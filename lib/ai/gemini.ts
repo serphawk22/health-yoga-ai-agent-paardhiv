@@ -9,7 +9,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 // ==================== MODEL CONFIGURATIONS ====================
 
-const getModel = (modelName: string = 'gemini-1.5-flash-latest'): GenerativeModel => {
+const getModel = (modelName: string = 'gemini-2.5-flash'): GenerativeModel => {
   return genAI.getGenerativeModel({ model: modelName });
 };
 
@@ -96,7 +96,7 @@ export async function healthChat(
   chatHistory: ChatMessage[],
   healthProfile: HealthProfile | null
 ): Promise<string> {
-  const model = getModel('gemini-1.5-flash-latest');
+  const model = getModel('gemini-2.5-flash');
 
   const profileContext = healthProfile
     ? `\n\nUSER'S HEALTH PROFILE:\n${formatHealthProfile(healthProfile)}`
@@ -150,7 +150,7 @@ export async function healthChat(
     return response;
   } catch (error) {
     console.error('Health chat error:', error);
-    throw new Error('Failed to generate response. Please try again.');
+    throw new Error(`Failed to generate response: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -170,7 +170,7 @@ function shouldAddDisclaimer(message: string, response: string): boolean {
 export async function extractAppointmentDetails(
   naturalLanguage: string
 ): Promise<AppointmentExtraction> {
-  const model = getModel('gemini-1.5-flash-latest');
+  const model = getModel('gemini-2.5-flash');
 
   const currentDate = new Date();
   const prompt = `${SYSTEM_PROMPTS.appointmentExtraction}
@@ -197,15 +197,15 @@ Respond with ONLY the JSON object, no markdown formatting or explanation.`;
   try {
     const result = await model.generateContent(prompt);
     const responseText = result.response.text().trim();
-    
+
     // Clean up response - remove markdown code blocks if present
     let cleanJson = responseText;
     if (responseText.startsWith('```')) {
       cleanJson = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     }
-    
+
     const extracted = JSON.parse(cleanJson) as AppointmentExtraction;
-    
+
     // Validate and fix date if needed
     if (extracted.date) {
       const parsedDate = new Date(extracted.date);
@@ -214,7 +214,7 @@ Respond with ONLY the JSON object, no markdown formatting or explanation.`;
         extracted.confidence = Math.max(0.3, extracted.confidence - 0.3);
       }
     }
-    
+
     return extracted;
   } catch (error) {
     console.error('Appointment extraction error:', error);
@@ -236,10 +236,10 @@ export async function generateDietPlan(
   healthProfile: HealthProfile | null,
   specificRequest?: string
 ): Promise<DietPlan> {
-  const model = getModel('gemini-1.5-flash-latest');
+  const model = getModel('gemini-2.5-flash');
 
   const profileContext = formatHealthProfile(healthProfile);
-  
+
   const prompt = `${SYSTEM_PROMPTS.dietRecommendation}
 
 USER'S HEALTH PROFILE:
@@ -259,24 +259,18 @@ Consider:
 Respond with ONLY the JSON object, no markdown formatting or explanation.`;
 
   try {
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.6,
-        maxOutputTokens: 2048,
-      },
-    });
+    const result = await model.generateContent(prompt);
 
     const responseText = result.response.text().trim();
     let cleanJson = responseText;
     if (responseText.startsWith('```')) {
       cleanJson = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     }
-    
+
     return JSON.parse(cleanJson) as DietPlan;
   } catch (error) {
     console.error('Diet plan generation error:', error);
-    throw new Error('Failed to generate diet plan. Please try again.');
+    throw new Error(`Failed to generate diet plan: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -287,7 +281,7 @@ export async function generateExercisePlan(
   bodyPart?: string,
   specificRequest?: string
 ): Promise<ExercisePlan> {
-  const model = getModel('gemini-1.5-flash-latest');
+  const model = getModel('gemini-2.5-flash');
 
   const profileContext = formatHealthProfile(healthProfile);
 
@@ -311,24 +305,18 @@ IMPORTANT SAFETY CONSIDERATIONS:
 Respond with ONLY the JSON object, no markdown formatting or explanation.`;
 
   try {
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.6,
-        maxOutputTokens: 2048,
-      },
-    });
+    const result = await model.generateContent(prompt);
 
     const responseText = result.response.text().trim();
     let cleanJson = responseText;
     if (responseText.startsWith('```')) {
       cleanJson = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     }
-    
+
     return JSON.parse(cleanJson) as ExercisePlan;
   } catch (error) {
     console.error('Exercise plan generation error:', error);
-    throw new Error('Failed to generate exercise plan. Please try again.');
+    throw new Error(`Failed to generate exercise plan: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -340,7 +328,7 @@ export async function generateYogaPlan(
   condition?: string,
   specificRequest?: string
 ): Promise<YogaPlan> {
-  const model = getModel('gemini-1.5-flash-latest');
+  const model = getModel('gemini-2.5-flash');
 
   const profileContext = formatHealthProfile(healthProfile);
 
@@ -364,24 +352,18 @@ Include appropriate poses considering:
 Respond with ONLY the JSON object, no markdown formatting or explanation.`;
 
   try {
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.6,
-        maxOutputTokens: 2048,
-      },
-    });
+    const result = await model.generateContent(prompt);
 
     const responseText = result.response.text().trim();
     let cleanJson = responseText;
     if (responseText.startsWith('```')) {
       cleanJson = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     }
-    
+
     return JSON.parse(cleanJson) as YogaPlan;
   } catch (error) {
     console.error('Yoga plan generation error:', error);
-    throw new Error('Failed to generate yoga plan. Please try again.');
+    throw new Error(`Failed to generate yoga plan: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -390,7 +372,7 @@ Respond with ONLY the JSON object, no markdown formatting or explanation.`;
 export async function calculateHealthScores(
   healthProfile: HealthProfile
 ): Promise<HealthScores> {
-  const model = getModel('gemini-1.5-flash-latest');
+  const model = getModel('gemini-2.5-flash');
 
   const profileContext = formatHealthProfile(healthProfile);
 
@@ -414,24 +396,18 @@ Categories: 0-25=Poor, 26-50=Fair, 51-75=Good, 76-100=Excellent
 Respond with ONLY the JSON object, no markdown formatting or explanation.`;
 
   try {
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.3,
-        maxOutputTokens: 1024,
-      },
-    });
+    const result = await model.generateContent(prompt);
 
     const responseText = result.response.text().trim();
     let cleanJson = responseText;
     if (responseText.startsWith('```')) {
       cleanJson = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     }
-    
+
     return JSON.parse(cleanJson) as HealthScores;
   } catch (error) {
     console.error('Health scores calculation error:', error);
-    throw new Error('Failed to calculate health scores. Please try again.');
+    throw new Error(`Failed to calculate health scores: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -441,7 +417,7 @@ export async function getDiseaseGuidance(
   healthProfile: HealthProfile | null,
   condition: string
 ): Promise<string> {
-  const model = getModel('gemini-1.5-flash-latest');
+  const model = getModel('gemini-2.5-flash');
 
   const profileContext = formatHealthProfile(healthProfile);
 
@@ -466,21 +442,15 @@ Include:
 Remember: NO medication advice, NO diagnosis. Emphasize consulting healthcare providers.`;
 
   try {
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.5,
-        maxOutputTokens: 2048,
-      },
-    });
+    const result = await model.generateContent(prompt);
 
     let response = result.response.text();
     response += RESPONSE_TEMPLATES.medicalDisclaimer;
-    
+
     return response;
   } catch (error) {
     console.error('Disease guidance error:', error);
-    throw new Error('Failed to generate guidance. Please try again.');
+    throw new Error(`Failed to generate guidance: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -491,7 +461,7 @@ export async function generateGoalPlan(
   goal: string,
   duration: string = '4 weeks'
 ): Promise<string> {
-  const model = getModel('gemini-1.5-flash-latest');
+  const model = getModel('gemini-2.5-flash');
 
   const profileContext = formatHealthProfile(healthProfile);
 
@@ -515,25 +485,19 @@ Create a comprehensive plan including:
 Make the plan realistic and achievable based on their current fitness level and health conditions.`;
 
   try {
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.6,
-        maxOutputTokens: 3000,
-      },
-    });
+    const result = await model.generateContent(prompt);
 
     let response = result.response.text();
-    
+
     // Add disclaimer for health-related goals
     if (['weight', 'muscle', 'fitness', 'recovery'].some(k => goal.toLowerCase().includes(k))) {
       response += RESPONSE_TEMPLATES.medicalDisclaimer;
     }
-    
+
     return response;
   } catch (error) {
     console.error('Goal plan generation error:', error);
-    throw new Error('Failed to generate goal plan. Please try again.');
+    throw new Error(`Failed to generate goal plan: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -543,7 +507,7 @@ export async function getNextProfileQuestion(
   currentProfile: Partial<HealthProfile>,
   currentStep: number
 ): Promise<{ question: string; field: string; options?: string[] }> {
-  const model = getModel('gemini-1.5-flash-latest');
+  const model = getModel('gemini-2.5-flash');
 
   const completedFields = Object.entries(currentProfile)
     .filter(([_, value]) => value !== null && value !== undefined)
@@ -581,7 +545,7 @@ Respond with ONLY the JSON object, no markdown formatting.`;
     if (responseText.startsWith('```')) {
       cleanJson = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     }
-    
+
     return JSON.parse(cleanJson);
   } catch (error) {
     console.error('Profile question error:', error);

@@ -82,7 +82,7 @@ export async function sendChatMessage(
     };
   } catch (error) {
     console.error('Chat error:', error);
-    return { success: false, error: 'Failed to send message. Please try again.' };
+    return { success: false, error: `Failed to send message: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
 

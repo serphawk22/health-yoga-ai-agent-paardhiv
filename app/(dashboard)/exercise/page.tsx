@@ -3,9 +3,9 @@
 
 import { useState } from 'react';
 import { getExerciseRecommendation } from '@/lib/actions/recommendations';
-import { 
-  Dumbbell, 
-  Loader2, 
+import {
+  Dumbbell,
+  Loader2,
   AlertCircle,
   RefreshCw,
   Clock,
@@ -49,20 +49,20 @@ export default function ExercisePage() {
     setIsLoading(true);
     setError(null);
     setCompletedExercises(new Set());
-    
+
     const bodyPart = selectedBodyPart === 'full_body' ? undefined : selectedBodyPart;
-    const request = specificRequest 
-      ? `${specificRequest}. Fitness level: ${fitnessLevel}` 
+    const request = specificRequest
+      ? `${specificRequest}. Fitness level: ${fitnessLevel}`
       : `Fitness level: ${fitnessLevel}`;
-    
+
     const result = await getExerciseRecommendation(bodyPart, request);
-    
+
     if (result.success) {
       setExercisePlan(result.data);
     } else {
       setError(result.error || 'Failed to generate exercise plan');
     }
-    
+
     setIsLoading(false);
   }
 
@@ -87,7 +87,7 @@ export default function ExercisePage() {
       {/* Selection Section */}
       <div className="card mb-6">
         <h2 className="font-semibold text-health-text mb-4">Customize Your Workout</h2>
-        
+
         {/* Body Part Selection */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-health-text mb-2">
@@ -98,11 +98,10 @@ export default function ExercisePage() {
               <button
                 key={part.id}
                 onClick={() => setSelectedBodyPart(part.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  selectedBodyPart === part.id
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedBodyPart === part.id
                     ? 'bg-primary-600 text-white'
                     : 'bg-gray-100 text-health-text hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 {part.emoji} {part.label}
               </button>
@@ -120,11 +119,10 @@ export default function ExercisePage() {
               <button
                 key={level.id}
                 onClick={() => setFitnessLevel(level.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  fitnessLevel === level.id
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${fitnessLevel === level.id
                     ? 'bg-primary-600 text-white'
                     : 'bg-gray-100 text-health-text hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 {level.label}
               </button>
@@ -224,7 +222,7 @@ export default function ExercisePage() {
                 </span>
               </div>
               <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-500"
                   style={{ width: `${(completedExercises.size / exercisePlan.exercises.length) * 100}%` }}
                 />
@@ -241,10 +239,10 @@ export default function ExercisePage() {
                 <span className="text-sm text-health-muted">(5-10 min)</span>
               </div>
               <ul className="space-y-2">
-                {exercisePlan.warmup.map((item: string, i: number) => (
+                {exercisePlan.warmup.map((item: any, i: number) => (
                   <li key={i} className="text-sm text-health-text flex items-start gap-2">
                     <Play className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                    {item}
+                    <span><span className="font-medium">{item.name}</span> <span className="text-health-muted">({item.duration})</span></span>
                   </li>
                 ))}
               </ul>
@@ -256,9 +254,9 @@ export default function ExercisePage() {
             <h3 className="font-semibold text-health-text mb-4">Exercises</h3>
             <div className="space-y-3">
               {exercisePlan.exercises?.map((exercise: any, index: number) => (
-                <ExerciseCard 
-                  key={index} 
-                  exercise={exercise} 
+                <ExerciseCard
+                  key={index}
+                  exercise={exercise}
                   index={index}
                   isCompleted={completedExercises.has(index)}
                   onToggleComplete={() => toggleExerciseComplete(index)}
@@ -276,10 +274,10 @@ export default function ExercisePage() {
                 <span className="text-sm text-health-muted">(5-10 min)</span>
               </div>
               <ul className="space-y-2">
-                {exercisePlan.cooldown.map((item: string, i: number) => (
+                {exercisePlan.cooldown.map((item: any, i: number) => (
                   <li key={i} className="text-sm text-health-text flex items-start gap-2">
                     <Play className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
-                    {item}
+                    <span><span className="font-medium">{item.name}</span> <span className="text-health-muted">({item.duration})</span></span>
                   </li>
                 ))}
               </ul>
@@ -321,9 +319,9 @@ export default function ExercisePage() {
 
           {/* Disclaimer */}
           <div className="p-4 rounded-lg bg-gray-100 text-sm text-health-muted">
-            <strong>⚠️ Disclaimer:</strong> This exercise plan is for general wellness purposes only. 
-            Stop any exercise that causes pain or discomfort. Consult a healthcare provider or certified 
-            fitness professional before starting any new exercise program, especially if you have 
+            <strong>⚠️ Disclaimer:</strong> This exercise plan is for general wellness purposes only.
+            Stop any exercise that causes pain or discomfort. Consult a healthcare provider or certified
+            fitness professional before starting any new exercise program, especially if you have
             health conditions or injuries.
           </div>
         </div>
@@ -332,13 +330,13 @@ export default function ExercisePage() {
   );
 }
 
-function ExerciseCard({ 
-  exercise, 
-  index, 
-  isCompleted, 
-  onToggleComplete 
-}: { 
-  exercise: any; 
+function ExerciseCard({
+  exercise,
+  index,
+  isCompleted,
+  onToggleComplete
+}: {
+  exercise: any;
   index: number;
   isCompleted: boolean;
   onToggleComplete: () => void;
@@ -346,22 +344,20 @@ function ExerciseCard({
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div 
-      className={`rounded-lg border transition-all ${
-        isCompleted 
-          ? 'bg-green-50 border-green-200' 
+    <div
+      className={`rounded-lg border transition-all ${isCompleted
+          ? 'bg-green-50 border-green-200'
           : 'border-health-border hover:border-primary-300'
-      }`}
+        }`}
     >
       <div className="p-4">
         <div className="flex items-center gap-4">
           <button
             onClick={onToggleComplete}
-            className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-              isCompleted 
-                ? 'bg-green-600 text-white' 
+            className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors ${isCompleted
+                ? 'bg-green-600 text-white'
                 : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
-            }`}
+              }`}
           >
             {isCompleted ? (
               <CheckCircle2 className="w-5 h-5" />
@@ -369,7 +365,7 @@ function ExerciseCard({
               <span className="font-medium">{index + 1}</span>
             )}
           </button>
-          
+
           <div className="flex-1 min-w-0">
             <h4 className={`font-medium ${isCompleted ? 'text-green-800 line-through' : 'text-health-text'}`}>
               {exercise.name}

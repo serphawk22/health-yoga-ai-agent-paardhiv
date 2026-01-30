@@ -4,8 +4,10 @@ import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'health-agent-secret-key-change-in-production'
+  process.env.AUTH_SECRET || 'health-agent-default-secret-key'
 );
+
+const COOKIE_NAME = 'health-agent-session';
 
 // Routes that don't require authentication
 const publicRoutes = ['/', '/login', '/register'];
@@ -32,8 +34,8 @@ export async function middleware(request: NextRequest) {
   // Check if it's a public route
   if (publicRoutes.includes(pathname)) {
     // If user is authenticated and trying to access login/register, redirect to dashboard
-    const token = request.cookies.get('auth-token')?.value;
-    
+    const token = request.cookies.get(COOKIE_NAME)?.value;
+
     if (token && (pathname === '/login' || pathname === '/register')) {
       try {
         await jwtVerify(token, JWT_SECRET);
@@ -42,7 +44,7 @@ export async function middleware(request: NextRequest) {
         // Invalid token, let them access login/register
       }
     }
-    
+
     return NextResponse.next();
   }
 
@@ -52,7 +54,7 @@ export async function middleware(request: NextRequest) {
   );
 
   if (isProtectedRoute) {
-    const token = request.cookies.get('auth-token')?.value;
+    const token = request.cookies.get(COOKIE_NAME)?.value;
 
     if (!token) {
       // No token, redirect to login
@@ -68,7 +70,7 @@ export async function middleware(request: NextRequest) {
     } catch {
       // Invalid token, redirect to login
       const response = NextResponse.redirect(new URL('/login', request.url));
-      response.cookies.delete('auth-token');
+      response.cookies.delete(COOKIE_NAME);
       return response;
     }
   }

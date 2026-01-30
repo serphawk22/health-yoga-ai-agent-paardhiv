@@ -56,7 +56,7 @@ export async function getDietRecommendation(
     return { success: true, data: dietPlan };
   } catch (error) {
     console.error('Diet recommendation error:', error);
-    return { success: false, error: 'Failed to generate diet recommendation' };
+    return { success: false, error: `Failed to generate diet recommendation: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
 
@@ -96,7 +96,7 @@ export async function getExerciseRecommendation(
     return { success: true, data: exercisePlan };
   } catch (error) {
     console.error('Exercise recommendation error:', error);
-    return { success: false, error: 'Failed to generate exercise recommendation' };
+    return { success: false, error: `Failed to generate exercise recommendation: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
 
@@ -138,7 +138,7 @@ export async function getYogaRecommendation(
     return { success: true, data: yogaPlan };
   } catch (error) {
     console.error('Yoga recommendation error:', error);
-    return { success: false, error: 'Failed to generate yoga recommendation' };
+    return { success: false, error: `Failed to generate yoga recommendation: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
 
@@ -176,7 +176,7 @@ export async function getDiseaseRecommendation(
     return { success: true, data: { guidance } };
   } catch (error) {
     console.error('Disease recommendation error:', error);
-    return { success: false, error: 'Failed to generate guidance' };
+    return { success: false, error: `Failed to generate guidance: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
 
@@ -218,7 +218,7 @@ export async function getGoalRecommendation(
     return { success: true, data: { plan } };
   } catch (error) {
     console.error('Goal recommendation error:', error);
-    return { success: false, error: 'Failed to generate goal plan' };
+    return { success: false, error: `Failed to generate goal plan: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
 
@@ -236,9 +236,9 @@ export async function getUserConditions(): Promise<RecommendationActionResult> {
       select: { existingConditions: true },
     });
 
-    return { 
-      success: true, 
-      data: healthProfile?.existingConditions || [] 
+    return {
+      success: true,
+      data: healthProfile?.existingConditions || []
     };
   } catch (error) {
     console.error('Get conditions error:', error);
@@ -280,7 +280,7 @@ export async function getConditionGuidance(
     return { success: true, data: { guidance, condition } };
   } catch (error) {
     console.error('Condition guidance error:', error);
-    return { success: false, error: 'Failed to generate guidance' };
+    return { success: false, error: `Failed to generate guidance: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
 

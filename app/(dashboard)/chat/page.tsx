@@ -1,4 +1,4 @@
-    // Health Chat Page
+// Health Chat Page
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -77,7 +77,7 @@ export default function ChatPage() {
 
     try {
       const result = await sendChatMessage(userMessage, sessionId || undefined);
-      
+
       if (result.success && result.data) {
         if (!sessionId) {
           setSessionId(result.data.sessionId);
@@ -97,7 +97,7 @@ export default function ChatPage() {
         setMessages(prev => [...prev, {
           id: `error-${Date.now()}`,
           role: 'assistant',
-          content: '❌ Sorry, I encountered an error. Please try again.',
+          content: `❌ ${result.error || 'Sorry, I encountered an error. Please try again.'}`,
           createdAt: new Date(),
         }]);
       }
@@ -136,7 +136,7 @@ export default function ChatPage() {
               New Chat
             </button>
           </div>
-          
+
           <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
             {sessions.length > 0 ? (
               <div className="space-y-1">
@@ -144,11 +144,10 @@ export default function ChatPage() {
                   <button
                     key={session.sessionId}
                     onClick={() => loadSessionHistory(session.sessionId)}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                      sessionId === session.sessionId
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${sessionId === session.sessionId
                         ? 'bg-primary-50 text-primary-700'
                         : 'hover:bg-gray-50 text-health-text'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-2">
                       <MessageCircle className="w-4 h-4 shrink-0" />
@@ -192,15 +191,15 @@ export default function ChatPage() {
                 Hello! I'm your Health Assistant
               </h2>
               <p className="text-health-muted max-w-md mb-6">
-                I can help you with health questions, diet advice, exercise tips, and more. 
+                I can help you with health questions, diet advice, exercise tips, and more.
                 My responses are personalized based on your health profile.
               </p>
-              
+
               {/* Disclaimer */}
               <div className="flex items-start gap-2 p-4 rounded-lg bg-amber-50 border border-amber-200 max-w-md">
                 <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <p className="text-sm text-amber-800 text-left">
-                  <strong>Important:</strong> I provide general wellness information only. 
+                  <strong>Important:</strong> I provide general wellness information only.
                   This is not medical advice. Always consult healthcare professionals for medical concerns.
                 </p>
               </div>
@@ -236,9 +235,8 @@ export default function ChatPage() {
                     </div>
                   )}
                   <div
-                    className={`${
-                      message.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-assistant'
-                    } animate-fadeIn`}
+                    className={`${message.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-assistant'
+                      } animate-fadeIn`}
                   >
                     <div className="prose prose-sm max-w-none whitespace-pre-wrap">
                       {message.content}
@@ -251,7 +249,7 @@ export default function ChatPage() {
                   )}
                 </div>
               ))}
-              
+
               {isLoading && (
                 <div className="flex gap-3">
                   <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center shrink-0">
@@ -265,7 +263,7 @@ export default function ChatPage() {
                   </div>
                 </div>
               )}
-              
+
               <div ref={messagesEndRef} />
             </>
           )}
