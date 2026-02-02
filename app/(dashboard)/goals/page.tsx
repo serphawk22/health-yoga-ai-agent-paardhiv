@@ -1,5 +1,6 @@
-// Goals Page
 'use client';
+
+// Goals Page
 
 import { useState, useEffect } from 'react';
 import { getGoalPlan } from '@/lib/actions/recommendations';

@@ -1,5 +1,6 @@
-// Sidebar Component
 'use client';
+
+// Sidebar Component
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -18,6 +19,7 @@ import {
   LogOut,
   Settings,
   Stethoscope,
+  Pill,
   Flower2,
 } from 'lucide-react';
 import { GradientButton } from '@/components/ui/gradient-button';
@@ -42,7 +44,7 @@ const navigation = [
   { name: 'Exercise', href: '/exercise', icon: Dumbbell },
   { name: 'Yoga', href: '/yoga', icon: Flower2 },
   { name: 'Health Assessment', href: '/assessment', icon: BarChart3 },
-  { name: 'Disease Management', href: '/conditions', icon: Stethoscope },
+  { name: 'Prescription Management', href: '/prescriptions', icon: Pill },
   { name: 'Goal Planner', href: '/goals', icon: Target },
   { name: 'Health Metrics', href: '/metrics', icon: Activity },
 ];

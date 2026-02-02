@@ -1,5 +1,6 @@
-// Yoga Plan Page
 'use client';
+
+// Yoga Plan Page
 
 import { useState } from 'react';
 import { getYogaRecommendation } from '@/lib/actions/recommendations';

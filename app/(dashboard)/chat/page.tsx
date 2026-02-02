@@ -1,5 +1,6 @@
-// Health Chat Page
 'use client';
+
+// Health Chat Page
 
 import { useState, useRef, useEffect } from 'react';
 import { sendChatMessage, getChatHistory, getChatSessions } from '@/lib/actions/chat';

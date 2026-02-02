@@ -1,5 +1,6 @@
-// Health Metrics Page
 'use client';
+
+// Health Metrics Page
 
 import { useState, useEffect } from 'react';
 import { getHealthMetrics, logHealthMetric } from '@/lib/actions/metrics';

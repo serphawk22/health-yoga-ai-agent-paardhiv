@@ -1,5 +1,6 @@
-// Header Component
 'use client';
+
+// Header Component
 
 import { useState } from 'react';
 import Link from 'next/link';

@@ -1,5 +1,6 @@
-// Exercise Plan Page
 'use client';
+
+// Exercise Plan Page
 
 import { useState } from 'react';
 import { getExerciseRecommendation } from '@/lib/actions/recommendations';

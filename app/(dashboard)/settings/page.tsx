@@ -1,5 +1,6 @@
-// Settings Page
 'use client';
+
+// Settings Page
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';

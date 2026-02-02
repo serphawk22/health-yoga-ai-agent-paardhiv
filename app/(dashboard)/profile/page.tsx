@@ -1,5 +1,6 @@
-// Profile View/Edit Page
 'use client';
+
+// Profile View/Edit Page
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
