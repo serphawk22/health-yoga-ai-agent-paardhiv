@@ -3,8 +3,8 @@
 
 import { useState, useEffect } from 'react';
 import { getHealthMetrics, logHealthMetric } from '@/lib/actions/metrics';
-import { 
-  Loader2, 
+import {
+  Loader2,
   AlertCircle,
   Plus,
   TrendingUp,
@@ -23,6 +23,8 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { GradientButton } from '@/components/ui/gradient-button';
+import { cn } from '@/lib/utils';
 
 const METRIC_TYPES = [
   { id: 'WEIGHT', label: 'Weight', unit: 'kg', icon: Scale, color: 'blue' },
@@ -54,26 +56,26 @@ export default function MetricsPage() {
   async function loadMetrics() {
     setIsLoading(true);
     const result = await getHealthMetrics(dateRange);
-    
+
     if (result.success) {
       setMetrics(result.data || []);
     }
-    
+
     setIsLoading(false);
   }
 
   async function handleAddMetric() {
     if (!metricValue) return;
-    
+
     setIsSaving(true);
     setError(null);
-    
+
     const result = await logHealthMetric(
       selectedMetricType,
       parseFloat(metricValue),
       new Date(metricDate)
     );
-    
+
     if (result.success) {
       setShowAddModal(false);
       setMetricValue('');
@@ -81,7 +83,7 @@ export default function MetricsPage() {
     } else {
       setError(result.error || 'Failed to save metric');
     }
-    
+
     setIsSaving(false);
   }
 
@@ -116,13 +118,13 @@ export default function MetricsPage() {
           <h1 className="text-2xl font-bold text-health-text">Health Metrics</h1>
           <p className="text-health-muted">Track and monitor your health data over time</p>
         </div>
-        <button 
+        <GradientButton
           onClick={() => setShowAddModal(true)}
-          className="btn-primary"
+          className="h-auto"
         >
           <Plus className="w-4 h-4 mr-2" />
           Log Metric
-        </button>
+        </GradientButton>
       </div>
 
       {/* Date Range Filter */}
@@ -135,11 +137,12 @@ export default function MetricsPage() {
               <button
                 key={range}
                 onClick={() => setDateRange(range)}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                className={cn(
+                  "px-3 py-1 rounded-lg text-sm font-medium transition-colors",
                   dateRange === range
                     ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-health-text hover:bg-gray-200'
-                }`}
+                    : 'bg-white/5 text-health-text hover:bg-white/10'
+                )}
               >
                 {range === 'week' ? 'Last 7 days' : range === 'month' ? 'Last 30 days' : 'All time'}
               </button>
@@ -160,14 +163,14 @@ export default function MetricsPage() {
             const latest = getLatestValue(type.id);
             const trend = getTrend(type.id);
             const colorMap: Record<string, { bg: string; text: string }> = {
-              blue: { bg: 'bg-blue-100', text: 'text-blue-600' },
-              red: { bg: 'bg-red-100', text: 'text-red-600' },
-              pink: { bg: 'bg-pink-100', text: 'text-pink-600' },
-              purple: { bg: 'bg-purple-100', text: 'text-purple-600' },
-              indigo: { bg: 'bg-indigo-100', text: 'text-indigo-600' },
-              green: { bg: 'bg-green-100', text: 'text-green-600' },
-              orange: { bg: 'bg-orange-100', text: 'text-orange-600' },
-              cyan: { bg: 'bg-cyan-100', text: 'text-cyan-600' },
+              blue: { bg: 'bg-blue-500/20', text: 'text-blue-500' },
+              red: { bg: 'bg-red-500/20', text: 'text-red-500' },
+              pink: { bg: 'bg-pink-500/20', text: 'text-pink-500' },
+              purple: { bg: 'bg-purple-500/20', text: 'text-purple-500' },
+              indigo: { bg: 'bg-indigo-500/20', text: 'text-indigo-500' },
+              green: { bg: 'bg-green-500/20', text: 'text-green-500' },
+              orange: { bg: 'bg-orange-500/20', text: 'text-orange-500' },
+              cyan: { bg: 'bg-cyan-500/20', text: 'text-cyan-500' },
             };
             const colors = colorMap[type.color] || colorMap.blue;
 
@@ -191,7 +194,7 @@ export default function MetricsPage() {
                     </div>
                   )}
                 </div>
-                
+
                 {latest ? (
                   <div>
                     <p className="text-2xl font-bold text-health-text">
@@ -209,7 +212,7 @@ export default function MetricsPage() {
                         setSelectedMetricType(type.id);
                         setShowAddModal(true);
                       }}
-                      className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                      className="text-sm text-primary-400 hover:text-primary-300 font-medium"
                     >
                       + Add first reading
                     </button>
@@ -225,9 +228,9 @@ export default function MetricsPage() {
                         <div key={i} className="text-center shrink-0">
                           <p className="text-xs font-medium text-health-text">{m.value}</p>
                           <p className="text-xs text-health-muted">
-                            {new Date(m.recordedAt).toLocaleDateString('en-US', { 
-                              month: 'short', 
-                              day: 'numeric' 
+                            {new Date(m.recordedAt).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric'
                             })}
                           </p>
                         </div>
@@ -243,18 +246,18 @@ export default function MetricsPage() {
 
       {/* Add Metric Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-health-card border border-health-border rounded-2xl shadow-xl max-w-md w-full">
             <div className="flex items-center justify-between p-4 border-b border-health-border">
               <h3 className="font-semibold text-health-text">Log Health Metric</h3>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-white/5 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5 text-health-muted" />
               </button>
             </div>
-            
+
             <div className="p-4 space-y-4">
               {/* Metric Type Selection */}
               <div>
@@ -304,7 +307,7 @@ export default function MetricsPage() {
               </div>
 
               {error && (
-                <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-2">
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm flex items-center gap-2">
                   <AlertCircle className="w-4 h-4" />
                   {error}
                 </div>
@@ -314,14 +317,14 @@ export default function MetricsPage() {
             <div className="flex gap-3 p-4 border-t border-health-border">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="btn-secondary flex-1"
+                className="btn-secondary flex-1 border border-health-border hover:bg-white/5"
               >
                 Cancel
               </button>
-              <button
+              <GradientButton
                 onClick={handleAddMetric}
                 disabled={!metricValue || isSaving}
-                className="btn-primary flex-1"
+                className="flex-1"
               >
                 {isSaving ? (
                   <>
@@ -334,16 +337,16 @@ export default function MetricsPage() {
                     Save Metric
                   </>
                 )}
-              </button>
+              </GradientButton>
             </div>
           </div>
         </div>
       )}
 
       {/* Tips */}
-      <div className="card mt-6 bg-blue-50 border-blue-200">
-        <h3 className="font-semibold text-blue-800 mb-2">💡 Tips for Tracking</h3>
-        <ul className="space-y-1 text-sm text-blue-700">
+      <div className="card mt-6 bg-blue-500/10 border-blue-500/20">
+        <h3 className="font-semibold text-blue-400 mb-2">💡 Tips for Tracking</h3>
+        <ul className="space-y-1 text-sm text-blue-300">
           <li>• Log your metrics at the same time each day for consistency</li>
           <li>• Track weight first thing in the morning for accurate readings</li>
           <li>• Record blood pressure after 5 minutes of rest</li>

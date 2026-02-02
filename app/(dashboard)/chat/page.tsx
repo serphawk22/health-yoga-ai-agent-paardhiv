@@ -4,6 +4,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { sendChatMessage, getChatHistory, getChatSessions } from '@/lib/actions/chat';
 import { Send, Loader2, Bot, User, Plus, MessageCircle, Trash2, AlertCircle } from 'lucide-react';
+import { GradientButton } from '@/components/ui/gradient-button';
+import { cn } from '@/lib/utils';
 
 interface Message {
   id: string;
@@ -128,13 +130,13 @@ export default function ChatPage() {
       <div className="hidden lg:flex flex-col w-64 shrink-0">
         <div className="card flex-1 flex flex-col overflow-hidden">
           <div className="p-4 border-b border-health-border">
-            <button
+            <GradientButton
               onClick={startNewChat}
-              className="btn-primary w-full"
+              className="w-full"
             >
               <Plus className="w-4 h-4 mr-2" />
               New Chat
-            </button>
+            </GradientButton>
           </div>
 
           <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
@@ -144,10 +146,12 @@ export default function ChatPage() {
                   <button
                     key={session.sessionId}
                     onClick={() => loadSessionHistory(session.sessionId)}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${sessionId === session.sessionId
-                        ? 'bg-primary-50 text-primary-700'
-                        : 'hover:bg-gray-50 text-health-text'
-                      }`}
+                    className={cn(
+                      "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
+                      sessionId === session.sessionId
+                        ? 'bg-primary-600/20 text-primary-400'
+                        : 'hover:bg-white/5 text-health-text'
+                    )}
                   >
                     <div className="flex items-center gap-2">
                       <MessageCircle className="w-4 h-4 shrink-0" />
@@ -168,7 +172,7 @@ export default function ChatPage() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col card overflow-hidden">
         {/* Chat Header */}
-        <div className="p-4 border-b border-health-border bg-gradient-to-r from-primary-50 to-accent-50">
+        <div className="p-4 border-b border-health-border bg-health-card">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
               <Bot className="w-6 h-6 text-white" />
@@ -184,8 +188,8 @@ export default function ChatPage() {
         <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4">
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center px-4">
-              <div className="w-16 h-16 rounded-2xl bg-primary-100 flex items-center justify-center mb-4">
-                <Bot className="w-8 h-8 text-primary-600" />
+              <div className="w-16 h-16 rounded-2xl bg-primary-500/20 flex items-center justify-center mb-4">
+                <Bot className="w-8 h-8 text-primary-500" />
               </div>
               <h2 className="text-xl font-semibold text-health-text mb-2">
                 Hello! I'm your Health Assistant
@@ -196,9 +200,9 @@ export default function ChatPage() {
               </p>
 
               {/* Disclaimer */}
-              <div className="flex items-start gap-2 p-4 rounded-lg bg-amber-50 border border-amber-200 max-w-md">
-                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                <p className="text-sm text-amber-800 text-left">
+              <div className="flex items-start gap-2 p-4 rounded-lg bg-amber-500/10 border border-amber-500/20 max-w-md">
+                <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                <p className="text-sm text-amber-400 text-left">
                   <strong>Important:</strong> I provide general wellness information only.
                   This is not medical advice. Always consult healthcare professionals for medical concerns.
                 </p>
@@ -215,7 +219,7 @@ export default function ChatPage() {
                   <button
                     key={suggestion}
                     onClick={() => setInput(suggestion)}
-                    className="px-4 py-2 rounded-full border border-health-border text-sm text-health-text hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 rounded-full border border-health-border text-sm text-health-text hover:bg-white/5 transition-colors"
                   >
                     {suggestion}
                   </button>
@@ -230,8 +234,8 @@ export default function ChatPage() {
                   className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {message.role === 'assistant' && (
-                    <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center shrink-0">
-                      <Bot className="w-5 h-5 text-primary-600" />
+                    <div className="w-8 h-8 rounded-lg bg-primary-500/20 flex items-center justify-center shrink-0">
+                      <Bot className="w-5 h-5 text-primary-500" />
                     </div>
                   )}
                   <div
@@ -243,8 +247,8 @@ export default function ChatPage() {
                     </div>
                   </div>
                   {message.role === 'user' && (
-                    <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center shrink-0">
-                      <User className="w-5 h-5 text-gray-600" />
+                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                      <User className="w-5 h-5 text-health-muted" />
                     </div>
                   )}
                 </div>
@@ -252,8 +256,8 @@ export default function ChatPage() {
 
               {isLoading && (
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center shrink-0">
-                    <Bot className="w-5 h-5 text-primary-600" />
+                  <div className="w-8 h-8 rounded-lg bg-primary-500/20 flex items-center justify-center shrink-0">
+                    <Bot className="w-5 h-5 text-primary-500" />
                   </div>
                   <div className="chat-bubble-assistant">
                     <div className="flex items-center gap-2 text-health-muted">
@@ -270,7 +274,7 @@ export default function ChatPage() {
         </div>
 
         {/* Input Area */}
-        <div className="p-4 border-t border-health-border bg-white">
+        <div className="p-4 border-t border-health-border bg-health-card">
           <form onSubmit={handleSubmit} className="flex gap-3">
             <textarea
               ref={inputRef}
@@ -282,17 +286,17 @@ export default function ChatPage() {
               rows={1}
               disabled={isLoading}
             />
-            <button
+            <GradientButton
               type="submit"
               disabled={!input.trim() || isLoading}
-              className="btn-primary px-4"
+              className="px-4 h-auto"
             >
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <Send className="w-5 h-5" />
               )}
-            </button>
+            </GradientButton>
           </form>
         </div>
       </div>

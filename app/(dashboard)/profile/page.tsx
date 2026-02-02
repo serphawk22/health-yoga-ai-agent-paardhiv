@@ -4,8 +4,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getHealthProfile, updateProfile } from '@/lib/actions/profile';
-import { 
-  Loader2, 
+import {
+  Loader2,
   AlertCircle,
   User,
   Heart,
@@ -20,6 +20,8 @@ import {
   CheckCircle2,
   AlertTriangle,
 } from 'lucide-react';
+import { GradientButton } from '@/components/ui/gradient-button';
+import { motion } from 'motion/react';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -29,7 +31,7 @@ export default function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  
+
   // Edit form state
   const [formData, setFormData] = useState<any>({});
 
@@ -40,7 +42,7 @@ export default function ProfilePage() {
   async function loadProfile() {
     setIsLoading(true);
     const result = await getHealthProfile();
-    
+
     if (result.success && result.data) {
       // Map schema fields to UI fields
       const mappedProfile = {
@@ -58,16 +60,16 @@ export default function ProfilePage() {
     } else {
       setError(result.error || 'Failed to load profile');
     }
-    
+
     setIsLoading(false);
   }
 
   async function handleSave() {
     setIsSaving(true);
     setError(null);
-    
+
     const result = await updateProfile(formData);
-    
+
     if (result.success) {
       const mappedProfile = {
         ...result.data,
@@ -84,7 +86,7 @@ export default function ProfilePage() {
     } else {
       setError(result.error || 'Failed to update profile');
     }
-    
+
     setIsSaving(false);
   }
 
@@ -109,19 +111,24 @@ export default function ProfilePage() {
           <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-health-text mb-2">Profile Not Set Up</h2>
           <p className="text-health-muted mb-4">Please complete your health profile to get started.</p>
-          <button 
+          <GradientButton
             onClick={() => router.push('/profile/setup')}
-            className="btn-primary"
+            className="mt-4"
           >
             Set Up Profile
-          </button>
+          </GradientButton>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto pb-20 lg:pb-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-4xl mx-auto pb-20 lg:pb-6"
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -129,31 +136,31 @@ export default function ProfilePage() {
           <p className="text-health-muted">Your personal health information</p>
         </div>
         {!isEditing ? (
-          <button onClick={() => setIsEditing(true)} className="btn-secondary">
+          <button onClick={() => setIsEditing(true)} className="btn-secondary border-health-border hover:bg-white/5">
             <Edit2 className="w-4 h-4 mr-2" />
             Edit Profile
           </button>
         ) : (
           <div className="flex gap-2">
-            <button onClick={handleCancel} className="btn-secondary">
+            <button onClick={handleCancel} className="btn-secondary border-health-border hover:bg-white/5">
               <X className="w-4 h-4 mr-2" />
               Cancel
             </button>
-            <button onClick={handleSave} disabled={isSaving} className="btn-primary">
+            <GradientButton onClick={handleSave} disabled={isSaving}>
               {isSaving ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (
                 <Save className="w-4 h-4 mr-2" />
               )}
               Save Changes
-            </button>
+            </GradientButton>
           </div>
         )}
       </div>
 
       {/* Success Message */}
       {successMessage && (
-        <div className="mb-6 p-4 rounded-lg bg-green-50 border border-green-200 text-green-700 flex items-center gap-2">
+        <div className="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500 flex items-center gap-2">
           <CheckCircle2 className="w-5 h-5" />
           {successMessage}
         </div>
@@ -161,7 +168,7 @@ export default function ProfilePage() {
 
       {/* Error Message */}
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 flex items-center gap-2">
+        <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-2">
           <AlertCircle className="w-5 h-5" />
           {error}
         </div>
@@ -174,7 +181,7 @@ export default function ProfilePage() {
             <User className="w-5 h-5 text-primary-600" />
             <h2 className="font-semibold text-health-text">Basic Information</h2>
           </div>
-          
+
           {isEditing ? (
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
@@ -233,7 +240,7 @@ export default function ProfilePage() {
             <Activity className="w-5 h-5 text-primary-600" />
             <h2 className="font-semibold text-health-text">Health Metrics</h2>
           </div>
-          
+
           {isEditing ? (
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
@@ -285,16 +292,16 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
-              <InfoCard 
-                icon={Activity} 
-                label="Activity" 
-                value={formatEnumValue(profile.activityLevel)} 
+              <InfoCard
+                icon={Activity}
+                label="Activity"
+                value={formatEnumValue(profile.activityLevel)}
               />
               <InfoCard icon={Activity} label="Sleep" value={`${profile.sleepHours || '-'} hours`} />
-              <InfoCard 
-                icon={Activity} 
-                label="Stress" 
-                value={formatEnumValue(profile.stressLevel)} 
+              <InfoCard
+                icon={Activity}
+                label="Stress"
+                value={formatEnumValue(profile.stressLevel)}
               />
               <InfoCard icon={Activity} label="Water" value={`${profile.waterIntake || '-'} glasses`} />
             </div>
@@ -307,7 +314,7 @@ export default function ProfilePage() {
             <Apple className="w-5 h-5 text-primary-600" />
             <h2 className="font-semibold text-health-text">Diet & Preferences</h2>
           </div>
-          
+
           {isEditing ? (
             <div className="space-y-4">
               <div>
@@ -331,9 +338,9 @@ export default function ProfilePage() {
                 <input
                   type="text"
                   value={formData.allergies?.join(', ') || ''}
-                  onChange={(e) => setFormData({ 
-                    ...formData, 
-                    allergies: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean) 
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    allergies: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean)
                   })}
                   placeholder="e.g., Peanuts, Dairy, Gluten"
                   className="input"
@@ -346,9 +353,9 @@ export default function ProfilePage() {
                 <input
                   type="text"
                   value={formData.foodPreferences?.join(', ') || ''}
-                  onChange={(e) => setFormData({ 
-                    ...formData, 
-                    foodPreferences: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean) 
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    foodPreferences: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean)
                   })}
                   placeholder="e.g., South Indian, Low spice"
                   className="input"
@@ -359,7 +366,7 @@ export default function ProfilePage() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-health-text">Diet Type:</span>
-                <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm">
+                <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-500 text-sm border border-green-500/20">
                   {formatEnumValue(profile.dietType)}
                 </span>
               </div>
@@ -368,7 +375,7 @@ export default function ProfilePage() {
                   <span className="text-sm font-medium text-health-text">Allergies:</span>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {profile.allergies.map((allergy: string, i: number) => (
-                      <span key={i} className="px-3 py-1 rounded-full bg-red-100 text-red-700 text-sm">
+                      <span key={i} className="px-3 py-1 rounded-full bg-red-500/20 text-red-500 text-sm border border-red-500/20">
                         {allergy}
                       </span>
                     ))}
@@ -380,7 +387,7 @@ export default function ProfilePage() {
                   <span className="text-sm font-medium text-health-text">Preferences:</span>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {profile.foodPreferences.map((pref: string, i: number) => (
-                      <span key={i} className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">
+                      <span key={i} className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-500 text-sm border border-blue-500/20">
                         {pref}
                       </span>
                     ))}
@@ -397,7 +404,7 @@ export default function ProfilePage() {
             <Heart className="w-5 h-5 text-primary-600" />
             <h2 className="font-semibold text-health-text">Health Conditions</h2>
           </div>
-          
+
           {isEditing ? (
             <div className="space-y-4">
               <div>
@@ -407,9 +414,9 @@ export default function ProfilePage() {
                 <input
                   type="text"
                   value={formData.healthConditions?.join(', ') || ''}
-                  onChange={(e) => setFormData({ 
-                    ...formData, 
-                    healthConditions: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean) 
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    healthConditions: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean)
                   })}
                   placeholder="e.g., Diabetes, Hypertension"
                   className="input"
@@ -422,9 +429,9 @@ export default function ProfilePage() {
                 <input
                   type="text"
                   value={formData.medications?.join(', ') || ''}
-                  onChange={(e) => setFormData({ 
-                    ...formData, 
-                    medications: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean) 
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    medications: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean)
                   })}
                   placeholder="e.g., Metformin, Aspirin"
                   className="input"
@@ -438,7 +445,7 @@ export default function ProfilePage() {
                   <span className="text-sm font-medium text-health-text">Conditions:</span>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {profile.healthConditions.map((condition: string, i: number) => (
-                      <span key={i} className="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-sm">
+                      <span key={i} className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-500 text-sm border border-amber-500/20">
                         {condition}
                       </span>
                     ))}
@@ -452,7 +459,7 @@ export default function ProfilePage() {
                   <span className="text-sm font-medium text-health-text">Medications:</span>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {profile.medications.map((med: string, i: number) => (
-                      <span key={i} className="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm">
+                      <span key={i} className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-500 text-sm border border-purple-500/20">
                         {med}
                       </span>
                     ))}
@@ -469,7 +476,7 @@ export default function ProfilePage() {
             <Activity className="w-5 h-5 text-primary-600" />
             <h2 className="font-semibold text-health-text">Health Goals</h2>
           </div>
-          
+
           {isEditing ? (
             <div>
               <label className="block text-sm font-medium text-health-text mb-1">
@@ -477,9 +484,9 @@ export default function ProfilePage() {
               </label>
               <textarea
                 value={formData.fitnessGoals?.join(', ') || ''}
-                onChange={(e) => setFormData({ 
-                  ...formData, 
-                  fitnessGoals: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean) 
+                onChange={(e) => setFormData({
+                  ...formData,
+                  fitnessGoals: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean)
                 })}
                 placeholder="e.g., Lose weight, Build muscle, Improve sleep"
                 className="textarea"
@@ -491,7 +498,7 @@ export default function ProfilePage() {
               {profile.fitnessGoals && profile.fitnessGoals.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {profile.fitnessGoals.map((goal: string, i: number) => (
-                    <span key={i} className="px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-sm">
+                    <span key={i} className="px-3 py-1 rounded-full bg-primary-500/20 text-primary-500 text-sm border border-primary-500/20">
                       🎯 {goal}
                     </span>
                   ))}
@@ -505,29 +512,29 @@ export default function ProfilePage() {
 
         {/* Calculated BMI */}
         {profile.heightCm && profile.weightKg && (
-          <div className="card bg-gradient-to-r from-primary-50 to-blue-50 border-primary-200">
-            <h3 className="font-semibold text-primary-800 mb-3">Your BMI</h3>
+          <div className="card bg-gradient-to-r from-primary-500/10 to-blue-500/10 border-primary-500/20">
+            <h3 className="font-semibold text-primary-400 mb-3">Your BMI</h3>
             <div className="flex items-center gap-4">
-              <div className="text-4xl font-bold text-primary-600">
+              <div className="text-4xl font-bold text-primary-500">
                 {(profile.weightKg / Math.pow(profile.heightCm / 100, 2)).toFixed(1)}
               </div>
               <div>
-                <p className="text-sm text-primary-700">
+                <p className="text-sm text-primary-300">
                   {getBmiCategory(profile.weightKg / Math.pow(profile.heightCm / 100, 2))}
                 </p>
-                <p className="text-xs text-primary-600">Based on your height and weight</p>
+                <p className="text-xs text-primary-400/70">Based on your height and weight</p>
               </div>
             </div>
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 function InfoCard({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
-    <div className="p-3 rounded-lg bg-gray-50">
+    <div className="p-3 rounded-lg bg-white/5 border border-white/10">
       <div className="flex items-center gap-2 mb-1">
         <Icon className="w-4 h-4 text-health-muted" />
         <span className="text-xs text-health-muted">{label}</span>

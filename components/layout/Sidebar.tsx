@@ -21,6 +21,7 @@ import {
   Flower2,
 } from 'lucide-react';
 import { GradientButton } from '@/components/ui/gradient-button';
+import { Typewriter } from '@/components/ui/typewriter';
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {
@@ -61,10 +62,19 @@ export function Sidebar({ user }: SidebarProps) {
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-health-card border-r border-[#27272a] px-6 pb-4">
           {/* Logo */}
           <div className="flex h-16 shrink-0 items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
-              <Heart className="w-6 h-6 text-white" />
+
+            <div className="flex flex-col">
+              <span className="text-xl font-bold text-health-text leading-tight">Health</span>
+              <div className="text-sm font-medium text-primary-500">
+                <Typewriter
+                  text={["Agent", "Partner", "Advisor"]}
+                  speed={70}
+                  waitTime={1500}
+                  deleteSpeed={40}
+                  cursorChar={"_"}
+                />
+              </div>
             </div>
-            <span className="text-xl font-bold text-health-text">Health Agent</span>
           </div>
 
           {/* Profile Completion Warning */}

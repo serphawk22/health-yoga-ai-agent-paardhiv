@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/lib/actions/auth';
-import { 
+import {
   Settings,
   Bell,
   Shield,
@@ -20,6 +20,8 @@ import {
   AlertCircle,
   Check,
 } from 'lucide-react';
+import { GradientButton } from '@/components/ui/gradient-button';
+import { motion } from 'motion/react';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -41,7 +43,12 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto pb-20 lg:pb-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-2xl mx-auto pb-20 lg:pb-6"
+    >
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-health-text">Settings</h1>
@@ -55,7 +62,7 @@ export default function SettingsPage() {
             <User className="w-5 h-5 text-primary-600" />
             Account
           </h2>
-          
+
           <div className="space-y-2">
             <SettingsItem
               icon={User}
@@ -67,7 +74,7 @@ export default function SettingsPage() {
               icon={Lock}
               label="Change Password"
               description="Update your account password"
-              onClick={() => {}}
+              onClick={() => { }}
               disabled
             />
           </div>
@@ -79,7 +86,7 @@ export default function SettingsPage() {
             <Bell className="w-5 h-5 text-primary-600" />
             Notifications
           </h2>
-          
+
           <div className="space-y-4">
             <ToggleSetting
               label="Appointment Reminders"
@@ -114,23 +121,23 @@ export default function SettingsPage() {
             <Sun className="w-5 h-5 text-primary-600" />
             Appearance
           </h2>
-          
+
           <div className="space-y-2">
-            <div className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+            <div className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
                   <Sun className="w-5 h-5 text-health-muted" />
                 </div>
                 <div>
                   <p className="font-medium text-health-text">Theme</p>
-                  <p className="text-sm text-health-muted">Light mode (default)</p>
+                  <p className="text-sm text-health-muted">Dark mode (default)</p>
                 </div>
               </div>
-              <span className="text-sm text-health-muted">Coming soon</span>
+              <span className="text-sm text-health-muted">Active</span>
             </div>
-            <div className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+            <div className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
                   <Globe className="w-5 h-5 text-health-muted" />
                 </div>
                 <div>
@@ -149,19 +156,19 @@ export default function SettingsPage() {
             <Shield className="w-5 h-5 text-primary-600" />
             Privacy & Security
           </h2>
-          
+
           <div className="space-y-2">
             <SettingsItem
               icon={Shield}
               label="Privacy Policy"
               description="Read our privacy policy"
-              onClick={() => {}}
+              onClick={() => { }}
             />
             <SettingsItem
               icon={HelpCircle}
               label="Terms of Service"
               description="Read our terms of service"
-              onClick={() => {}}
+              onClick={() => { }}
             />
           </div>
         </div>
@@ -172,19 +179,19 @@ export default function SettingsPage() {
             <HelpCircle className="w-5 h-5 text-primary-600" />
             Support
           </h2>
-          
+
           <div className="space-y-2">
             <SettingsItem
               icon={HelpCircle}
               label="Help Center"
               description="Get help with the app"
-              onClick={() => {}}
+              onClick={() => { }}
             />
             <SettingsItem
               icon={HelpCircle}
               label="Contact Support"
               description="Reach out to our support team"
-              onClick={() => {}}
+              onClick={() => { }}
             />
           </div>
         </div>
@@ -195,12 +202,12 @@ export default function SettingsPage() {
             <AlertCircle className="w-5 h-5" />
             Danger Zone
           </h2>
-          
+
           <div className="space-y-3">
             <button
               onClick={handleLogout}
               disabled={isLoggingOut}
-              className="w-full flex items-center justify-between p-3 rounded-lg border border-health-border hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between p-3 rounded-lg border border-health-border hover:bg-white/5 transition-colors"
             >
               <div className="flex items-center gap-3">
                 <LogOut className="w-5 h-5 text-health-muted" />
@@ -213,7 +220,7 @@ export default function SettingsPage() {
 
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="w-full flex items-center justify-between p-3 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 transition-colors"
+              className="w-full flex items-center justify-between p-3 rounded-lg border border-red-500/20 bg-red-500/10 hover:bg-red-500/20 transition-colors"
             >
               <div className="flex items-center gap-3">
                 <Trash2 className="w-5 h-5 text-red-600" />
@@ -233,15 +240,15 @@ export default function SettingsPage() {
 
       {/* Delete Account Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-health-card border border-health-border rounded-2xl shadow-xl max-w-md w-full p-6">
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-                <Trash2 className="w-8 h-8 text-red-600" />
+              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-8 h-8 text-red-500" />
               </div>
               <h3 className="text-xl font-semibold text-health-text mb-2">Delete Account?</h3>
               <p className="text-health-muted mb-6">
-                This action cannot be undone. All your data, including your health profile, 
+                This action cannot be undone. All your data, including your health profile,
                 chat history, and appointments will be permanently deleted.
               </p>
               <div className="flex gap-3">
@@ -265,19 +272,19 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
-function SettingsItem({ 
-  icon: Icon, 
-  label, 
-  description, 
+function SettingsItem({
+  icon: Icon,
+  label,
+  description,
   onClick,
   disabled = false,
-}: { 
-  icon: any; 
-  label: string; 
+}: {
+  icon: any;
+  label: string;
   description: string;
   onClick: () => void;
   disabled?: boolean;
@@ -286,14 +293,13 @@ function SettingsItem({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${
-        disabled 
-          ? 'opacity-50 cursor-not-allowed' 
-          : 'hover:bg-gray-50'
-      }`}
+      className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${disabled
+        ? 'opacity-50 cursor-not-allowed'
+        : 'hover:bg-white/5'
+        }`}
     >
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
           <Icon className="w-5 h-5 text-health-muted" />
         </div>
         <div className="text-left">
@@ -306,33 +312,31 @@ function SettingsItem({
   );
 }
 
-function ToggleSetting({ 
-  label, 
-  description, 
-  enabled, 
-  onChange 
-}: { 
-  label: string; 
+function ToggleSetting({
+  label,
+  description,
+  enabled,
+  onChange
+}: {
+  label: string;
   description: string;
   enabled: boolean;
   onChange: (value: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors">
       <div>
         <p className="font-medium text-health-text">{label}</p>
         <p className="text-sm text-health-muted">{description}</p>
       </div>
       <button
         onClick={() => onChange(!enabled)}
-        className={`w-12 h-6 rounded-full transition-colors relative ${
-          enabled ? 'bg-primary-600' : 'bg-gray-300'
-        }`}
+        className={`w-12 h-6 rounded-full transition-colors relative ${enabled ? 'bg-primary-600' : 'bg-white/20'
+          }`}
       >
         <span
-          className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
-            enabled ? 'translate-x-7' : 'translate-x-1'
-          }`}
+          className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${enabled ? 'translate-x-7' : 'translate-x-1'
+            }`}
         />
       </button>
     </div>
