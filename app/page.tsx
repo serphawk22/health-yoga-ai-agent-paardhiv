@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { BackgroundPaths } from '@/components/ui/background-paths';
 import { GradientButton } from '@/components/ui/gradient-button';
+import { FreeDietPlanGenerator } from '@/components/landing/FreeDietPlanGenerator';
 
 export default function HomePage() {
   return (
@@ -49,9 +50,9 @@ export default function HomePage() {
             Get personalized diet plans, exercise routines, yoga recommendations, and health guidance tailored to your unique profile. Powered by advanced AI.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <GradientButton asChild className="z-20 text-lg h-14 min-w-[200px]">
-              <Link href="/register">
-                Start Your Health Journey
+            <GradientButton asChild className="z-20 text-lg h-14 min-w-[200px] cursor-pointer">
+              <Link href="#try-diet-planner">
+                Try Free AI Diet Plan
                 <ChevronRight className="w-5 h-5 ml-2" />
               </Link>
             </GradientButton>
@@ -62,7 +63,12 @@ export default function HomePage() {
             </GradientButton>
           </div>
         </div>
+
       </BackgroundPaths>
+
+      {/* Free Diet Plan Generator */}
+      <FreeDietPlanGenerator />
+
 
       {/* Features Grid */}
       <section className="py-20 px-4">

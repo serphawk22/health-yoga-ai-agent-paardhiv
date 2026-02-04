@@ -1,0 +1,371 @@
+Starting test...
+Calling generateDietPlan...
+Error: Error: Failed to generate diet plan: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent: [400 Bad Request] API key not valid. Please pass a valid API key. [{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key not valid. Please pass a valid API key."}]
+Error: Failed to generate diet plan: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent: [400 Bad Request] API key not valid. Please pass a valid API key. [{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key not valid. Please pass a valid API key."}]
+    at generateDietPlan (C:\Users\Paardhuu\health-agent\lib\ai\gemini.ts:273:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async testDietGen (C:\Users\Paardhuu\health-agent\scripts\test-diet-gen.ts:21:24)
+Starting test...
+API Key present. Length: 39. First 4: AIza
+Calling generateDietPlan...
+Error: Error: Failed to generate diet plan: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent: [400 Bad Request] API key not valid. Please pass a valid API key. [{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key not valid. Please pass a valid API key."}]
+Starting test...
+API Key present. Length: 39.
+Dynamic importing gemini...
+Calling generateDietPlan...
+Result: {
+  "dailyCalories": 2000,
+  "macros": {
+    "protein": 100,
+    "carbs": 275,
+    "fats": 55
+  },
+  "meals": [
+    {
+      "name": "Breakfast",
+      "time": "7:00 AM - 8:00 AM",
+      "items": [
+        "1 cup cooked oatmeal made with water or unsweetened plant milk",
+        "1/2 cup mixed berries",
+        "1 tbsp chia seeds",
+        "1/4 cup chopped walnuts"
+      ],
+      "calories": 400
+    },
+    {
+      "name": "Snack 1",
+      "time": "10:30 AM - 11:00 AM",
+      "items": [
+        "1 medium apple",
+        "1 oz (approx. 23) almonds"
+      ],
+      "calories": 180
+    },
+    {
+      "name": "Lunch",
+      "time": "1:00 PM - 2:00 PM",
+      "items": [
+        "Large mixed green salad with 1 cup chickpeas",
+        "1/2 cup chopped cucumber, tomatoes, bell peppers",
+        "2 tbsp olive oil and lemon dressing",
+        "1 slice whole-grain bread"
+      ],
+      "calories": 500
+    },
+    {
+      "name": "Snack 2",
+      "time": "4:00 PM - 5:00 PM",
+      "items": [
+        "1 cup plain unsweetened plant-based yogurt (e.g., soy or almond)",
+        "1/2 cup fruit (e.g., peach or orange slices)"
+      ],
+      "calories": 180
+    },
+    {
+      "name": "Dinner",
+      "time": "7:00 PM - 8:00 PM",
+      "items": [
+        "1 cup tofu scramble or baked tofu (approx 4-5oz)",
+        "1 cup mixed steamed vegetables (broccoli, carrots, spinach)",
+        "1 cup brown rice",
+        "Light seasoning with herbs and spices"
+      ],
+      "calories": 740
+    }
+  ],
+  "foodsToInclude": [
+    "Legumes (lentils, chickpeas, black beans, kidney beans)",
+    "Tofu, tempeh, edamame",
+    "Nuts and seeds (almonds, walnuts, chia seeds, flax seeds, pumpkin seeds)",
+    "Whole grains (oats, brown rice, quinoa, whole wheat bread, whole wheat pasta)",
+    "Plenty of fruits (berries, apples, bananas, oranges, pears)",
+    "Variety of vegetables (leafy greens, broccoli, bell peppers, carrots, sweet potatoes, zucchini)",
+    "Plant-based milks (almond, soy, oat - unsweetened)",
+    "Healthy oils (olive oil, avocado oil)",
+    "Herbs and spices for flavor"
+  ],
+  "foodsToAvoid": [
+    "Highly processed vegetarian convenience foods (often high in sodium and unhealthy fats)",
+    "Excessive added sugars and sugary beverages",
+    "Deep-fried foods",
+    "Refined grains (white bread, white rice, sugary cereals in large quantities)",
+    "Foods high in saturated and trans fats (e.g., some vegan cheeses, fried snacks)"
+  ],
+  "hydrationTips": [
+    "Aim for at least 8-10 glasses (2-2.5 liters) of water daily.",
+    "Drink water throughout the day, especially between meals.",
+    "Include herbal teas or infused water (with fruits/vegetables) for variety.",
+    "Limit sugary drinks, sodas, and excessive caffeine."
+  ],
+  "specialNotes": [
+    "This is a general vegetarian diet plan designed for a healthy adult to maintain weight, assuming moderate activity. It is NOT personalized to your specific health profile, allergies, existing medical conditions, or health goals.",
+    "To create a truly personalized and safe diet plan, it is crucial to provide detailed information about your health history, allergies, dietary restrictions, activity level, and specific health objectives.",
+    "Always consult with a qualified healthcare professional or a registered dietitian before making significant changes to your diet, especially if you have any medical conditions (like diabetes, hypertension, allergies, etc.).",
+    "Ensure adequate intake of Vitamin B12, Vitamin D, Iron, Calcium, Omega-3 fatty acids, and Zinc, which can sometimes be lower in vegetarian diets. Consider fortified foods or supplements as advised by a professional.",
+    "Listen to your body's hunger and fullness cues."
+  ]
+}
+Starting test...
+API Key present. Length: 39.
+Dynamic importing gemini...
+Calling generateDietPlan for 'Vegetarian'...
+Result 1: {
+  "dailyCalories": 2000,
+  "macros": {
+    "protein": 100,
+    "carbs": 250,
+    "fats": 67
+  },
+  "meals": [
+    {
+      "name": "Breakfast",
+      "time": "7:00 AM - 8:00 AM",
+      "items": [
+        "1 cup rolled oats cooked with water or plant milk",
+        "1/2 cup mixed berries",
+        "1 tbsp chia seeds",
+        "1/4 cup chopped walnuts or almonds"
+      ],
+      "calories": 400
+    },
+    {
+      "name": "Snack 1",
+      "time": "10:00 AM - 11:00 AM",
+      "items": [
+        "1 medium apple",
+        "2 tbsp almond butter"
+      ],
+      "calories": 200
+    },
+    {
+      "name": "Lunch",
+      "time": "12:30 PM - 1:30 PM",
+      "items": [
+        "Large salad with mixed greens, cucumber, tomatoes, bell peppers",
+        "1 cup cooked lentils or chickpeas",
+        "1/2 cup quinoa or brown rice",
+        "2 tbsp olive oil and lemon dressing"
+      ],
+      "calories": 600
+    },
+    {
+      "name": "Snack 2",
+      "time": "3:30 PM - 4:30 PM",
+      "items": [
+        "1 cup plain Greek yogurt (dairy or plant-based) with 1/4 cup pumpkin seeds"
+      ],
+      "calories": 200
+    },
+    {
+      "name": "Dinner",
+      "time": "6:30 PM - 7:30 PM",
+      "items": [
+        "Tofu/Tempeh Stir-fry (4 oz tofu/tempeh, 2 cups mixed vegetables like broccoli, carrots, snap peas)",
+        "1/2 cup brown rice",
+        "Light soy sauce or tamari based sauce"
+      ],
+      "calories": 600
+    }
+  ],
+  "foodsToInclude": [
+    "Legumes (lentils, chickpeas, black beans, kidney beans)",
+    "Tofu, tempeh, edamame",
+    "Whole grains (quinoa, brown rice, oats, whole wheat bread/pasta)",
+    "Nuts and seeds (almonds, walnuts, chia seeds, flax seeds, pumpkin seeds)",
+    "Abundant fruits and vegetables (berries, apples, spinach, broccoli, bell peppers)",
+    "Plant-based milks (fortified soy, almond, oat milk)",
+    "Nutritional yeast (for B12 and cheesy flavor)"
+  ],
+  "foodsToAvoid": [
+    "Highly processed vegetarian foods (e.g., highly processed veggie burgers with long ingredient lists)",
+    "Excessive added sugars",
+    "Deep-fried foods",
+    "Refined grains (white bread, white pasta, sugary cereals)",
+    "Excessive saturated fats (found in some plant-based cheeses and desserts)"
+  ],
+  "hydrationTips": [
+    "Drink at least 8-10 glasses (2-2.5 liters) of water daily.",
+    "Carry a reusable water bottle to encourage consistent intake.",
+    "Include herbal teas or infused water (with fruits like lemon, cucumber) for variety.",
+    "Limit sugary beverages, including fruit juices with added sugar."
+  ],
+  "specialNotes": [
+    "**Disclaimer:** This diet plan is a general example for a vegetarian adult and is NOT personalized. The calorie targets and macronutrient distribution provided (e.g., 2000 calories, 100g protein, 250g carbs, 67g fats) are illustrative and based on a hypothetical healthy adult. For a truly personalized recommendation, please provide your age, gender, current weight, height, activity level, health goals (e.g., weight loss, maintenance, muscle gain), any allergies, and existing health conditions.",
+    "It is crucial to consult with a registered dietitian or healthcare provider for personalized advice, especially if you have any pre-existing health conditions (e.g., diabetes, hypertension), allergies, or specific dietary needs.",
+    "Ensure adequate intake of Vitamin B12, Vitamin D, Iron, Calcium, Omega-3 fatty acids, and Iodine, as these can be critical nutrients in a vegetarian diet. Consider fortified foods or supplements as advised by a professional.",
+    "Listen to your body's hunger and fullness cues."
+  ]
+}
+Calling generateDietPlan for 'Healthy vegan diet'...
+Result 2: {
+  "dailyCalories": 2000,
+  "macros": {
+    "protein": 100,
+    "carbs": 275,
+    "fats": 56
+  },
+  "meals": [
+    {
+      "name": "Breakfast",
+      "time": "Morning",
+      "items": [
+        "1/2 cup dry rolled oats cooked with 1 cup fortified soy milk",
+        "Topped with 1/2 cup mixed berries, 1 tbsp chia seeds, and 1/4 cup walnuts"
+      ],
+      "calories": 450
+    },
+    {
+      "name": "Mid-Morning Snack",
+      "time": "Mid-morning",
+      "items": [
+        "1 medium apple with 2 tbsp natural peanut butter"
+      ],
+      "calories": 150
+    },
+    {
+      "name": "Lunch",
+      "time": "Noon",
+      "items": [
+        "Large Spinach Salad: 2 cups fresh spinach, 1 cup mixed raw vegetables (cucumber, bell pepper, carrots), 1/2 cup chickpeas, 1/4 block (approx. 3.5 oz) baked tofu, 1/4 avocado",
+        "Dressing: 1 tbsp extra virgin olive oil with lemon juice and herbs",
+        "1 slice whole-wheat bread"
+      ],
+      "calories": 550
+    },
+    {
+      "name": "Afternoon Snack",
+      "time": "Afternoon",
+      "items": [
+        "1 cup fortified unsweetened soy yogurt",
+        "1 tbsp ground flax seeds"
+      ],
+      "calories": 200
+    },
+    {
+      "name": "Dinner",
+      "time": "Evening",
+      "items": [
+        "Lentil and Vegetable Stir-fry: 1 cup cooked brown lentils, 1.5 cups mixed stir-fry vegetables (broccoli, carrots, snow peas, mushrooms) sautéed in a small amount of sesame oil",
+        "Served with 1/2 cup cooked quinoa",
+        "Seasoned with low-sodium tamari or soy sauce, fresh ginger, and garlic"
+      ],
+      "calories": 650
+    }
+  ],
+  "foodsToInclude": [
+    "Legumes (lentils, chickpeas, black beans, kidney beans)",
+    "Tofu, tempeh, edamame",
+    "Whole grains (oats, quinoa, brown rice, whole wheat bread/pasta)",
+    "Fruits (berries, apples, bananas, oranges, pears)",
+    "Abundant vegetables (leafy greens like spinach/kale, broccoli, bell peppers, carrots, sweet potatoes)",
+    "Nuts and seeds (almonds, walnuts, chia seeds, flax seeds, hemp seeds, pumpkin seeds)",
+    "Healthy fats (avocado, olive oil, nut butters)",
+    "Fortified plant milks (soy, almond, oat) and yogurts",
+    "Nutritional yeast (for B vitamins)"
+  ],
+  "foodsToAvoid": [
+    "Processed vegan junk foods high in added sugars, unhealthy fats, and sodium",
+    "Deep-fried foods",
+    "Refined grains (white bread, white pasta, sugary cereals)",
+    "Sugary beverages (soda, sweetened fruit juices)",
+    "Excessive consumption of highly processed oils"
+  ],
+  "hydrationTips": [
+    "Drink at least 8-10 glasses (2-2.5 liters) of water throughout the day.",
+    "Include herbal teas without added sugar.",
+    "Consume water-rich fruits and vegetables like cucumber, watermelon, and oranges.",
+    "Limit intake of caffeinated beverages, which can contribute to dehydration."
+  ],
+  "specialNotes": [
+    "This plan is a general healthy vegan diet recommendation based on a lack of specific health profile information. Actual personalized recommendations would require details on your age, gender, weight, height, activity level, health goals, allergies, and pre-existing medical conditions.",
+    "For individuals following a vegan diet, it's crucial to pay attention to certain nutrients that can be harder to obtain: Vitamin B12 (supplementation is often recommended), Vitamin D (sun exposure or fortified foods/supplements), Iron (pair iron-rich plant foods with Vitamin C for better absorption), Calcium (from fortified plant milks, leafy greens, tofu), Iodine (iodized salt or seaweed in moderation), Zinc (legumes, nuts, seeds), and Omega-3 fatty acids (flax seeds, chia seeds, walnuts, algal oil supplements).",
+    "Always consult with a qualified healthcare professional or a registered dietitian before making significant changes to your diet, especially if you have any medical conditions or specific health concerns."
+  ]
+}
+Calling generateDietPlan for undefined...
+Result 3: {
+  "dailyCalories": 2000,
+  "macros": {
+    "protein": 125,
+    "carbs": 250,
+    "fats": 56
+  },
+  "meals": [
+    {
+      "name": "Breakfast",
+      "time": "7:00 AM - 8:00 AM",
+      "items": [
+        "1 cup Rolled Oats (cooked with water or unsweetened plant-based milk)",
+        "1/2 cup Mixed Berries",
+        "1 tbsp Chopped Nuts (almonds, walnuts)",
+        "1 scoop (20g) Protein Powder (whey or plant-based) OR 2 Scrambled Eggs with spinach"
+      ],
+      "calories": 400
+    },
+    {
+      "name": "Mid-morning Snack",
+      "time": "10:30 AM - 11:00 AM",
+      "items": [
+        "1 medium Apple",
+        "1 tbsp Peanut Butter (natural, unsweetened)"
+      ],
+      "calories": 200
+    },
+    {
+      "name": "Lunch",
+      "time": "1:00 PM - 2:00 PM",
+      "items": [
+        "150g Grilled Chicken Breast or Lentil Soup (1.5 cups)",
+        "1 cup Quinoa or Brown Rice",
+        "2 cups Mixed Green Salad with various vegetables (cucumber, bell peppers, tomatoes)",
+        "2 tbsp Olive Oil and Vinegar Dressing"
+      ],
+      "calories": 600
+    },
+    {
+      "name": "Afternoon Snack",
+      "time": "4:00 PM - 4:30 PM",
+      "items": [
+        "1 cup Greek Yogurt (plain, unsweetened) OR 1/2 cup Edamame",
+        "1/4 cup Cherry Tomatoes"
+      ],
+      "calories": 150
+    },
+    {
+      "name": "Dinner",
+      "time": "7:00 PM - 8:00 PM",
+      "items": [
+        "120g Baked Salmon or Tofu Stir-fry (150g tofu)",
+        "1 cup Steamed Broccoli and Carrots",
+        "1 medium Sweet Potato (baked or roasted)"
+      ],
+      "calories": 550
+    }
+  ],
+  "foodsToInclude": [
+    "Lean proteins (chicken breast, fish, tofu, lentils, beans, eggs)",
+    "Whole grains (oats, quinoa, brown rice, whole wheat bread)",
+    "Plenty of fruits and vegetables (berries, apples, leafy greens, broccoli, carrots, bell peppers)",
+    "Healthy fats (avocado, nuts, seeds, olive oil)",
+    "Low-fat dairy or fortified plant-based alternatives (unsweetened Greek yogurt, almond milk)"
+  ],
+  "foodsToAvoid": [
+    "Highly processed foods (packaged snacks, fast food)",
+    "Sugary drinks (soda, fruit juices with added sugar)",
+    "Excessive saturated and trans fats (fried foods, processed meats, most baked goods)",
+    "Refined grains (white bread, white pasta, sugary cereals)",
+    "Excessive added sugars and artificial sweeteners"
+  ],
+  "hydrationTips": [
+    "Drink at least 8-10 glasses (2-2.5 liters) of water daily.",
+    "Carry a reusable water bottle to encourage consistent hydration.",
+    "Sip water throughout the day, rather than drinking large amounts at once.",
+    "Limit sugary beverages; opt for plain water, unsweetened tea, or infused water with fruit slices.",
+    "Increase water intake during physical activity or hot weather."
+  ],
+  "specialNotes": [
+    "This is a general healthy eating plan and is NOT personalized. Your health profile was not provided.",
+    "For personalized recommendations, please provide details on your health conditions (e.g., allergies, diabetes, hypertension), dietary restrictions (e.g., vegetarian, vegan), health goals (e.g., weight loss, muscle gain), and activity level.",
+    "Always consult with a qualified dietitian or healthcare professional before making significant changes to your diet, especially if you have existing health conditions or allergies."
+  ]
+}
