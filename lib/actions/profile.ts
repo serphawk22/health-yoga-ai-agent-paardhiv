@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { healthProfileSchema } from '@/lib/validations';
-import { calculateHealthScores } from '@/lib/ai/gemini';
+import { calculateHealthScores } from '@/lib/ai';
 
 // ==================== TYPES ====================
 
@@ -191,7 +191,7 @@ export async function updateHealthProfile(formData: FormData): Promise<ProfileAc
 
     revalidatePath('/dashboard');
     revalidatePath('/profile');
-    
+
     return { success: true, data: profile };
   } catch (error) {
     console.error('Update profile error:', error);

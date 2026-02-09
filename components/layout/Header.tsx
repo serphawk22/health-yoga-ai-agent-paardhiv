@@ -2,7 +2,7 @@
 
 // Header Component
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { signOut } from '@/lib/actions/auth';
 import { getInitials } from '@/lib/utils';
@@ -24,8 +24,7 @@ export function Header({ user }: HeaderProps) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  // Derive notifications
-  const notifications = [
+  const [notifications, setNotifications] = useState([
     {
       id: 1,
       title: 'Welcome to Health Agent',
@@ -33,17 +32,27 @@ export function Header({ user }: HeaderProps) {
       time: 'Just now',
       read: false,
     },
-  ];
+  ]);
 
-  if (!user.healthProfile?.isComplete) {
-    notifications.unshift({
-      id: 0,
-      title: 'Complete your profile',
-      message: 'Your health profile is incomplete. Complete it now to get personalized recommendations.',
-      time: 'Action Required',
-      read: false,
-    });
-  }
+  useEffect(() => {
+    if (user && !user.healthProfile?.isComplete) {
+      setNotifications(prev => {
+        if (prev.find(n => n.id === 0)) return prev;
+        return [{
+          id: 0,
+          title: 'Complete your profile',
+          message: 'Your health profile is incomplete. Complete it now to get personalized recommendations.',
+          time: 'Action Required',
+          read: false,
+        }, ...prev];
+      });
+    }
+  }, [user]);
+
+  const markAllAsRead = () => {
+    setNotifications([]);
+    setShowNotifications(false);
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-health-card border-b border-health-border">
@@ -119,7 +128,7 @@ export function Header({ user }: HeaderProps) {
                   </div>
                   <div className="p-2 border-t border-health-border bg-health-muted/5">
                     <button
-                      onClick={() => setShowNotifications(false)}
+                      onClick={markAllAsRead}
                       className="w-full text-center text-xs text-primary-500 font-medium hover:text-primary-600 py-1"
                     >
                       Mark all as read

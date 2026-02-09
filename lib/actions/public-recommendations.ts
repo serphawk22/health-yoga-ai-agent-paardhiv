@@ -1,6 +1,6 @@
 'use server';
 
-import { generateDietPlan, DietPlan } from '@/lib/ai/gemini';
+import { generateDietPlan, DietPlan } from '@/lib/ai';
 
 export interface PublicRecommendationResult {
     success: boolean;

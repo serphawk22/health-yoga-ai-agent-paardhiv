@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { BackgroundPaths } from '@/components/ui/background-paths';
 import { GradientButton } from '@/components/ui/gradient-button';
+import { Typewriter } from '@/components/ui/typewriter';
 import { FreeDietPlanGenerator } from '@/components/landing/FreeDietPlanGenerator';
 import { SuccessStory } from '@/components/landing/SuccessStory';
 
@@ -25,15 +26,23 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
+              <span className="text-xl font-bold text-health-text leading-tight">Health</span>
+              <div className="text-sm font-medium text-primary-500">
+                <Typewriter
+                  text={["Agent", "Partner", "Advisor"]}
+                  speed={70}
+                  waitTime={1500}
+                  deleteSpeed={40}
+                  cursorChar={"_"}
+                />
               </div>
-              <span className="text-xl font-bold text-health-text">Health Agent</span>
             </div>
             <div className="flex items-center gap-4">
-              <Link href="/login" className="text-sm font-medium text-health-text hover:text-primary-600 transition-colors">
-                Sign In
-              </Link>
+              <GradientButton asChild variant="variant" className="min-w-[100px] px-4 py-2 h-10 text-sm">
+                <Link href="/login">
+                  Sign In
+                </Link>
+              </GradientButton>
               <GradientButton asChild className="min-w-[120px] px-6 py-2 h-10 text-sm">
                 <Link href="/register">
                   Get Started

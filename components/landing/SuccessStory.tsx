@@ -16,39 +16,33 @@ export function SuccessStory() {
     const stories = [
         {
             title: "THE STRUGGLE",
-            image: "https://images.unsplash.com/photo-1541577141970-eebc83ebe30e?q=80&w=1200&auto=format&fit=crop", // Stressed/Tired
-            description: "Feeling constantly tired and unsure what to eat.",
-            quote: "I knew I needed a change, but I didn't know where to start.",
+            image: "/images/struggle.svg", // Using local placeholder as fallback
+            description: "Sarah was drowning in deadlines and neglecting her health. Fast food at her desk was the norm, and her energy was crashing by 2 PM.",
+            quote: "I was exhausted and unproductive.",
         },
         {
-            title: "THE SOLUTION",
-            image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1200&auto=format&fit=crop", // Workout/During
-            description: "Personalized diet plans and daily workouts.",
-            quote: "The AI suggestions were surprisingly accurate!",
+            title: "THE DISCOVERY",
+            image: "https://images.unsplash.com/photo-1555421689-491a97ff2040?q=80&w=1200&auto=format&fit=crop", // Looking at phone happy
+            description: "She found Health Agent. It wasn't just another tracker; it was a partner that understood her busy schedule and tailored everything to her.",
+            quote: "Finally, something that gets my lifestyle.",
+        },
+        {
+            title: "THE PLAN",
+            image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=1200&auto=format&fit=crop", // Healthy food
+            description: "Health Agent crafted a meal plan she could actually stick to—quick, brain-boosting recipes that fueled her focus without the sugar crash.",
+            quote: "Delicious food that actually gives me energy?",
+        },
+        {
+            title: "THE SHIFT",
+            image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop", // Active/Exercise
+            description: "With better fuel and quick AI-suggested workouts, her foggy mornings turned into productive power hours. The brain fog vanished.",
+            quote: "I can't believe how much more I get done.",
         },
         {
             title: "THE RESULT",
-            image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200&auto=format&fit=crop", // Happy/Fit
-            description: "More energy, better sleep, and fitness goals reached.",
-            quote: "I feel like a completely new person.",
-        },
-        {
-            title: "MAINTENANCE",
-            image: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=1200&auto=format&fit=crop", // Healthy Food (Safe URL)
-            description: "Learning to cook healthy meals that taste amazing.",
-            quote: "It's not a diet anymore, it's just how I eat.",
-        },
-        {
-            title: "LIFESTYLE",
-            image: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=1200&auto=format&fit=crop", // Running/Active
-            description: "Finding joy in movement and staying active daily.",
-            quote: "I actually look forward to my workouts now.",
-        },
-        {
-            title: "BALANCE",
-            image: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1200&auto=format&fit=crop", // Yoga/Meditation
-            description: "Mental clarity and stress management through mindfulness.",
-            quote: "Health is about more than just the physical.",
+            image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=1200&auto=format&fit=crop", // Productive happy woman
+            description: "Now, Sarah is crushing her goals. Focused, energetic, and healthy. Health Agent didn't just change her diet; it reclaimed her time.",
+            quote: "I'm the most productive I've ever been.",
         }
     ];
 

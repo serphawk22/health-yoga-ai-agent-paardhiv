@@ -1,16 +1,16 @@
 "use server";
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 
 export async function analyzePrescription(formData: FormData) {
     try {
-        const apiKey = process.env.GEMINI_API_KEY;
+        const apiKey = process.env.OPENAI_API_KEY;
         if (!apiKey) {
-            console.error("GEMINI_API_KEY is missing in environment variables");
+            console.error("OPENAI_API_KEY is missing in environment variables");
             return { success: false, error: "Server configuration error: API Key missing" };
         }
 
-        const genAI = new GoogleGenerativeAI(apiKey);
+        const openai = new OpenAI({ apiKey });
 
         const file = formData.get("file") as File;
         if (!file) {
@@ -20,8 +20,7 @@ export async function analyzePrescription(formData: FormData) {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
         const base64Image = buffer.toString("base64");
-
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const dataUrl = `data:${file.type};base64,${base64Image}`;
 
         const prompt = `
       Analyze this prescription image and extract the following details in strict JSON format:
@@ -46,30 +45,36 @@ export async function analyzePrescription(formData: FormData) {
       Ensure the output is valid JSON without any markdown formatting.
     `;
 
-        const result = await model.generateContent([
-            prompt,
-            {
-                inlineData: {
-                    data: base64Image,
-                    mimeType: file.type,
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+                {
+                    role: "user",
+                    content: [
+                        { type: "text", text: prompt },
+                        {
+                            type: "image_url",
+                            image_url: {
+                                url: dataUrl,
+                            },
+                        },
+                    ],
                 },
-            },
-        ]);
+            ],
+            max_tokens: 1000,
+            response_format: { type: "json_object" },
+        });
 
-        const response = await result.response;
-        const text = response.text();
-        console.log("Gemini Raw Response:", text); // Debugging log
-
-        // Clean up markdown code blocks if present
-        const jsonString = text.replace(/```json\n|\n```/g, "").replace(/```/g, "").trim();
+        const text = response.choices[0]?.message?.content || "{}";
+        console.log("OpenAI Raw Response:", text);
 
         try {
-            const data = JSON.parse(jsonString);
+            const data = JSON.parse(text);
             return { success: true, data };
         } catch (parseError) {
             console.error("JSON Parse Error:", parseError);
             console.log("Failed Text:", text);
-            return { success: false, error: "Failed to parse AI response. The AI might have returned invalid JSON." };
+            return { success: false, error: "Failed to parse AI response." };
         }
 
     } catch (error: any) {

@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { randomUUID } from 'crypto';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
-import { healthChat, ChatMessage } from '@/lib/ai/gemini';
+import { healthChat, ChatMessage } from '@/lib/ai';
 
 // ==================== TYPES ====================
 

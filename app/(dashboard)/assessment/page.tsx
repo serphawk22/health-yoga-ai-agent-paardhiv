@@ -212,14 +212,14 @@ export default function AssessmentPage() {
 
           {/* Risk Factors */}
           {assessment.riskFactors && assessment.riskFactors.length > 0 && (
-            <div className="card bg-amber-50 border-amber-200">
+            <div className="card bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/50">
               <div className="flex items-center gap-2 mb-4">
-                <AlertTriangle className="w-5 h-5 text-amber-600" />
-                <h3 className="font-semibold text-amber-800">Areas to Watch</h3>
+                <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-500" />
+                <h3 className="font-semibold text-amber-800 dark:text-amber-200">Areas to Watch</h3>
               </div>
               <ul className="space-y-2">
                 {assessment.riskFactors.map((risk: string, i: number) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-amber-800">
+                  <li key={i} className="flex items-start gap-2 text-sm text-amber-800 dark:text-amber-200/80">
                     <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                     {risk}
                   </li>
@@ -230,14 +230,14 @@ export default function AssessmentPage() {
 
           {/* Strengths */}
           {assessment.strengths && assessment.strengths.length > 0 && (
-            <div className="card bg-green-50 border-green-200">
+            <div className="card bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-900/50">
               <div className="flex items-center gap-2 mb-4">
-                <CheckCircle2 className="w-5 h-5 text-green-600" />
-                <h3 className="font-semibold text-green-800">Your Strengths</h3>
+                <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-500" />
+                <h3 className="font-semibold text-green-800 dark:text-green-200">Your Strengths</h3>
               </div>
               <ul className="space-y-2">
                 {assessment.strengths.map((strength: string, i: number) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-green-800">
+                  <li key={i} className="flex items-start gap-2 text-sm text-green-800 dark:text-green-200/80">
                     <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
                     {strength}
                   </li>
@@ -295,12 +295,12 @@ function ScoreCard({
   color: string;
 }) {
   const colorMap: Record<string, { bg: string; text: string; bar: string }> = {
-    blue: { bg: 'bg-blue-100', text: 'text-blue-600', bar: 'bg-blue-500' },
-    green: { bg: 'bg-green-100', text: 'text-green-600', bar: 'bg-green-500' },
-    purple: { bg: 'bg-purple-100', text: 'text-purple-600', bar: 'bg-purple-500' },
-    orange: { bg: 'bg-orange-100', text: 'text-orange-600', bar: 'bg-orange-500' },
-    yellow: { bg: 'bg-yellow-100', text: 'text-yellow-600', bar: 'bg-yellow-500' },
-    red: { bg: 'bg-red-100', text: 'text-red-600', bar: 'bg-red-500' },
+    blue: { bg: 'bg-blue-100 dark:bg-blue-900/20', text: 'text-blue-600 dark:text-blue-400', bar: 'bg-blue-500' },
+    green: { bg: 'bg-green-100 dark:bg-green-900/20', text: 'text-green-600 dark:text-green-400', bar: 'bg-green-500' },
+    purple: { bg: 'bg-purple-100 dark:bg-purple-900/20', text: 'text-purple-600 dark:text-purple-400', bar: 'bg-purple-500' },
+    orange: { bg: 'bg-orange-100 dark:bg-orange-900/20', text: 'text-orange-600 dark:text-orange-400', bar: 'bg-orange-500' },
+    yellow: { bg: 'bg-yellow-100 dark:bg-yellow-900/20', text: 'text-yellow-600 dark:text-yellow-400', bar: 'bg-yellow-500' },
+    red: { bg: 'bg-red-100 dark:bg-red-900/20', text: 'text-red-600 dark:text-red-400', bar: 'bg-red-500' },
   };
 
   const colors = colorMap[color] || colorMap.blue;
@@ -338,9 +338,9 @@ function ScoreCard({
 
 function RecommendationCard({ recommendation, index }: { recommendation: any; index: number }) {
   const priorityColors: Record<string, string> = {
-    high: 'border-l-red-500 bg-red-50',
-    medium: 'border-l-yellow-500 bg-yellow-50',
-    low: 'border-l-blue-500 bg-blue-50',
+    high: 'border-l-red-500 bg-red-50 dark:bg-red-950/20',
+    medium: 'border-l-yellow-500 bg-yellow-50 dark:bg-yellow-950/20',
+    low: 'border-l-blue-500 bg-blue-50 dark:bg-blue-950/20',
   };
 
   const priority = recommendation.priority || 'medium';
@@ -354,8 +354,8 @@ function RecommendationCard({ recommendation, index }: { recommendation: any; in
           <p className="text-sm text-health-muted mt-1">{recommendation.description}</p>
         </div>
         <span className={`text-xs px-2 py-1 rounded capitalize ${priority === 'high' ? 'bg-red-100 text-red-700' :
-            priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-              'bg-blue-100 text-blue-700'
+          priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+            'bg-blue-100 text-blue-700'
           }`}>
           {priority}
         </span>

@@ -4,7 +4,7 @@
 import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
-import { extractAppointmentDetails } from '@/lib/ai/gemini';
+import { extractAppointmentDetails } from '@/lib/ai';
 import { format, parse, isValid, isBefore, startOfDay } from 'date-fns';
 
 // ==================== TYPES ====================
@@ -80,13 +80,13 @@ export async function getDoctorAvailability(
     for (const avail of availability) {
       const [startHour, startMin] = avail.startTime.split(':').map(Number);
       const [endHour, endMin] = avail.endTime.split(':').map(Number);
-      
+
       let currentHour = startHour;
       let currentMin = startMin;
 
       while (currentHour < endHour || (currentHour === endHour && currentMin < endMin)) {
         const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
-        
+
         slots.push({
           time: timeStr,
           available: !bookedTimes.has(timeStr),
@@ -115,11 +115,11 @@ export async function extractAppointmentFromText(
 ): Promise<AppointmentActionResult> {
   try {
     const extraction = await extractAppointmentDetails(text);
-    
+
     // Validate extracted date
     const extractedDate = new Date(extraction.date);
     const today = startOfDay(new Date());
-    
+
     if (isBefore(extractedDate, today)) {
       return {
         success: false,

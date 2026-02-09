@@ -9,7 +9,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        border: '#1e293b',
+        border: 'hsl(var(--border))',
         primary: {
           50: '#f0fdf4',
           100: '#dcfce7',
@@ -35,11 +35,11 @@ module.exports = {
           900: '#0c4a6e',
         },
         health: {
-          bg: '#000000', // Pure Black
-          card: '#09090b', // Zinc-950 (very dark gray)
-          border: '#27272a', // Zinc-800
-          text: '#f8fafc', // Slate-50
-          muted: '#a1a1aa', // Zinc-400
+          bg: 'hsl(var(--background))',
+          card: 'hsl(var(--card))',
+          border: 'hsl(var(--border))',
+          text: 'hsl(var(--foreground))',
+          muted: 'hsl(var(--muted-foreground))',
         },
       },
       fontFamily: {

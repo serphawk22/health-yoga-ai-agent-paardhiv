@@ -27,11 +27,13 @@ import {
 } from 'lucide-react';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { motion } from 'motion/react';
+import { useTheme } from '@/components/theme-provider';
 
 export default function SettingsPage() {
   const router = useRouter();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   // Settings state (these would typically be stored in database/preferences)
   const [notifications, setNotifications] = useState({
@@ -132,18 +134,27 @@ export default function SettingsPage() {
           </h2>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors">
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-                  <Sun className="w-5 h-5 text-health-muted" />
+                  {theme === 'dark' ? (
+                    <Moon className="w-5 h-5 text-health-muted" />
+                  ) : (
+                    <Sun className="w-5 h-5 text-health-muted" />
+                  )}
                 </div>
-                <div>
+                <div className="text-left">
                   <p className="font-medium text-health-text">Theme</p>
-                  <p className="text-sm text-health-muted">Dark mode (default)</p>
+                  <p className="text-sm text-health-muted">
+                    {theme === 'dark' ? 'Dark mode' : 'Light mode'}
+                  </p>
                 </div>
               </div>
-              <span className="text-sm text-health-muted">Active</span>
-            </div>
+              <span className="text-sm text-health-muted">Click to toggle</span>
+            </button>
             <div className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">

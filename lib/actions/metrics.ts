@@ -6,7 +6,7 @@ import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { healthMetricsSchema } from '@/lib/validations';
 import { subDays } from 'date-fns';
-import { calculateHealthScores } from '@/lib/ai/gemini';
+import { calculateHealthScores } from '@/lib/ai';
 
 // ==================== TYPES ====================
 

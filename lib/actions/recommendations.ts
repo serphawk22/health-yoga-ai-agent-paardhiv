@@ -13,7 +13,7 @@ import {
   DietPlan,
   ExercisePlan,
   YogaPlan,
-} from '@/lib/ai/gemini';
+} from '@/lib/ai';
 
 // ==================== TYPES ====================
 
