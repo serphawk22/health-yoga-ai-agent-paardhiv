@@ -440,7 +440,7 @@ function PoseCard({
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                             <h4 className={`font-medium ${isCompleted ? 'text-green-500 line-through print:text-black print:no-underline' : 'text-health-text print:text-black'}`}>
-                                {pose.name}
+                                {pose.englishName}
                             </h4>
                             {pose.sanskritName && (
                                 <span className="text-xs italic text-health-muted print:text-gray-600">({pose.sanskritName})</span>
@@ -450,20 +450,6 @@ function PoseCard({
                             {pose.duration && (
                                 <span className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 print:text-black print:bg-gray-100">
                                     {pose.duration}
-                                </span>
-                            )}
-                            {pose.sides && (
-                                <span className="text-xs px-2 py-1 rounded bg-purple-100 text-purple-700 print:text-black print:bg-gray-100">
-                                    {pose.sides}
-                                </span>
-                            )}
-                            {pose.difficulty && (
-                                <span className={cn("text-xs px-2 py-1 rounded border",
-                                    pose.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400 border-green-500/20 print:text-black print:bg-gray-100 print:border-gray-300' :
-                                        pose.difficulty === 'Moderate' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/20 print:text-black print:bg-gray-100 print:border-gray-300' :
-                                            'bg-orange-500/20 text-orange-400 border-orange-500/20 print:text-black print:bg-gray-100 print:border-gray-300'
-                                )}>
-                                    {pose.difficulty}
                                 </span>
                             )}
                         </div>
@@ -487,7 +473,11 @@ function PoseCard({
                     {pose.instructions && (
                         <div>
                             <p className="text-sm font-medium text-health-text mb-2 print:text-black">How to do it:</p>
-                            <p className="text-sm text-health-muted print:text-black">{pose.instructions}</p>
+                            <ul className="list-disc pl-4 space-y-1">
+                                {pose.instructions.map((step: string, i: number) => (
+                                    <li key={i} className="text-sm text-health-muted print:text-black">{step}</li>
+                                ))}
+                            </ul>
                         </div>
                     )}
                     {pose.benefits && pose.benefits.length > 0 && (
@@ -503,20 +493,26 @@ function PoseCard({
                             </ul>
                         </div>
                     )}
-                    {pose.breathingCue && (
+                    {pose.breathingPattern && (
                         <div className="p-3 rounded-lg bg-blue-500/10 text-sm border border-blue-500/20 print:bg-transparent print:border-gray-200">
                             <span className="font-medium text-blue-400 print:text-black">Breathing: </span>
-                            <span className="text-blue-300 print:text-black">{pose.breathingCue}</span>
+                            <span className="text-blue-300 print:text-black">{pose.breathingPattern}</span>
                         </div>
                     )}
-                    {pose.modification && (
+                    {pose.modifications && (
                         <div className="p-3 rounded-lg bg-amber-500/10 text-sm border border-amber-500/20 print:bg-transparent print:border-gray-200">
                             <span className="font-medium text-amber-500 print:text-black">Modification: </span>
-                            <span className="text-amber-400 print:text-black">{pose.modification}</span>
+                            <span className="text-amber-400 print:text-black">{pose.modifications}</span>
+                        </div>
+                    )}
+                    {pose.contraindications && pose.contraindications.length > 0 && (
+                        <div className="p-3 rounded-lg bg-red-500/10 text-sm border border-red-500/20 print:bg-transparent print:border-gray-200">
+                            <span className="font-medium text-red-500 print:text-black">Caution: </span>
+                            <span className="text-red-400 print:text-black">{pose.contraindications.join(', ')}</span>
                         </div>
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

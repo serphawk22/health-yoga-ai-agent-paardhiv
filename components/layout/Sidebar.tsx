@@ -3,7 +3,7 @@
 // Sidebar Component
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { signOut } from '@/lib/actions/auth';
 import {
   Heart,
@@ -20,6 +20,7 @@ import {
   Settings,
   Stethoscope,
   Pill,
+  Flower,
 } from 'lucide-react';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Typewriter } from '@/components/ui/typewriter';
@@ -42,7 +43,7 @@ const navigation = [
   { name: 'Diet Plan', href: '/diet', icon: Apple },
   { name: 'Exercise', href: '/exercise', icon: Dumbbell },
   { name: 'Health Assessment', href: '/assessment', icon: BarChart3 },
-  { name: 'Prescription Management', href: '/prescriptions', icon: Pill },
+  { name: 'Yoga', href: '/exercise?tab=yoga', icon: Flower }, // New Yoga Feature
   { name: 'Goal Planner', href: '/goals', icon: Target },
   { name: 'Health Metrics', href: '/metrics', icon: Activity },
 ];
@@ -99,18 +100,51 @@ export function Sidebar({ user }: SidebarProps) {
           <nav className="flex flex-1 flex-col">
             <ul role="list" className="flex flex-1 flex-col gap-y-1">
               {navigation.map((item) => {
-                const isActive = pathname === item.href;
+                // Check if active. For Yoga, we need to check the query param too if we are on client side, 
+                // but simpler approach: just check if pathname matches and we are not in yoga mode for other items.
+                // Actually, usePathname usage doesn't give query params. 
+                // We'll trust the Link to handle navigation, but for highlighting:
+                // Since we can't easily access searchParams in this server/client component without useSearchParams (which might deopt static rendering),
+                // we'll stick to simple matching or use a client hook. Sidebar is 'use client'.
+                // So we can use window.location or useSearchParams.
+                // Let's use a simpler check: if href includes 'tab=yoga', we strictly check that.
+                // But usePathname() returns just the path.
+                const searchParams = useSearchParams();
+                const tab = searchParams.get('tab');
+                let isActive = pathname === item.href;
+
+                if (item.name === 'Yoga') {
+                  isActive = pathname === '/exercise' && tab === 'yoga';
+                } else if (item.name === 'Exercise') {
+                  // Exercise tab is active if we are on /exercise AND tab is NOT yoga (default view)
+                  isActive = pathname === '/exercise' && tab !== 'yoga';
+                }
+
+                // Simplified active check for Next.js router
+                // We'll rely on the fact that when clicking "Yoga", we go to /exercise?tab=yoga.
+                // But we want the sidebar to stay highlighted. 
+                // Let's import useSearchParams.
                 return (
                   <li key={item.name}>
                     <Link
                       href={item.href}
                       className={cn(
-                        isActive ? 'bg-primary-600/20 text-primary-400' : 'text-health-muted hover:text-health-text hover:bg-white/5',
+                        isActive
+                          ? 'bg-primary-600/20 text-primary-400'
+                          : item.name === 'Yoga'
+                            ? 'text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 hover:text-purple-300'
+                            : 'text-health-muted hover:text-health-text hover:bg-white/5',
                         'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                       )}
                     >
                       <item.icon className="w-5 h-5 shrink-0" />
                       {item.name}
+                      {item.name === 'Yoga' && (
+                        <span className="ml-auto flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-purple-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+                        </span>
+                      )}
                     </Link>
                   </li>
                 );

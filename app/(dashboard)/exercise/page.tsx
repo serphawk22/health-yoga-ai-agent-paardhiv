@@ -6,8 +6,12 @@ import { YogaView } from '@/components/features/exercise/YogaView';
 import { cn } from '@/lib/utils';
 import { Dumbbell, Leaf } from 'lucide-react';
 
+import { useSearchParams } from 'next/navigation';
+
 export default function ExercisePage() {
-  const [activeTab, setActiveTab] = useState<'workout' | 'yoga'>('workout');
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get('tab') === 'yoga' ? 'yoga' : 'workout';
+  const [activeTab, setActiveTab] = useState<'workout' | 'yoga'>(initialTab);
 
   return (
     <div className="max-w-5xl mx-auto pb-20 lg:pb-6">
