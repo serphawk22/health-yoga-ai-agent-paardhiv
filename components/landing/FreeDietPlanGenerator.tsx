@@ -195,11 +195,11 @@ export function FreeDietPlanGenerator() {
                             </div>
                             <h3 className="text-xl font-bold text-health-text mb-2">Free Trials Used</h3>
                             <p className="text-health-muted mb-8 max-w-md mx-auto">
-                                You've used your 2 free diet plan generations. Create a free account to generate unlimited personalized plans!
+                                You&apos;ve used your 2 free diet plan generations. Create a free account to generate unlimited personalized plans!
                             </p>
                             <GradientButton asChild className="px-8">
                                 <Link href="/register">
-                                    Sign Up Now - It's Free
+                                    Sign Up Now - It&apos;s Free
                                 </Link>
                             </GradientButton>
                             <p className="mt-4 text-sm text-health-muted">

@@ -12,7 +12,9 @@ import {
   ChevronRight,
   Activity
 } from 'lucide-react';
-import { BackgroundPaths } from '@/components/ui/background-paths';
+import { SplineScene } from "@/components/ui/splite";
+import { Spotlight } from "@/components/ui/spotlight";
+// import { BackgroundPaths } from '@/components/ui/background-paths';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Typewriter } from '@/components/ui/typewriter';
 import { FreeDietPlanGenerator } from '@/components/landing/FreeDietPlanGenerator';
@@ -54,27 +56,48 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <BackgroundPaths title="Your Personal AI Health Assistant">
-        <div className="flex flex-col items-center">
-          <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-10">
-            Get personalized diet plans, exercise routines, yoga recommendations, and health guidance tailored to your unique profile. Powered by advanced AI.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <GradientButton asChild className="z-20 text-lg h-14 min-w-[200px] cursor-pointer">
-              <Link href="#try-diet-planner">
-                Try Free AI Diet Plan
-                <ChevronRight className="w-5 h-5 ml-2" />
-              </Link>
-            </GradientButton>
-            <GradientButton asChild variant="variant" className="z-20 text-lg h-14 min-w-[200px]">
-              <Link href="/login">
-                I already have an account
-              </Link>
-            </GradientButton>
+      {/* Hero Section */}
+      <section className="w-full bg-black/[0.96] relative overflow-hidden">
+        <Spotlight
+          className="-top-40 left-0 md:left-60 md:-top-20"
+          fill="white"
+        />
+
+        <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)] pt-16">
+          {/* Left content */}
+          <div className="flex-1 p-8 md:p-16 relative z-10 flex flex-col justify-center">
+            <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 mb-6">
+              Your Personal AI Health Assistant
+            </h1>
+            <div className="flex flex-col items-start gap-8">
+              <p className="text-xl text-neutral-300 max-w-2xl">
+                Get personalized diet plans, exercise routines, yoga recommendations, and health guidance tailored to your unique profile. Powered by advanced AI.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                <GradientButton asChild className="z-20 text-lg h-14 min-w-[200px] cursor-pointer">
+                  <Link href="#try-diet-planner">
+                    Try Free AI Diet Plan
+                    <ChevronRight className="w-5 h-5 ml-2" />
+                  </Link>
+                </GradientButton>
+                <GradientButton asChild variant="variant" className="z-20 text-lg h-14 min-w-[200px]">
+                  <Link href="/login">
+                    I already have an account
+                  </Link>
+                </GradientButton>
+              </div>
+            </div>
+          </div>
+
+          {/* Right content - Spline Scene */}
+          <div className="flex-1 relative h-[50vh] md:h-auto w-full">
+            <SplineScene
+              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              className="w-full h-full"
+            />
           </div>
         </div>
-
-      </BackgroundPaths>
+      </section>
 
       {/* Free Diet Plan Generator */}
       <FreeDietPlanGenerator />

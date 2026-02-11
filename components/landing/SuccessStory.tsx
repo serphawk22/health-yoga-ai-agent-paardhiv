@@ -29,7 +29,7 @@ export function SuccessStory() {
         {
             title: "THE PLAN",
             image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=1200&auto=format&fit=crop", // Healthy food
-            description: "Health Agent crafted a meal plan she could actually stick to—quick, brain-boosting recipes that fueled her focus without the sugar crash.",
+            description: "I&apos;ve tried so many diet apps, but they never felt adaptable to my real life. This AI agent actually listens. when I said I twisted my ankle, it immediately adjusted my workout plan to be low-impact and focused on recovery. It felt like having a real coach who cares.",
             quote: "Delicious food that actually gives me energy?",
         },
         {
@@ -62,7 +62,7 @@ export function SuccessStory() {
                             <span className="text-primary-500">Real Results</span>
                         </h1>
                         <p className="text-slate-400 max-w-xl mx-auto">
-                            Scroll to see Sarah's transformation journey with Health Agent.
+                            Scroll to see Sarah&apos;s transformation journey with Health Agent.
                         </p>
                     </div>
                 </header>
@@ -143,7 +143,7 @@ function StorySection({ story, index, total, scrollYProgress }: { story: any, in
                     </p>
                     <div className="inline-block relative">
                         <p className="text-xl md:text-2xl text-primary-400 italic font-serif">
-                            "{story.quote}"
+                            &quot;{story.quote}&quot;
                         </p>
                     </div>
                 </div>

@@ -4,9 +4,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateHealthProfile } from '@/lib/actions/profile';
-import { 
-  ChevronRight, 
-  ChevronLeft, 
+import {
+  ChevronRight,
+  ChevronLeft,
   Loader2,
   User,
   Heart,
@@ -60,7 +60,7 @@ export default function ProfileSetupPage() {
       form.append('completionStep', '4');
 
       const result = await updateHealthProfile(form);
-      
+
       if (result.success) {
         router.push('/dashboard');
         router.refresh();
@@ -87,32 +87,30 @@ export default function ProfileSetupPage() {
         <div className="flex justify-between mb-8 relative">
           {/* Progress Line */}
           <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200 -z-10" />
-          <div 
+          <div
             className="absolute top-5 left-0 h-0.5 bg-primary-500 -z-10 transition-all"
             style={{ width: `${((currentStep - 1) / 3) * 100}%` }}
           />
-          
+
           {STEPS.map((step) => {
             const Icon = step.icon;
             const isComplete = currentStep > step.id;
             const isCurrent = currentStep === step.id;
-            
+
             return (
               <div key={step.id} className="flex flex-col items-center">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                    isComplete 
-                      ? 'bg-primary-500 text-white' 
-                      : isCurrent 
-                      ? 'bg-primary-500 text-white ring-4 ring-primary-100'
-                      : 'bg-white border-2 border-gray-200 text-gray-400'
-                  }`}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isComplete
+                      ? 'bg-primary-500 text-white'
+                      : isCurrent
+                        ? 'bg-primary-500 text-white ring-4 ring-primary-100'
+                        : 'bg-white border-2 border-gray-200 text-gray-400'
+                    }`}
                 >
                   {isComplete ? <CheckCircle className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
                 </div>
-                <span className={`mt-2 text-xs font-medium ${
-                  isCurrent ? 'text-primary-600' : 'text-health-muted'
-                }`}>
+                <span className={`mt-2 text-xs font-medium ${isCurrent ? 'text-primary-600' : 'text-health-muted'
+                  }`}>
                   {step.name}
                 </span>
               </div>
@@ -146,7 +144,7 @@ export default function ProfileSetupPage() {
               <ChevronLeft className="w-4 h-4 mr-1" />
               Back
             </button>
-            
+
             <button
               type="button"
               onClick={handleNext}
@@ -176,7 +174,7 @@ export default function ProfileSetupPage() {
         {/* Skip Option */}
         <p className="text-center mt-4 text-sm text-health-muted">
           Want to complete this later?{' '}
-          <button 
+          <button
             onClick={() => router.push('/dashboard')}
             className="text-primary-600 hover:text-primary-700"
           >
@@ -189,11 +187,11 @@ export default function ProfileSetupPage() {
 }
 
 // Step 1: Basic Info
-function BasicInfoStep({ 
-  data, 
-  onChange 
-}: { 
-  data: Record<string, any>; 
+function BasicInfoStep({
+  data,
+  onChange
+}: {
+  data: Record<string, any>;
   onChange: (data: Record<string, any>) => void;
 }) {
   return (
@@ -216,7 +214,7 @@ function BasicInfoStep({
             placeholder="Enter your age"
           />
         </div>
-        
+
         <div>
           <label className="label">Gender</label>
           <select
@@ -246,7 +244,7 @@ function BasicInfoStep({
             placeholder="e.g., 170"
           />
         </div>
-        
+
         <div>
           <label className="label">Weight (kg)</label>
           <input
@@ -284,11 +282,11 @@ function BasicInfoStep({
 }
 
 // Step 2: Health History
-function HealthHistoryStep({ 
-  data, 
-  onChange 
-}: { 
-  data: Record<string, any>; 
+function HealthHistoryStep({
+  data,
+  onChange
+}: {
+  data: Record<string, any>;
   onChange: (data: Record<string, any>) => void;
 }) {
   const conditions = [
@@ -320,11 +318,10 @@ function HealthHistoryStep({
               key={condition}
               type="button"
               onClick={() => toggleCondition(condition)}
-              className={`px-3 py-2 rounded-lg text-sm border transition-colors ${
-                (data.existingConditions || []).includes(condition)
+              className={`px-3 py-2 rounded-lg text-sm border transition-colors ${(data.existingConditions || []).includes(condition)
                   ? 'bg-primary-50 border-primary-500 text-primary-700'
                   : 'border-health-border text-health-text hover:bg-gray-50'
-              }`}
+                }`}
             >
               {condition}
             </button>
@@ -337,8 +334,8 @@ function HealthHistoryStep({
         <input
           type="text"
           value={(data.allergies || []).join(', ')}
-          onChange={(e) => onChange({ 
-            allergies: e.target.value.split(',').map(s => s.trim()).filter(Boolean) 
+          onChange={(e) => onChange({
+            allergies: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
           })}
           className="input"
           placeholder="e.g., Peanuts, Penicillin (comma separated)"
@@ -350,8 +347,8 @@ function HealthHistoryStep({
         <input
           type="text"
           value={(data.medications || []).join(', ')}
-          onChange={(e) => onChange({ 
-            medications: e.target.value.split(',').map(s => s.trim()).filter(Boolean) 
+          onChange={(e) => onChange({
+            medications: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
           })}
           className="input"
           placeholder="e.g., Metformin, Aspirin (comma separated)"
@@ -363,8 +360,8 @@ function HealthHistoryStep({
         <input
           type="text"
           value={(data.injuries || []).join(', ')}
-          onChange={(e) => onChange({ 
-            injuries: e.target.value.split(',').map(s => s.trim()).filter(Boolean) 
+          onChange={(e) => onChange({
+            injuries: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
           })}
           className="input"
           placeholder="e.g., Lower back pain, Knee injury (comma separated)"
@@ -375,11 +372,11 @@ function HealthHistoryStep({
 }
 
 // Step 3: Lifestyle
-function LifestyleStep({ 
-  data, 
-  onChange 
-}: { 
-  data: Record<string, any>; 
+function LifestyleStep({
+  data,
+  onChange
+}: {
+  data: Record<string, any>;
   onChange: (data: Record<string, any>) => void;
 }) {
   return (
@@ -488,11 +485,11 @@ function LifestyleStep({
 }
 
 // Step 4: Goals
-function GoalsStep({ 
-  data, 
-  onChange 
-}: { 
-  data: Record<string, any>; 
+function GoalsStep({
+  data,
+  onChange
+}: {
+  data: Record<string, any>;
   onChange: (data: Record<string, any>) => void;
 }) {
   const goals = [
@@ -533,11 +530,10 @@ function GoalsStep({
               key={goal.value}
               type="button"
               onClick={() => onChange({ primaryGoal: goal.value })}
-              className={`px-3 py-3 rounded-lg text-sm border transition-colors text-left ${
-                data.primaryGoal === goal.value
+              className={`px-3 py-3 rounded-lg text-sm border transition-colors text-left ${data.primaryGoal === goal.value
                   ? 'bg-primary-50 border-primary-500 text-primary-700'
                   : 'border-health-border text-health-text hover:bg-gray-50'
-              }`}
+                }`}
             >
               <span className="text-lg mr-2">{goal.icon}</span>
               {goal.label}
@@ -548,18 +544,17 @@ function GoalsStep({
 
       <div>
         <label className="label">Secondary Goals (Optional)</label>
-        <p className="text-xs text-health-muted mb-2">Select any additional goals you'd like to work towards</p>
+        <p className="text-xs text-health-muted mb-2">Select any additional goals you&apos;d like to work towards</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {goals.filter(g => g.value !== data.primaryGoal).map((goal) => (
             <button
               key={goal.value}
               type="button"
               onClick={() => toggleSecondaryGoal(goal.value)}
-              className={`px-3 py-2 rounded-lg text-sm border transition-colors text-left ${
-                (data.secondaryGoals || []).includes(goal.value)
+              className={`px-3 py-2 rounded-lg text-sm border transition-colors text-left ${(data.secondaryGoals || []).includes(goal.value)
                   ? 'bg-accent-50 border-accent-500 text-accent-700'
                   : 'border-health-border text-health-text hover:bg-gray-50'
-              }`}
+                }`}
             >
               <span className="mr-1">{goal.icon}</span>
               {goal.label}

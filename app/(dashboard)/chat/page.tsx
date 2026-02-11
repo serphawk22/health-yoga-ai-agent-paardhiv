@@ -240,7 +240,7 @@ export default function ChatPage() {
                 <Bot className="w-8 h-8 text-primary-500" />
               </div>
               <h2 className="text-xl font-semibold text-health-text mb-2">
-                Hello! I'm your Health Assistant
+                Hello! I&apos;m your Health Assistant
               </h2>
               <p className="text-health-muted max-w-md mb-6">
                 I can help you with health questions, diet advice, exercise tips, and more.

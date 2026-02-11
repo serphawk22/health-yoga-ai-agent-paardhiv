@@ -55,6 +55,7 @@ const bottomNavigation = [
 
 export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   return (
     <>
@@ -109,7 +110,6 @@ export function Sidebar({ user }: SidebarProps) {
                 // So we can use window.location or useSearchParams.
                 // Let's use a simpler check: if href includes 'tab=yoga', we strictly check that.
                 // But usePathname() returns just the path.
-                const searchParams = useSearchParams();
                 const tab = searchParams.get('tab');
                 let isActive = pathname === item.href;
 

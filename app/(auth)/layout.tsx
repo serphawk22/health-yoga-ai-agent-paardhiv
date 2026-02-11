@@ -18,10 +18,12 @@ export default function AuthLayout({
             <span className="text-2xl font-bold text-white">Health Agent</span>
           </div>
         </div>
-        
+
         <div className="space-y-6">
-          <blockquote className="text-xl text-white/90 italic">
-            "Health Agent has completely transformed how I manage my wellness. The personalized recommendations are spot-on!"
+          <blockquote className="space-y-2">
+            <p className="text-lg">
+              &quot;Health Agent has completely transformed how I manage my wellness journey. It&apos;s like having a personal doctor and trainer in my pocket.&quot;
+            </p>
           </blockquote>
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white font-semibold">
@@ -33,12 +35,12 @@ export default function AuthLayout({
             </div>
           </div>
         </div>
-        
+
         <div className="text-white/60 text-sm">
           © {new Date().getFullYear()} Health Agent. All rights reserved.
         </div>
       </div>
-      
+
       {/* Right Side - Auth Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-health-bg">
         <div className="w-full max-w-md">
