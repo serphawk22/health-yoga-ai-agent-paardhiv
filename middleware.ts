@@ -23,6 +23,7 @@ const protectedRoutes = [
   '/metrics',
   '/profile',
   '/settings',
+  '/doctor',
 ];
 
 export async function middleware(request: NextRequest) {

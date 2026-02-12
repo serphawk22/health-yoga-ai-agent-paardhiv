@@ -26,7 +26,7 @@ export default function LoginPage() {
     if (result.success) {
       // Force a hard navigation to ensure cookies are sent
       if (result.role === 'DOCTOR' || result.role === 'YOGA_INSTRUCTOR') {
-        window.location.href = '/dashboard/doctor';
+        window.location.href = '/doctor';
       } else {
         window.location.href = '/dashboard';
       }

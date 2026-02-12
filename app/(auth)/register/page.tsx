@@ -29,7 +29,7 @@ export default function RegisterPage() {
       if (role === 'PATIENT') {
         window.location.href = '/profile/setup';
       } else {
-        window.location.href = '/dashboard';
+        window.location.href = '/doctor';
       }
     } else {
       setError(result.error || 'An error occurred');
@@ -154,8 +154,8 @@ export default function RegisterPage() {
               type="button"
               onClick={() => setRole('PATIENT')}
               className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${role === 'PATIENT'
-                  ? 'bg-primary-500/10 border-primary-500 text-primary-500'
-                  : 'bg-white/5 border-white/10 text-health-muted hover:bg-white/10'
+                ? 'bg-primary-500/10 border-primary-500 text-primary-500'
+                : 'bg-white/5 border-white/10 text-health-muted hover:bg-white/10'
                 }`}
             >
               <User className="w-6 h-6" />
@@ -165,8 +165,8 @@ export default function RegisterPage() {
               type="button"
               onClick={() => setRole('DOCTOR')}
               className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${role === 'DOCTOR'
-                  ? 'bg-blue-500/10 border-blue-500 text-blue-500'
-                  : 'bg-white/5 border-white/10 text-health-muted hover:bg-white/10'
+                ? 'bg-blue-500/10 border-blue-500 text-blue-500'
+                : 'bg-white/5 border-white/10 text-health-muted hover:bg-white/10'
                 }`}
             >
               <Stethoscope className="w-6 h-6" />
@@ -176,8 +176,8 @@ export default function RegisterPage() {
               type="button"
               onClick={() => setRole('YOGA_INSTRUCTOR')}
               className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${role === 'YOGA_INSTRUCTOR'
-                  ? 'bg-green-500/10 border-green-500 text-green-500'
-                  : 'bg-white/5 border-white/10 text-health-muted hover:bg-white/10'
+                ? 'bg-green-500/10 border-green-500 text-green-500'
+                : 'bg-white/5 border-white/10 text-health-muted hover:bg-white/10'
                 }`}
             >
               <Flower className="w-6 h-6" />
