@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Send, Trash2, X, RefreshCw, Check, CheckCheck } from 'lucide-react';
 import { sendDoctorPatientMessage, getDoctorPatientMessages, unsendDoctorPatientMessage, markMessagesAsRead } from '@/lib/actions/chat-p2d';
 
@@ -21,11 +21,19 @@ export function DoctorPatientChat({ recipientId, recipientName, recipientRole, c
 
     const isDoctorViewer = recipientRole === 'patient'; // If viewing a patient, I am a doctor
 
+    const loadMessages = useCallback(async () => {
+        const result = await getDoctorPatientMessages(recipientId, isDoctorViewer);
+        if (result.success && result.data) {
+            setMessages(result.data);
+            setIsLoading(false);
+        }
+    }, [recipientId, isDoctorViewer]);
+
     useEffect(() => {
         loadMessages();
         const interval = setInterval(loadMessages, 5000); // Poll every 5s for new messages
         return () => clearInterval(interval);
-    }, [recipientId]);
+    }, [recipientId, loadMessages]);
 
     // Mark messages as read when they are loaded and I am the recipient
     useEffect(() => {
@@ -47,13 +55,7 @@ export function DoctorPatientChat({ recipientId, recipientName, recipientRole, c
         scrollToBottom();
     }, [messages]);
 
-    async function loadMessages() {
-        const result = await getDoctorPatientMessages(recipientId, isDoctorViewer);
-        if (result.success && result.data) {
-            setMessages(result.data);
-            setIsLoading(false);
-        }
-    }
+
 
     async function handleSend() {
         if (!newMessage.trim()) return;

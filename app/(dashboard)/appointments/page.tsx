@@ -1,7 +1,7 @@
 // Appointments Page
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   getDoctors,
   getDoctorAvailability,
@@ -59,23 +59,7 @@ export default function AppointmentsPage() {
     });
   }, []);
 
-  useEffect(() => {
-    if (selectedDoctor && selectedDate) {
-      loadAvailability();
-    }
-  }, [selectedDoctor, selectedDate]);
-
-  async function loadData() {
-    const [doctorsResult, appointmentsResult] = await Promise.all([
-      getDoctors(),
-      getUserAppointments(),
-    ]);
-
-    if (doctorsResult.success) setDoctors(doctorsResult.data || []);
-    if (appointmentsResult.success) setAppointments(appointmentsResult.data || []);
-  }
-
-  async function loadAvailability() {
+  const loadAvailability = useCallback(async () => {
     if (!selectedDoctor) return;
     setIsLoading(true);
     const result = await getDoctorAvailability(
@@ -86,6 +70,22 @@ export default function AppointmentsPage() {
       setAvailableSlots(result.data?.slots || []);
     }
     setIsLoading(false);
+  }, [selectedDoctor, selectedDate]);
+
+  useEffect(() => {
+    if (selectedDoctor && selectedDate) {
+      loadAvailability();
+    }
+  }, [selectedDoctor, selectedDate, loadAvailability]);
+
+  async function loadData() {
+    const [doctorsResult, appointmentsResult] = await Promise.all([
+      getDoctors(),
+      getUserAppointments(),
+    ]);
+
+    if (doctorsResult.success) setDoctors(doctorsResult.data || []);
+    if (appointmentsResult.success) setAppointments(appointmentsResult.data || []);
   }
 
   async function handleNLExtraction() {

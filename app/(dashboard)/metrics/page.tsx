@@ -2,7 +2,7 @@
 
 // Health Metrics Page
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getHealthMetrics, logHealthMetric } from '@/lib/actions/metrics';
 import {
   Loader2,
@@ -50,11 +50,7 @@ export default function MetricsPage() {
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<'week' | 'month' | 'all'>('week');
 
-  useEffect(() => {
-    loadMetrics();
-  }, [dateRange]);
-
-  async function loadMetrics() {
+  const loadMetrics = useCallback(async () => {
     setIsLoading(true);
     const result = await getHealthMetrics(dateRange);
 
@@ -63,7 +59,11 @@ export default function MetricsPage() {
     }
 
     setIsLoading(false);
-  }
+  }, [dateRange]);
+
+  useEffect(() => {
+    loadMetrics();
+  }, [dateRange, loadMetrics]);
 
   async function handleAddMetric() {
     if (!metricValue) return;

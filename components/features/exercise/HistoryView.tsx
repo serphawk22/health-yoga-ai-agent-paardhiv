@@ -138,7 +138,7 @@ export function HistoryView() {
 
                         {session.notes && (
                             <div className="mt-4 text-sm text-health-muted italic">
-                                "{session.notes}"
+                                &quot;{session.notes}&quot;
                             </div>
                         )}
                     </div>

@@ -2,7 +2,7 @@
 
 // Profile View/Edit Page
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { getHealthProfile, updateProfile } from '@/lib/actions/profile';
 import {
@@ -36,11 +36,7 @@ export default function ProfilePage() {
   // Edit form state
   const [formData, setFormData] = useState<any>({});
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  async function loadProfile() {
+  const loadProfile = useCallback(async () => {
     setIsLoading(true);
     const result = await getHealthProfile();
 
@@ -63,7 +59,11 @@ export default function ProfilePage() {
     }
 
     setIsLoading(false);
-  }
+  }, [router]);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
 
   async function handleSave() {
     setIsSaving(true);
