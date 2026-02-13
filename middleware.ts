@@ -35,6 +35,15 @@ export async function middleware(request: NextRequest) {
     const token = request.cookies.get(COOKIE_NAME)?.value;
 
     if (token && (pathname === '/login' || pathname === '/register')) {
+      // Avoid redirect loop: if we were redirected here by the layout (source=layout),
+      // it means the session is invalid despite the token being valid (e.g. user deleted from DB).
+      // We should let them access the login page and clear the invalid cookie.
+      if (request.nextUrl.searchParams.get('source') === 'layout') {
+        const response = NextResponse.next();
+        response.cookies.delete(COOKIE_NAME);
+        return response;
+      }
+
       try {
         await jwtVerify(token, getJwtSecretKey(), { clockTolerance: 15 });
         return NextResponse.redirect(new URL('/dashboard', request.url));

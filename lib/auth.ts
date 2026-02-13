@@ -76,6 +76,7 @@ export async function createSession(userId: string, email: string, name: string,
 }
 
 export async function getSession(): Promise<TokenPayload | null> {
+  // console.log('Checking session...');
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
 
@@ -92,7 +93,7 @@ export async function getSession(): Promise<TokenPayload | null> {
 
   if (!session || session.expiresAt < new Date()) {
     // Session expired or doesn't exist
-    await destroySession();
+    // cannot delete cookie in server component
     return null;
   }
 

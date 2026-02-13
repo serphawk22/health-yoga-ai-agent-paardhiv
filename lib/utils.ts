@@ -25,6 +25,14 @@ export function formatTime(time: string): string {
   return `${hour12}:${minutes} ${ampm}`;
 }
 
+// Format currency
+export function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(amount);
+}
+
 // Calculate BMI
 export function calculateBMI(weightKg: number, heightCm: number): number {
   const heightM = heightCm / 100;

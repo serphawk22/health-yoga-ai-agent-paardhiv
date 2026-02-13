@@ -10,7 +10,8 @@ import { Bell, Menu, X, ChevronDown, User, Settings, LogOut, Heart } from 'lucid
 import { GradientButton } from '@/components/ui/gradient-button';
 import { useRouter } from 'next/navigation';
 import { getNotifications, markAllNotificationsAsRead, markNotificationAsRead } from '@/lib/actions/notification';
-import { Notification } from '@prisma/client';
+import type { Notification } from '@prisma/client';
+
 
 interface HeaderProps {
   user: {
@@ -29,6 +30,8 @@ export function Header({ user }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
 
   const [notifications, setNotifications] = useState<any[]>([]);
+
+
   const [unreadCount, setUnreadCount] = useState(0);
 
   const fetchNotifications = async () => {

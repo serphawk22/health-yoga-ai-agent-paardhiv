@@ -21,6 +21,7 @@ import {
   Stethoscope,
   Pill,
   Flower,
+  ShoppingBag,
 } from 'lucide-react';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Typewriter } from '@/components/ui/typewriter';
@@ -41,6 +42,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Health Chat', href: '/chat', icon: MessageCircle },
   { name: 'Appointments', href: '/appointments', icon: Calendar },
+  { name: 'Store', href: '/marketplace', icon: ShoppingBag },
   { name: 'Diet Plan', href: '/diet', icon: Apple },
   { name: 'Exercise', href: '/exercise', icon: Dumbbell },
   { name: 'Health Assessment', href: '/assessment', icon: BarChart3 },
@@ -106,7 +108,7 @@ export function Sidebar({ user }: SidebarProps) {
                 const isDoctorOrInstructor = user.role === 'DOCTOR' || user.role === 'YOGA_INSTRUCTOR';
 
                 // Items allowed for doctors/instructors
-                const doctorAllowedItems = ['Dashboard', 'Appointments'];
+                const doctorAllowedItems = ['Dashboard', 'Appointments', 'Store'];
 
                 if (isDoctorOrInstructor) {
                   if (!doctorAllowedItems.includes(item.name)) {
@@ -115,6 +117,10 @@ export function Sidebar({ user }: SidebarProps) {
                   // Remap Dashboard link for doctors
                   if (item.name === 'Dashboard') {
                     item.href = '/doctor';
+                  }
+                  // Remap Store link for doctors
+                  if (item.name === 'Store') {
+                    item.href = '/doctor/products';
                   }
                 }
 
