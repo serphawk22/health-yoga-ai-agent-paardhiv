@@ -98,3 +98,21 @@ export async function markAllNotificationsAsRead(): Promise<NotificationActionRe
         return { success: false, error: 'Failed to mark notifications as read' };
     }
 }
+export async function clearAllNotifications(): Promise<NotificationActionResult> {
+    try {
+        const session = await getSession();
+        if (!session) return { success: false, error: 'Not authenticated' };
+
+        await prisma.notification.deleteMany({
+            where: {
+                userId: session.userId,
+            },
+        });
+
+        revalidatePath('/dashboard');
+        return { success: true };
+    } catch (error) {
+        console.error('Clear all notifications error:', error);
+        return { success: false, error: 'Failed to clear notifications' };
+    }
+}

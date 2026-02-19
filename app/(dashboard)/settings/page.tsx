@@ -1,41 +1,30 @@
 'use client';
 
-// Settings Page
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/lib/actions/auth';
+import { updateUserPreferences, deleteAccount, getUser } from '@/lib/actions/user';
 import {
-  Settings,
-  Bell,
-  Shield,
-  Moon,
-  Sun,
   LogOut,
   Trash2,
-  User,
-  Lock,
-  Globe,
-  HelpCircle,
   ChevronRight,
-  AlertCircle,
+  AlertTriangle,
   Check,
-  Calendar,
-  Sparkles,
-  Mail,
-  Activity,
+  Moon,
+  Sun,
+  Globe,
 } from 'lucide-react';
-import { GradientButton } from '@/components/ui/gradient-button';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from '@/components/theme-provider';
+import { toast } from 'sonner';
 
 export default function SettingsPage() {
   const router = useRouter();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  // Settings state (these would typically be stored in database/preferences)
   const [notifications, setNotifications] = useState({
     appointments: true,
     reminders: true,
@@ -43,329 +32,292 @@ export default function SettingsPage() {
     email: false,
   });
 
+  useEffect(() => {
+    async function loadPreferences() {
+      const user = await getUser();
+      if ((user as any)?.preferences) {
+        setNotifications((user as any).preferences);
+      }
+    }
+    loadPreferences();
+  }, []);
+
   async function handleLogout() {
     setIsLoggingOut(true);
     await logout();
     router.push('/');
   }
 
+  async function handlePreferenceChange(key: string, value: boolean) {
+    const newPreferences = { ...notifications, [key]: value };
+    setNotifications(newPreferences);
+    try {
+      await updateUserPreferences(newPreferences);
+      toast.success('Preferences updated');
+    } catch (error) {
+      toast.error('Failed to update preferences');
+      setNotifications(notifications);
+    }
+  }
+
+  async function handleDeleteAccount() {
+    setIsDeleting(true);
+    try {
+      await deleteAccount();
+      await logout();
+      router.push('/');
+      toast.success('Account deleted successfully');
+    } catch (error) {
+      toast.error('Failed to delete account');
+      setIsDeleting(false);
+    }
+  }
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="max-w-2xl mx-auto pb-20 lg:pb-6"
-    >
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-health-text">Settings</h1>
-        <p className="text-health-muted">Manage your account and preferences</p>
-      </div>
+    <div className="relative pb-24">
+      <div className="max-w-2xl mx-auto pt-4 space-y-10">
 
-      <div className="space-y-6">
-        {/* Account Section */}
-        <div className="card">
-          <h2 className="font-semibold text-health-text mb-4 flex items-center gap-2">
-            <User className="w-5 h-5 text-primary-600" />
-            Account
-          </h2>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <p className="text-zinc-500 font-medium text-sm uppercase tracking-wider mb-1">Preferences</p>
+          <h1 className="text-3xl font-light text-health-text">
+            Settings
+          </h1>
+        </motion.div>
 
-          <div className="space-y-2">
-            <SettingsItem
-              icon={User}
-              label="Edit Profile"
-              description="Update your health information"
-              onClick={() => router.push('/profile')}
-            />
-            <SettingsItem
-              icon={Lock}
-              label="Change Password"
-              description="Update your account password"
-              onClick={() => { }}
-              disabled
-            />
-          </div>
-        </div>
+        {/* Account */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.05 }}
+          className="space-y-3"
+        >
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Account</h2>
 
-        {/* Notifications Section */}
-        <div className="card">
-          <h2 className="font-semibold text-health-text mb-4 flex items-center gap-2">
-            <Bell className="w-5 h-5 text-primary-600" />
-            Notifications
-          </h2>
-
-          <div className="space-y-4">
-            <ToggleSetting
-              icon={Settings}
-              label="Appointment Reminders"
-              description="Get notified about upcoming appointments"
-              enabled={notifications.appointments}
-              onChange={(v) => setNotifications({ ...notifications, appointments: v })}
-            />
-            <ToggleSetting
-              icon={Bell}
-              label="Daily Reminders"
-              description="Reminders to log your health metrics"
-              enabled={notifications.reminders}
-              onChange={(v) => setNotifications({ ...notifications, reminders: v })}
-            />
-            <ToggleSetting
-              icon={Shield}
-              label="Health Recommendations"
-              description="Personalized health tips and suggestions"
-              enabled={notifications.recommendations}
-              onChange={(v) => setNotifications({ ...notifications, recommendations: v })}
-            />
-            <ToggleSetting
-              icon={Globe}
-              label="Email Notifications"
-              description="Receive updates via email"
-              enabled={notifications.email}
-              onChange={(v) => setNotifications({ ...notifications, email: v })}
-            />
-          </div>
-        </div>
-
-        {/* Appearance Section */}
-        <div className="card">
-          <h2 className="font-semibold text-health-text mb-4 flex items-center gap-2">
-            <Sun className="w-5 h-5 text-primary-600" />
-            Appearance
-          </h2>
-
-          <div className="space-y-2">
+          <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 divide-y divide-zinc-100 dark:divide-zinc-800 overflow-hidden">
             <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors"
+              onClick={() => router.push('/profile')}
+              className="w-full flex items-center justify-between px-5 py-4 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 transition-colors"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-                  {theme === 'dark' ? (
-                    <Moon className="w-5 h-5 text-health-muted" />
-                  ) : (
-                    <Sun className="w-5 h-5 text-health-muted" />
-                  )}
-                </div>
-                <div className="text-left">
-                  <p className="font-medium text-health-text">Theme</p>
-                  <p className="text-sm text-health-muted">
-                    {theme === 'dark' ? 'Dark mode' : 'Light mode'}
-                  </p>
-                </div>
+              <div>
+                <p className="text-sm font-medium text-health-text text-left">Edit Profile</p>
+                <p className="text-xs text-zinc-500 text-left">Update your health information</p>
               </div>
-              <span className="text-sm text-health-muted">Click to toggle</span>
+              <ChevronRight className="w-4 h-4 text-zinc-400" />
             </button>
-            <div className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-                  <Globe className="w-5 h-5 text-health-muted" />
-                </div>
-                <div>
-                  <p className="font-medium text-health-text">Language</p>
-                  <p className="text-sm text-health-muted">English</p>
-                </div>
+
+            <div className="w-full flex items-center justify-between px-5 py-4 opacity-40 cursor-not-allowed">
+              <div>
+                <p className="text-sm font-medium text-health-text">Change Password</p>
+                <p className="text-xs text-zinc-500">Update your account password</p>
               </div>
-              <span className="text-sm text-health-muted">Coming soon</span>
+              <span className="text-[10px] text-zinc-400 bg-zinc-200 dark:bg-zinc-800 px-2 py-0.5 rounded-full uppercase tracking-wider font-medium">Soon</span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Privacy & Security Section */}
-        <div className="card">
-          <h2 className="font-semibold text-health-text mb-4 flex items-center gap-2">
-            <Shield className="w-5 h-5 text-primary-600" />
-            Privacy & Security
-          </h2>
+        {/* Notifications */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="space-y-3"
+        >
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Notifications</h2>
 
-          <div className="space-y-2">
-            <SettingsItem
-              icon={Shield}
-              label="Privacy Policy"
-              description="Read our privacy policy"
-              onClick={() => { }}
+          <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 divide-y divide-zinc-100 dark:divide-zinc-800 overflow-hidden">
+            <CheckRow
+              label="Appointment Reminders"
+              description="Get notified about upcoming appointments"
+              checked={notifications.appointments}
+              onChange={(v) => handlePreferenceChange('appointments', v)}
             />
-            <SettingsItem
-              icon={HelpCircle}
-              label="Terms of Service"
-              description="Read our terms of service"
-              onClick={() => { }}
+            <CheckRow
+              label="Daily Reminders"
+              description="Reminders to log your health metrics"
+              checked={notifications.reminders}
+              onChange={(v) => handlePreferenceChange('reminders', v)}
             />
-          </div>
-        </div>
-
-        {/* Support Section */}
-        <div className="card">
-          <h2 className="font-semibold text-health-text mb-4 flex items-center gap-2">
-            <HelpCircle className="w-5 h-5 text-primary-600" />
-            Support
-          </h2>
-
-          <div className="space-y-2">
-            <SettingsItem
-              icon={HelpCircle}
-              label="Help Center"
-              description="Get help with the app"
-              onClick={() => { }}
+            <CheckRow
+              label="Health Recommendations"
+              description="Personalized health tips and suggestions"
+              checked={notifications.recommendations}
+              onChange={(v) => handlePreferenceChange('recommendations', v)}
             />
-            <SettingsItem
-              icon={HelpCircle}
-              label="Contact Support"
-              description="Reach out to our support team"
-              onClick={() => { }}
+            <CheckRow
+              label="Email Notifications"
+              description="Receive updates via email"
+              checked={notifications.email}
+              onChange={(v) => handlePreferenceChange('email', v)}
             />
           </div>
-        </div>
+        </motion.div>
+
+        {/* Appearance */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+          className="space-y-3"
+        >
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Appearance</h2>
+
+          <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 divide-y divide-zinc-100 dark:divide-zinc-800 overflow-hidden">
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="w-full flex items-center justify-between px-5 py-4 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 transition-colors"
+            >
+              <div className="text-left">
+                <p className="text-sm font-medium text-health-text">Theme</p>
+                <p className="text-xs text-zinc-500">
+                  {theme === 'dark' ? 'Dark mode' : 'Light mode'}
+                </p>
+              </div>
+              <div className="flex items-center gap-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full p-0.5">
+                <span className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${theme === 'light' ? 'bg-white dark:bg-zinc-700 text-health-text shadow-sm' : 'text-zinc-500'}`}>
+                  <Sun className="w-3.5 h-3.5 inline-block" />
+                </span>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${theme === 'dark' ? 'bg-white dark:bg-zinc-700 text-health-text shadow-sm' : 'text-zinc-500'}`}>
+                  <Moon className="w-3.5 h-3.5 inline-block" />
+                </span>
+              </div>
+            </button>
+
+            <div className="w-full flex items-center justify-between px-5 py-4">
+              <div>
+                <p className="text-sm font-medium text-health-text">Language</p>
+                <p className="text-xs text-zinc-500">English</p>
+              </div>
+              <span className="text-[10px] text-zinc-400 bg-zinc-200 dark:bg-zinc-800 px-2 py-0.5 rounded-full uppercase tracking-wider font-medium">Soon</span>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Danger Zone */}
-        <div className="card border-red-200">
-          <h2 className="font-semibold text-red-600 mb-4 flex items-center gap-2">
-            <AlertCircle className="w-5 h-5" />
-            Danger Zone
-          </h2>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="space-y-3"
+        >
+          <h2 className="text-xs font-semibold text-red-500/60 uppercase tracking-wider">Danger Zone</h2>
 
-          <div className="space-y-3">
+          <div className="rounded-2xl border border-red-500/15 bg-red-500/[0.03] divide-y divide-red-500/10 overflow-hidden">
             <button
               onClick={handleLogout}
               disabled={isLoggingOut}
-              className="w-full flex items-center justify-between p-3 rounded-lg border border-health-border hover:bg-white/5 transition-colors"
+              className="w-full flex items-center justify-between px-5 py-4 hover:bg-red-500/5 transition-colors disabled:opacity-50"
             >
               <div className="flex items-center gap-3">
-                <LogOut className="w-5 h-5 text-health-muted" />
-                <span className="font-medium text-health-text">
+                <LogOut className="w-4 h-4 text-zinc-500" />
+                <span className="text-sm font-medium text-health-text">
                   {isLoggingOut ? 'Logging out...' : 'Log Out'}
                 </span>
               </div>
-              <ChevronRight className="w-5 h-5 text-health-muted" />
+              <ChevronRight className="w-4 h-4 text-zinc-500" />
             </button>
 
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="w-full flex items-center justify-between p-3 rounded-lg border border-red-500/20 bg-red-500/10 hover:bg-red-500/20 transition-colors"
+              className="w-full flex items-center justify-between px-5 py-4 hover:bg-red-500/5 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <Trash2 className="w-5 h-5 text-red-600" />
-                <span className="font-medium text-red-600">Delete Account</span>
+                <Trash2 className="w-4 h-4 text-red-400" />
+                <span className="text-sm font-medium text-red-400">Delete Account</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-red-400" />
+              <ChevronRight className="w-4 h-4 text-red-400/40" />
             </button>
           </div>
-        </div>
+        </motion.div>
 
-        {/* App Info */}
-        <div className="text-center py-6">
-          <p className="text-sm text-health-muted">Health Agent v1.0.0</p>
-          <p className="text-xs text-health-muted mt-1">Made with ❤️ for your health</p>
-        </div>
+
       </div>
 
-      {/* Delete Account Confirmation Modal */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-health-card border border-health-border rounded-2xl shadow-xl max-w-md w-full p-6">
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
-                <Trash2 className="w-8 h-8 text-red-500" />
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {showDeleteConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl max-w-sm w-full p-6"
+            >
+              <div className="text-center">
+                <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                  <AlertTriangle className="w-6 h-6 text-red-500" />
+                </div>
+                <h3 className="text-base font-semibold text-health-text mb-1">Delete Account?</h3>
+                <p className="text-xs text-zinc-500 mb-6 leading-relaxed">
+                  This cannot be undone. All data including health profile,
+                  chat history, and appointments will be permanently deleted.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 text-sm font-medium hover:bg-zinc-700 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleDeleteAccount}
+                    disabled={isDeleting}
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-60"
+                  >
+                    {isDeleting ? 'Deleting...' : 'Delete'}
+                  </button>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold text-health-text mb-2">Delete Account?</h3>
-              <p className="text-health-muted mb-6">
-                This action cannot be undone. All your data, including your health profile,
-                chat history, and appointments will be permanently deleted.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="btn-secondary flex-1"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    // TODO: Implement account deletion
-                    setShowDeleteConfirm(false);
-                  }}
-                  className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors"
-                >
-                  Delete Account
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
-function SettingsItem({
-  icon: Icon,
-  label,
-  description,
-  onClick,
-  disabled = false,
-}: {
-  icon: any;
-  label: string;
-  description: string;
-  onClick: () => void;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${disabled
-        ? 'opacity-50 cursor-not-allowed'
-        : 'hover:bg-white/5'
-        }`}
-    >
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-health-muted" />
-        </div>
-        <div className="text-left">
-          <p className="font-medium text-health-text">{label}</p>
-          <p className="text-sm text-health-muted">{description}</p>
-        </div>
-      </div>
-      <ChevronRight className="w-5 h-5 text-health-muted" />
-    </button>
-  );
-}
+/* ──── Checkbox-style row ──── */
 
-function ToggleSetting({
-  icon: Icon,
+function CheckRow({
   label,
   description,
-  enabled,
-  onChange
+  checked,
+  onChange,
 }: {
-  icon: any;
   label: string;
   description: string;
-  enabled: boolean;
+  checked: boolean;
   onChange: (value: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-health-muted" />
-        </div>
-        <div className="text-left">
-          <p className="font-medium text-health-text">{label}</p>
-          <p className="text-sm text-health-muted">{description}</p>
-        </div>
+    <button
+      onClick={() => onChange(!checked)}
+      className="w-full flex items-center justify-between px-5 py-4 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 transition-colors"
+    >
+      <div className="text-left">
+        <p className="text-sm font-medium text-health-text">{label}</p>
+        <p className="text-xs text-zinc-500">{description}</p>
       </div>
-      <button
-        onClick={() => onChange(!enabled)}
-        className={`w-12 h-6 rounded-full transition-colors relative ${enabled ? 'bg-primary-600' : 'bg-white/20'
+      <div
+        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200 shrink-0 ${checked
+          ? 'bg-primary-600 border-primary-600'
+          : 'border-zinc-300 dark:border-zinc-600 bg-transparent'
           }`}
       >
-        <span
-          className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${enabled ? 'translate-x-7' : 'translate-x-1'
-            }`}
-        />
-      </button>
-    </div>
+        {checked && (
+          <Check className="w-3 h-3 text-white" strokeWidth={3} />
+        )}
+      </div>
+    </button>
   );
 }
