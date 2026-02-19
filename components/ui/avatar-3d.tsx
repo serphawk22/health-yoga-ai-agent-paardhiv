@@ -132,6 +132,8 @@ function CharacterRig({ config }: { config: AvatarConfig }) {
     const group = useRef<THREE.Group>(null);
     const rightArm = useRef<THREE.Group>(null);
     const head = useRef<THREE.Group>(null);
+    const wavePhase = useRef<'waving' | 'lowering' | 'idle'>('waving');
+    const armAngle = useRef(0);
 
     const skinColor = config.skinColor;
     const hairColor = get3DHairColor(skinColor);
@@ -140,24 +142,46 @@ function CharacterRig({ config }: { config: AvatarConfig }) {
     const skinMat = useMemo(() => new THREE.MeshStandardMaterial({ color: skinColor, roughness: 0.5 }), [skinColor]);
     const clothesMat = useMemo(() => new THREE.MeshStandardMaterial({ color: clothesColor, roughness: 0.7 }), [clothesColor]);
 
+    const WAVE_DURATION = 2.5; // seconds of waving
+    const LOWER_SPEED = 3;    // how fast the arm lowers
+
     // Animation Loop
     useFrame((state) => {
         if (!rightArm.current || !head.current || !group.current) return;
         const t = state.clock.getElapsedTime();
 
-        // Breathing / Floating
-        group.current.position.y = Math.sin(t * 1) * 0.05 - 0.5;
+        // Gentle breathing
+        group.current.position.y = Math.sin(t * 1) * 0.03 - 0.5;
 
-        // Wave Animation (Right Arm)
-        // Arm rotates around Z axis to wave
-        // Base rotation: Math.PI / 1.5 (raised)
-        // Wave: Math.sin(t * 5) * 0.3
-        rightArm.current.rotation.z = Math.PI - 0.5 + Math.sin(t * 8) * 0.3;
-        rightArm.current.rotation.x = Math.sin(t * 5) * 0.1;
+        // Head subtle idle movement (always active)
+        head.current.rotation.y = Math.sin(t * 0.5) * 0.06;
+        head.current.rotation.x = Math.sin(t * 0.8) * 0.03;
 
-        // Head subtle movement
-        head.current.rotation.y = Math.sin(t * 0.5) * 0.1;
-        head.current.rotation.x = Math.sin(t * 0.8) * 0.05;
+        // Wave → Lower → Idle
+        if (wavePhase.current === 'waving') {
+            // Raise arm and wave back and forth
+            const raiseAngle = Math.PI - 0.5;
+            const waveSwing = Math.sin(t * 8) * 0.3;
+            rightArm.current.rotation.z = raiseAngle + waveSwing;
+            rightArm.current.rotation.x = Math.sin(t * 5) * 0.1;
+            armAngle.current = rightArm.current.rotation.z;
+
+            if (t > WAVE_DURATION) {
+                wavePhase.current = 'lowering';
+            }
+        } else if (wavePhase.current === 'lowering') {
+            // Smoothly lower the arm back to resting position (z ≈ 0)
+            armAngle.current = THREE.MathUtils.lerp(armAngle.current, 0, state.clock.getDelta() * LOWER_SPEED);
+            rightArm.current.rotation.z = armAngle.current;
+            rightArm.current.rotation.x = THREE.MathUtils.lerp(rightArm.current.rotation.x, 0, state.clock.getDelta() * LOWER_SPEED);
+
+            if (Math.abs(armAngle.current) < 0.02) {
+                rightArm.current.rotation.z = 0;
+                rightArm.current.rotation.x = 0;
+                wavePhase.current = 'idle';
+            }
+        }
+        // 'idle' → arm stays at rest, no further updates
     });
 
     const isMale = config.gender === 'male';
