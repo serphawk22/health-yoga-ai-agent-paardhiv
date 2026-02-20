@@ -43,6 +43,7 @@ export function VideoCall({ appointmentId, meetingId, userName, otherName, role 
     const remoteVideoRef = useRef<HTMLVideoElement>(null);
     const controlsTimeout = useRef<NodeJS.Timeout | null>(null);
     const connectionInterval = useRef<NodeJS.Timeout | null>(null);
+    const isConnectedRef = useRef(false);
 
     // Determines Peer IDs
     const myPeerId = `${meetingId}-${role}`;
@@ -67,18 +68,33 @@ export function VideoCall({ appointmentId, meetingId, userName, otherName, role 
                     localVideoRef.current.srcObject = stream;
                 }
 
-                // 2. Import PeerJS & Initialize
+                // 2. Fetch TURN credentials
+                setStatus('Fetching relay server credentials...');
+                let iceServers: RTCIceServer[] = [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:global.stun.twilio.com:3478' },
+                ];
+
+                try {
+                    const res = await fetch('/api/turn-credentials');
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.iceServers && data.iceServers.length > 0) {
+                            iceServers = data.iceServers;
+                            console.log('Got TURN credentials:', iceServers.length, 'servers');
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Failed to fetch TURN credentials, using STUN only:', e);
+                }
+
+                // 3. Import PeerJS & Initialize
                 setStatus('Connecting to secure signaling server...');
                 const { default: Peer } = await import('peerjs');
 
                 peerInstance = new Peer(myPeerId, {
-                    debug: 1,
-                    config: {
-                        iceServers: [
-                            { urls: 'stun:stun.l.google.com:19302' },
-                            { urls: 'stun:global.stun.twilio.com:3478' }
-                        ]
-                    }
+                    debug: 2,
+                    config: { iceServers }
                 });
 
                 peerInstance.on('open', (id) => {
@@ -97,14 +113,27 @@ export function VideoCall({ appointmentId, meetingId, userName, otherName, role 
                     setStatus('Connecting...');
                     call.answer(stream); // Answer immediately
 
-                    call.on('stream', (remoteStream) => {
-                        console.log('Received remote stream');
-                        setRemoteStream(remoteStream);
+                    call.on('stream', (incomingStream) => {
+                        console.log('Received remote stream via answer, tracks:', incomingStream.getTracks().length);
+                        setRemoteStream(incomingStream);
                         setIsConnected(true);
+                        isConnectedRef.current = true;
                         setStatus('Connected');
-                        if (remoteVideoRef.current) {
-                            remoteVideoRef.current.srcObject = remoteStream;
-                        }
+                        // Directly set srcObject
+                        setTimeout(() => {
+                            if (remoteVideoRef.current) {
+                                remoteVideoRef.current.srcObject = incomingStream;
+                                remoteVideoRef.current.play().catch(e => console.log('Auto-play blocked:', e));
+                            }
+                        }, 100);
+                    });
+
+                    call.on('close', () => {
+                        console.log('Call closed by remote peer');
+                        setIsConnected(false);
+                        isConnectedRef.current = false;
+                        setRemoteStream(null);
+                        setStatus('Call ended by other party');
                     });
                 });
 
@@ -126,9 +155,9 @@ export function VideoCall({ appointmentId, meetingId, userName, otherName, role 
 
         init();
 
-        // Duration timer
+        // Duration timer — use ref to avoid stale closure
         const timer = setInterval(() => {
-            if (isConnected) setCallDuration(prev => prev + 1);
+            if (isConnectedRef.current) setCallDuration(prev => prev + 1);
         }, 1000);
 
         return () => {
@@ -144,12 +173,13 @@ export function VideoCall({ appointmentId, meetingId, userName, otherName, role 
         };
     }, [meetingId, role, myPeerId]); // Re-run if ID changes (shouldn't happen often)
 
-    // Re-attach remote stream if ref changes (e.g. layout shift)
+    // Re-attach remote stream whenever remoteStream state changes
     useEffect(() => {
         if (remoteVideoRef.current && remoteStream) {
             remoteVideoRef.current.srcObject = remoteStream;
+            remoteVideoRef.current.play().catch(e => console.log('Auto-play blocked:', e));
         }
-    }, [remoteStream, remoteVideoRef.current]);
+    }, [remoteStream]);
 
     function startConnectionAttempts(currentPeer: Peer, stream: MediaStream) {
         if (connectionInterval.current) clearInterval(connectionInterval.current);
@@ -157,23 +187,38 @@ export function VideoCall({ appointmentId, meetingId, userName, otherName, role 
         connectionInterval.current = setInterval(() => {
             if (!currentPeer || currentPeer.destroyed) return;
 
-            // Only try calling if we don't have a remote stream yet
-            if (remoteVideoRef.current?.srcObject) return;
+            // Only try calling if we're not already connected
+            if (isConnectedRef.current) {
+                if (connectionInterval.current) clearInterval(connectionInterval.current);
+                return;
+            }
 
             console.log(`Attempting to call ${targetPeerId}...`);
             const call = currentPeer.call(targetPeerId, stream);
 
             if (call) {
-                call.on('stream', (remoteStream) => {
-                    console.log('Call accepted, receiving stream');
-                    setRemoteStream(remoteStream);
+                call.on('stream', (incomingStream) => {
+                    console.log('Call accepted, receiving stream, tracks:', incomingStream.getTracks().length);
+                    setRemoteStream(incomingStream);
                     setIsConnected(true);
+                    isConnectedRef.current = true;
                     setStatus('Connected');
                     if (connectionInterval.current) clearInterval(connectionInterval.current);
+                    // Directly set srcObject
+                    setTimeout(() => {
+                        if (remoteVideoRef.current) {
+                            remoteVideoRef.current.srcObject = incomingStream;
+                            remoteVideoRef.current.play().catch(e => console.log('Auto-play blocked:', e));
+                        }
+                    }, 100);
                 });
 
                 call.on('error', (err) => {
                     console.log('Call error (likely peer not ready):', err);
+                });
+
+                call.on('close', () => {
+                    console.log('Outgoing call closed');
                 });
             }
         }, 3000); // Retry every 3s
