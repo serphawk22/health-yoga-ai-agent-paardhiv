@@ -169,8 +169,8 @@ function StyledSlider({
         />
       </div>
       <div className="flex justify-between mt-3 px-1">
-        <span className="text-[10px] font-bold text-zinc-600 font-mono">{min}</span>
-        <span className="text-[10px] font-bold text-zinc-600 font-mono">{max}</span>
+        <span className="text-[10px] font-bold text-zinc-600">{min}</span>
+        <span className="text-[10px] font-bold text-zinc-600">{max}</span>
       </div>
     </div>
   );

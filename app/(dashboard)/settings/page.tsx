@@ -170,33 +170,48 @@ export default function SettingsPage() {
               </button>
             </div>
 
-            {/* Inline editor */}
+            {/* Inline editor — Two-column layout */}
             <AnimatePresence>
               {showAvatarEditor && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                   className="overflow-hidden"
                 >
-                  <div className="px-5 pb-5 pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                    {/* Live preview */}
-                    <div className="flex justify-center mb-6">
-                      <Avatar3D config={avatarConfig} className="w-[200px] h-[300px] rounded-2xl overflow-hidden bg-gradient-to-b from-zinc-100 to-white dark:from-zinc-800 dark:to-zinc-900 border border-zinc-200 dark:border-zinc-700 shadow-inner" />
+                  <div className="border-t border-zinc-100 dark:border-zinc-800">
+                    <div className="px-6 py-8">
+                      <div className="flex flex-col md:flex-row gap-8">
+
+                        {/* ── Left: Avatar Preview (focal point) ── */}
+                        <div className="md:w-[55%] flex flex-col items-center">
+                          <div className="w-full aspect-[4/5] rounded-3xl overflow-hidden bg-gradient-to-b from-zinc-100 to-zinc-50 dark:from-zinc-800/60 dark:to-zinc-900/80 border border-zinc-200 dark:border-zinc-700/40 shadow-[inset_0_1px_12px_rgba(0,0,0,0.04)] dark:shadow-[inset_0_1px_12px_rgba(0,0,0,0.2)]">
+                            <Avatar3D config={avatarConfig} className="w-full h-full" />
+                          </div>
+                          <p className="text-[11px] text-zinc-400 mt-3 text-center font-medium tracking-wide select-none">
+                            Drag to rotate
+                          </p>
+                        </div>
+
+                        {/* ── Right: Customization Controls ── */}
+                        <div className="md:w-[45%] flex flex-col">
+                          <div className="flex-1 md:max-h-[480px] md:overflow-y-auto md:pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-700/40 [&::-webkit-scrollbar-thumb]:rounded-full">
+                            <AvatarCustomizer config={avatarConfig} onChange={setAvatarConfig} />
+                          </div>
+
+                          {/* Save button */}
+                          <button
+                            onClick={handleSaveAvatar}
+                            disabled={isSavingAvatar}
+                            className="w-full mt-5 py-3 rounded-2xl bg-white text-zinc-900 text-sm font-semibold transition-all duration-200 hover:bg-zinc-100 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+                          >
+                            {isSavingAvatar ? 'Saving...' : 'Save Avatar'}
+                          </button>
+                        </div>
+
+                      </div>
                     </div>
-
-                    {/* Customizer controls */}
-                    <AvatarCustomizer config={avatarConfig} onChange={setAvatarConfig} />
-
-                    {/* Save button */}
-                    <button
-                      onClick={handleSaveAvatar}
-                      disabled={isSavingAvatar}
-                      className="w-full mt-6 py-3 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-200 transition-colors disabled:opacity-50"
-                    >
-                      {isSavingAvatar ? 'Saving...' : 'Save Avatar'}
-                    </button>
                   </div>
                 </motion.div>
               )}

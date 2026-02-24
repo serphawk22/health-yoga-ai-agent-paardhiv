@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { NeuralNetworkBackground } from "@/components/ui/neural-network-hero";
+import ColorBends from "@/components/ui/ColorBends";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { Calendar, Clock, Activity, Leaf, Sun, Heart, Stethoscope, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -90,8 +90,22 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
 
     return (
         <div className="relative min-h-screen text-zinc-100 font-sans overflow-hidden">
-            {/* Neural Network Background */}
-            <NeuralNetworkBackground />
+            {/* Background */}
+            <div className="fixed inset-0 z-[-1]">
+                <ColorBends
+                    colors={["#ff5c7a", "#8a5cff", "#00ffd1"]}
+                    rotation={0}
+                    speed={0.2}
+                    scale={1}
+                    frequency={1}
+                    warpStrength={1}
+                    mouseInfluence={1}
+                    parallax={0.5}
+                    noise={0.1}
+                    transparent
+                    autoRotate={0}
+                />
+            </div>
 
             <div className="relative z-10 px-6 py-8 md:px-12 max-w-7xl mx-auto space-y-10">
 
@@ -104,7 +118,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             transition={{ duration: 0.5 }}
                         >
                             <h1 className="text-4xl md:text-6xl font-thin tracking-tight mb-2">
-                                Namaste, <span className="font-bold text-primary-400">{userName}</span>
+                                Namaste, <span className="text-primary-400 uppercase font-thin">{userName}</span>
                             </h1>
                             <p className="text-lg md:text-xl text-zinc-400 font-light max-w-2xl">
                                 Find your balance today. Your journey to inner peace continues.
@@ -115,9 +129,9 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                     <div className="text-right flex flex-col items-end">
                         <div className="flex items-center gap-2 text-primary-400 mb-1">
                             <Calendar className="w-4 h-4" />
-                            <span className="text-sm font-medium tracking-wider uppercase">{formattedDate}</span>
+                            <span className="text-sm font-light tracking-wider uppercase">{formattedDate}</span>
                         </div>
-                        <div className="text-3xl md:text-5xl font-light tracking-tighter tabular-nums font-mono text-white">
+                        <div className="text-3xl md:text-5xl font-thin tracking-tighter tabular-nums text-white">
                             {formattedTime}
                         </div>
                     </div>
@@ -164,15 +178,14 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             className="rounded-2xl p-8 bg-zinc-950/60 backdrop-blur-xl border border-zinc-800 relative overflow-hidden"
                         >
                             <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
-                            <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                                <Activity className="w-5 h-5 text-primary-400" />
+                            <h3 className="text-xl font-semibold mb-6">
                                 Why Yoga Today?
                             </h3>
                             <ul className="space-y-4">
-                                <BenefitItem icon={Leaf} text="Reduces cortisol levels & stress" />
-                                <BenefitItem icon={Sun} text="Boosts energy & metabolic rate" />
-                                <BenefitItem icon={Heart} text="Improves cardiovascular health" />
-                                <BenefitItem icon={Activity} text="Enhances flexibility & strength" />
+                                <BenefitItem text="Reduces cortisol levels & stress" />
+                                <BenefitItem text="Boosts energy & metabolic rate" />
+                                <BenefitItem text="Improves cardiovascular health" />
+                                <BenefitItem text="Enhances flexibility & strength" />
                             </ul>
 
                             <div className="mt-8 pt-6 border-t border-zinc-800">
@@ -194,7 +207,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             className="md:col-span-2 rounded-2xl bg-zinc-950/60 backdrop-blur-xl border border-zinc-800 p-8"
                         >
                             <div className="mb-6">
-                                <h2 className="text-2xl font-light">Latest in <span className="font-semibold text-primary-400">Yoga World</span></h2>
+                                <h2 className="text-2xl font-thin uppercase tracking-tight">Latest in <span className="text-primary-400">Yoga World</span></h2>
                             </div>
 
                             <div className="grid md:grid-cols-2 gap-6">
@@ -216,8 +229,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             className="md:col-span-2 rounded-2xl bg-zinc-950/60 backdrop-blur-xl border border-zinc-800 p-8 flex flex-col justify-between"
                         >
                             <div>
-                                <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                                    <Stethoscope className="w-5 h-5 text-primary-400" />
+                                <h3 className="text-xl font-semibold mb-6">
                                     Upcoming Appointments
                                 </h3>
 
@@ -288,7 +300,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
 function TimeUnit({ value, label }: { value: number; label: string }) {
     return (
         <div className="flex flex-col items-center">
-            <div className="text-3xl lg:text-4xl font-light font-mono text-white tabular-nums tracking-tighter">
+            <div className="text-3xl lg:text-4xl font-thin text-white tabular-nums tracking-tighter">
                 {value.toString().padStart(2, '0')}
             </div>
             <span className="text-[10px] font-bold uppercase text-zinc-500 tracking-wider mt-1">{label}</span>
@@ -296,12 +308,9 @@ function TimeUnit({ value, label }: { value: number; label: string }) {
     )
 }
 
-function BenefitItem({ icon: Icon, text }: { icon: any; text: string }) {
+function BenefitItem({ text }: { text: string }) {
     return (
-        <li className="flex items-center gap-3 text-sm text-zinc-300">
-            <div className="p-1.5 rounded-full bg-primary-500/10 text-primary-400">
-                <Icon className="w-3.5 h-3.5" />
-            </div>
+        <li className="text-sm text-zinc-300">
             {text}
         </li>
     )

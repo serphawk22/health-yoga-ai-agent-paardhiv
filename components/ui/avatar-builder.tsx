@@ -41,277 +41,486 @@ export const CLOTHING_OPTIONS = [
 ] as const;
 
 /* ═══════════════════════════════════════════════════════════
-   SVG Parts — Head shapes, hair, clothing
+   Color Utilities — single source of truth
    ═══════════════════════════════════════════════════════════ */
 
-function HeadShape({ skinColor, gender }: { skinColor: string; gender: string }) {
-    const faceWidth = gender === 'female' ? 58 : 64;
-    const jawOffset = gender === 'female' ? 4 : 0;
+/** Darken a hex colour by a relative amount (0-1 scale). */
+function darken(hex: string, factor: number): string {
+    const num = parseInt(hex.replace('#', ''), 16);
+    const r = Math.max(Math.round(((num >> 16) & 0xff) * (1 - factor)), 0);
+    const g = Math.max(Math.round(((num >> 8) & 0xff) * (1 - factor)), 0);
+    const b = Math.max(Math.round((num & 0xff) * (1 - factor)), 0);
+    return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+}
+
+/** Hair colour is always independent of skin tone — never derived from it. */
+const HAIR_COLORS: Record<string, string> = {
+    '#FDEBD0': '#C4975A', // Light skin → sandy blonde
+    '#F5CBA7': '#7B4B2A', // Fair skin → medium brown
+    '#E0AC69': '#3E2723', // Medium → dark brown
+    '#C68642': '#1C1008', // Tan → near-black
+    '#8D5524': '#0E0906', // Brown → black
+    '#5C3A1E': '#080503', // Dark → jet black
+};
+function getHairColor(skinColor: string): string {
+    return HAIR_COLORS[skinColor] ?? '#1C1008';
+}
+
+/** Clothing palette per type — independent of skin tone. */
+const CLOTHING_PALETTE: Record<string, { fill: string; accent: string }> = {
+    tshirt: { fill: '#3B82F6', accent: '#2563EB' },
+    hoodie: { fill: '#6B7280', accent: '#4B5563' },
+    formal: { fill: '#1F2937', accent: '#111827' },
+    tank: { fill: '#EF4444', accent: '#DC2626' },
+};
+
+/* ═══════════════════════════════════════════════════════════
+   Layout Constants
+   ═══════════════════════════════════════════════════════════
+   All coordinates are in a 200×250 viewBox.
+   Centre-X = 100.  All Y values are relative to this grid.
+*/
+const CX = 100; // centre x
+
+/* ═══════════════════════════════════════════════════════════
+   SVG Layer 1 — Body & Skin
+   ═══════════════════════════════════════════════════════════
+   Renders: shoulders / torso / arms / neck / head / ears.
+   Everything uses the SAME skinColor — zero separate darkening.
+*/
+
+function BodySkin({ skinColor, gender }: { skinColor: string; gender: string }) {
+    const isFemale = gender === 'female';
+    const shoulderW = isFemale ? 72 : 82;
+    const headRx = isFemale ? 29 : 32;
+    const headRy = isFemale ? 36 : 38;
+    const headCy = 82;
+    const neckW = 20;
+
     return (
-        <g>
-            {/* Neck */}
+        <g id="body-skin">
+            {/* ── Torso (smooth rounded trapezoid) ── */}
+            <path
+                d={`
+                    M ${CX - shoulderW / 2},155
+                    Q ${CX - shoulderW / 2 - 4},158 ${CX - shoulderW / 2 + 4},200
+                    L ${CX + shoulderW / 2 - 4},200
+                    Q ${CX + shoulderW / 2 + 4},158 ${CX + shoulderW / 2},155
+                    Z
+                `}
+                fill={skinColor}
+            />
+
+            {/* ── Shoulders (curved caps) ── */}
+            <ellipse cx={CX - shoulderW / 2 + 2} cy={155} rx={12} ry={8} fill={skinColor} />
+            <ellipse cx={CX + shoulderW / 2 - 2} cy={155} rx={12} ry={8} fill={skinColor} />
+
+            {/* ── Left arm (capsule shape via rounded rect) ── */}
             <rect
-                x={100 - 14}
-                y={135}
-                width={28}
-                height={30}
-                rx={6}
+                x={CX - shoulderW / 2 - 16}
+                y={152}
+                width={16}
+                height={50}
+                rx={8}
+                ry={8}
                 fill={skinColor}
             />
-            {/* Head */}
-            <ellipse
-                cx={100}
-                cy={90 + jawOffset}
-                rx={faceWidth / 2}
-                ry={gender === 'female' ? 38 : 42}
+            {/* ── Right arm ── */}
+            <rect
+                x={CX + shoulderW / 2}
+                y={152}
+                width={16}
+                height={50}
+                rx={8}
+                ry={8}
                 fill={skinColor}
             />
-            {/* Ears */}
-            <ellipse cx={100 - faceWidth / 2 - 3} cy={92} rx={6} ry={9} fill={skinColor} />
-            <ellipse cx={100 + faceWidth / 2 + 3} cy={92} rx={6} ry={9} fill={skinColor} />
-            {/* Eyes */}
-            <circle cx={87} cy={88} r={3.5} fill="#1a1a1a" />
-            <circle cx={113} cy={88} r={3.5} fill="#1a1a1a" />
-            <circle cx={88} cy={87} r={1.2} fill="white" />
-            <circle cx={114} cy={87} r={1.2} fill="white" />
-            {/* Eyebrows */}
-            <line x1={82} y1={80} x2={92} y2={79} stroke="#333" strokeWidth={2} strokeLinecap="round" />
-            <line x1={108} y1={79} x2={118} y2={80} stroke="#333" strokeWidth={2} strokeLinecap="round" />
-            {/* Nose */}
-            <path d="M97 95 Q100 100 103 95" fill="none" stroke={darkenColor(skinColor, 30)} strokeWidth={1.5} strokeLinecap="round" />
-            {/* Mouth */}
-            <path d="M92 107 Q100 114 108 107" fill="none" stroke={darkenColor(skinColor, 40)} strokeWidth={1.8} strokeLinecap="round" />
+
+            {/* ── Neck ── */}
+            <rect
+                x={CX - neckW / 2}
+                y={headCy + headRy - 10}
+                width={neckW}
+                height={28}
+                rx={neckW / 2}
+                fill={skinColor}
+            />
+
+            {/* ── Head (single ellipse — same skinColor) ── */}
+            <ellipse cx={CX} cy={headCy} rx={headRx} ry={headRy} fill={skinColor} />
+
+            {/* ── Ears ── */}
+            <ellipse cx={CX - headRx - 3} cy={headCy + 4} rx={5} ry={8} fill={skinColor} />
+            <ellipse cx={CX + headRx + 3} cy={headCy + 4} rx={5} ry={8} fill={skinColor} />
         </g>
     );
 }
 
-function HairMale({ type, color }: { type: string; color: string }) {
-    const hairColor = color;
-    switch (type) {
-        case 'short':
-            return (
-                <g>
-                    <ellipse cx={100} cy={62} rx={35} ry={22} fill={hairColor} />
-                    <rect x={66} y={58} width={68} height={18} rx={8} fill={hairColor} />
-                </g>
-            );
-        case 'buzz':
-            return (
-                <g>
-                    <ellipse cx={100} cy={66} rx={34} ry={18} fill={hairColor} />
-                </g>
-            );
-        case 'curly':
-            return (
-                <g>
-                    <ellipse cx={100} cy={58} rx={38} ry={26} fill={hairColor} />
-                    <circle cx={72} cy={70} r={10} fill={hairColor} />
-                    <circle cx={128} cy={70} r={10} fill={hairColor} />
-                    <circle cx={80} cy={56} r={9} fill={hairColor} />
-                    <circle cx={120} cy={56} r={9} fill={hairColor} />
-                </g>
-            );
-        case 'spiky':
-            return (
-                <g>
-                    <polygon points="75,72 82,40 90,68" fill={hairColor} />
-                    <polygon points="88,68 96,35 104,68" fill={hairColor} />
-                    <polygon points="100,68 108,38 116,68" fill={hairColor} />
-                    <polygon points="112,68 120,42 128,72" fill={hairColor} />
-                    <rect x={72} y={60} width={56} height={16} rx={6} fill={hairColor} />
-                </g>
-            );
-        case 'slick':
-            return (
-                <g>
-                    <ellipse cx={100} cy={60} rx={36} ry={24} fill={hairColor} />
-                    <path d="M64,70 Q62,60 68,52 Q80,42 100,40 Q120,42 132,52 Q138,60 136,70" fill={hairColor} />
-                </g>
-            );
-        case 'none':
-            return null;
-        default:
-            return null;
-    }
-}
+/* ═══════════════════════════════════════════════════════════
+   SVG Layer 2 — Clothing Variants
+   ═══════════════════════════════════════════════════════════
+   Each type renders a DIFFERENT shape group entirely.
+   Clothing covers the torso but never the head/face/arms skin.
+*/
 
-function HairFemale({ type, color }: { type: string; color: string }) {
-    const hairColor = color;
-    switch (type) {
-        case 'long':
-            return (
-                <g>
-                    <ellipse cx={100} cy={60} rx={36} ry={24} fill={hairColor} />
-                    <rect x={62} y={58} width={16} height={85} rx={8} fill={hairColor} />
-                    <rect x={122} y={58} width={16} height={85} rx={8} fill={hairColor} />
-                    <path d="M64,70 Q60,100 66,140" fill={hairColor} stroke={hairColor} strokeWidth={4} />
-                    <path d="M136,70 Q140,100 134,140" fill={hairColor} stroke={hairColor} strokeWidth={4} />
-                </g>
-            );
-        case 'bob':
-            return (
-                <g>
-                    <ellipse cx={100} cy={58} rx={38} ry={24} fill={hairColor} />
-                    <rect x={60} y={56} width={80} height={50} rx={20} fill={hairColor} />
-                </g>
-            );
-        case 'curly':
-            return (
-                <g>
-                    <ellipse cx={100} cy={56} rx={40} ry={28} fill={hairColor} />
-                    <circle cx={64} cy={76} r={14} fill={hairColor} />
-                    <circle cx={136} cy={76} r={14} fill={hairColor} />
-                    <circle cx={68} cy={100} r={12} fill={hairColor} />
-                    <circle cx={132} cy={100} r={12} fill={hairColor} />
-                    <circle cx={74} cy={120} r={10} fill={hairColor} />
-                    <circle cx={126} cy={120} r={10} fill={hairColor} />
-                </g>
-            );
-        case 'ponytail':
-            return (
-                <g>
-                    <ellipse cx={100} cy={60} rx={35} ry={22} fill={hairColor} />
-                    <rect x={66} y={58} width={68} height={14} rx={7} fill={hairColor} />
-                    {/* Ponytail going back */}
-                    <ellipse cx={130} cy={68} rx={8} ry={12} fill={hairColor} />
-                    <rect x={126} y={68} width={10} height={60} rx={5} fill={hairColor} />
-                </g>
-            );
-        case 'braids':
-            return (
-                <g>
-                    <ellipse cx={100} cy={60} rx={36} ry={22} fill={hairColor} />
-                    <rect x={66} y={58} width={68} height={14} rx={7} fill={hairColor} />
-                    {/* Left braid */}
-                    <rect x={68} y={66} width={8} height={80} rx={4} fill={hairColor} />
-                    <circle cx={72} cy={148} r={5} fill={hairColor} />
-                    {/* Right braid */}
-                    <rect x={124} y={66} width={8} height={80} rx={4} fill={hairColor} />
-                    <circle cx={128} cy={148} r={5} fill={hairColor} />
-                </g>
-            );
-        case 'bun':
-            return (
-                <g>
-                    <ellipse cx={100} cy={60} rx={35} ry={22} fill={hairColor} />
-                    <rect x={66} y={58} width={68} height={14} rx={7} fill={hairColor} />
-                    <circle cx={100} cy={42} r={16} fill={hairColor} />
-                </g>
-            );
-        default:
-            return null;
-    }
-}
+function ClothingLayer({ type, skinColor }: { type: string; skinColor: string }) {
+    const c = CLOTHING_PALETTE[type] ?? CLOTHING_PALETTE.tshirt;
 
-function ClothingShape({ type, skinColor }: { type: string; skinColor: string }) {
-    const clothingColors: Record<string, { fill: string; accent: string }> = {
-        tshirt: { fill: '#3B82F6', accent: '#2563EB' },
-        hoodie: { fill: '#6B7280', accent: '#4B5563' },
-        formal: { fill: '#1F2937', accent: '#111827' },
-        tank: { fill: '#EF4444', accent: '#DC2626' },
+    const variants: Record<string, React.ReactNode> = {
+        tshirt: (
+            <g id="clothing-tshirt">
+                {/* Main body */}
+                <path
+                    d="M59,200 Q58,168 75,157 Q88,150 100,148 Q112,150 125,157 Q142,168 141,200 Z"
+                    fill={c.fill}
+                />
+                {/* Left sleeve — rounded */}
+                <path d="M59,162 Q50,160 44,170 Q40,180 46,190 L56,182 Q58,172 59,166 Z" fill={c.fill} />
+                {/* Right sleeve — rounded */}
+                <path d="M141,162 Q150,160 156,170 Q160,180 154,190 L144,182 Q142,172 141,166 Z" fill={c.fill} />
+                {/* Round collar */}
+                <path d="M88,149 Q100,157 112,149" fill="none" stroke={c.accent} strokeWidth={2} strokeLinecap="round" />
+            </g>
+        ),
+        hoodie: (
+            <g id="clothing-hoodie">
+                {/* Main body — wider, more coverage */}
+                <path
+                    d="M54,200 Q53,162 74,153 Q88,147 100,146 Q112,147 126,153 Q147,162 146,200 Z"
+                    fill={c.fill}
+                />
+                {/* Sleeves — longer */}
+                <path d="M54,162 Q44,158 38,170 Q34,184 42,196 L54,184 Z" fill={c.fill} />
+                <path d="M146,162 Q156,158 162,170 Q166,184 158,196 L146,184 Z" fill={c.fill} />
+                {/* Hood — arches behind neck */}
+                <path
+                    d="M72,148 Q68,136 76,128 Q88,122 100,120 Q112,122 124,128 Q132,136 128,148"
+                    fill={c.accent}
+                    fillOpacity={0.55}
+                />
+                {/* Centre zipper line */}
+                <line x1={CX} y1={146} x2={CX} y2={200} stroke={c.accent} strokeWidth={1.5} strokeDasharray="4,3" />
+                {/* Kangaroo pocket */}
+                <rect x={80} y={176} width={40} height={14} rx={6} fill={c.accent} fillOpacity={0.35} />
+            </g>
+        ),
+        formal: (
+            <g id="clothing-formal">
+                {/* Jacket body */}
+                <path
+                    d="M56,200 Q56,164 76,155 Q88,150 100,148 Q112,150 124,155 Q144,164 144,200 Z"
+                    fill={c.fill}
+                />
+                {/* Sleeves */}
+                <path d="M56,164 Q46,162 40,174 Q36,186 44,196 L56,184 Z" fill={c.fill} />
+                <path d="M144,164 Q154,162 160,174 Q164,186 156,196 L144,184 Z" fill={c.fill} />
+                {/* White shirt underneath */}
+                <path d="M88,149 L88,200 L112,200 L112,149 Q100,158 88,149 Z" fill="#E5E7EB" />
+                {/* Left lapel */}
+                <path d="M88,149 L80,168 L90,164 Z" fill="#F3F4F6" />
+                {/* Right lapel */}
+                <path d="M112,149 L120,168 L110,164 Z" fill="#F3F4F6" />
+                {/* Tie */}
+                <path d="M98,156 L102,156 L104,186 L100,190 L96,186 Z" fill="#DC2626" />
+                {/* Buttons on jacket */}
+                <circle cx={88} cy={174} r={1.5} fill={c.accent} />
+                <circle cx={88} cy={184} r={1.5} fill={c.accent} />
+                <circle cx={112} cy={174} r={1.5} fill={c.accent} />
+                <circle cx={112} cy={184} r={1.5} fill={c.accent} />
+            </g>
+        ),
+        tank: (
+            <g id="clothing-tank">
+                {/* Narrow body — no sleeves */}
+                <path
+                    d="M72,200 Q72,168 84,158 Q92,153 100,151 Q108,153 116,158 Q128,168 128,200 Z"
+                    fill={c.fill}
+                />
+                {/* Straps */}
+                <rect x={84} y={142} width={7} height={18} rx={3.5} fill={c.fill} />
+                <rect x={109} y={142} width={7} height={18} rx={3.5} fill={c.fill} />
+                {/* Exposed shoulders — show skin over the arm area */}
+                <ellipse cx={CX - 36} cy={155} rx={10} ry={6} fill={skinColor} />
+                <ellipse cx={CX + 36} cy={155} rx={10} ry={6} fill={skinColor} />
+            </g>
+        ),
     };
 
-    const c = clothingColors[type] || clothingColors.tshirt;
-
-    switch (type) {
-        case 'tshirt':
-            return (
-                <g>
-                    <path
-                        d="M60,200 Q60,165 80,155 Q90,150 100,148 Q110,150 120,155 Q140,165 140,200 Z"
-                        fill={c.fill}
-                    />
-                    {/* Sleeves */}
-                    <path d="M60,170 L42,185 L50,195 L65,182" fill={c.fill} />
-                    <path d="M140,170 L158,185 L150,195 L135,182" fill={c.fill} />
-                    {/* Collar */}
-                    <path d="M86,150 Q100,158 114,150" fill="none" stroke={c.accent} strokeWidth={2} />
-                    {/* Neck skin showing */}
-                    <path d="M88,150 Q100,156 112,150 L112,148 Q100,154 88,148 Z" fill={skinColor} />
-                </g>
-            );
-        case 'hoodie':
-            return (
-                <g>
-                    <path
-                        d="M55,200 Q55,160 78,152 Q90,148 100,146 Q110,148 122,152 Q145,160 145,200 Z"
-                        fill={c.fill}
-                    />
-                    <path d="M55,168 L38,182 L46,196 L60,180" fill={c.fill} />
-                    <path d="M145,168 L162,182 L154,196 L140,180" fill={c.fill} />
-                    {/* Hood */}
-                    <path d="M72,150 Q70,138 78,132 Q100,126 122,132 Q130,138 128,150" fill={c.accent} fillOpacity={0.6} />
-                    {/* Pocket */}
-                    <rect x={82} y={178} width={36} height={14} rx={4} fill={c.accent} fillOpacity={0.4} />
-                    {/* Zipper line */}
-                    <line x1={100} y1={148} x2={100} y2={200} stroke={c.accent} strokeWidth={1.5} strokeDasharray="3,3" />
-                </g>
-            );
-        case 'formal':
-            return (
-                <g>
-                    <path
-                        d="M58,200 Q58,162 80,154 Q90,150 100,148 Q110,150 120,154 Q142,162 142,200 Z"
-                        fill={c.fill}
-                    />
-                    <path d="M58,168 L40,183 L48,195 L63,180" fill={c.fill} />
-                    <path d="M142,168 L160,183 L152,195 L137,180" fill={c.fill} />
-                    {/* Collar / Lapels */}
-                    <path d="M88,150 L82,165 L92,160 Z" fill="white" />
-                    <path d="M112,150 L118,165 L108,160 Z" fill="white" />
-                    {/* Tie */}
-                    <polygon points="98,158 102,158 104,185 100,188 96,185" fill="#E11D48" />
-                    {/* Buttons */}
-                    <circle cx={100} cy={172} r={1.5} fill={c.accent} />
-                    <circle cx={100} cy={182} r={1.5} fill={c.accent} />
-                </g>
-            );
-        case 'tank':
-            return (
-                <g>
-                    <path
-                        d="M68,200 Q68,168 82,158 Q92,152 100,150 Q108,152 118,158 Q132,168 132,200 Z"
-                        fill={c.fill}
-                    />
-                    {/* Exposed shoulders */}
-                    <path d="M68,166 Q60,168 55,178 L58,180 Q62,170 68,168" fill={skinColor} />
-                    <path d="M132,166 Q140,168 145,178 L142,180 Q138,170 132,168" fill={skinColor} />
-                    {/* Strap */}
-                    <rect x={82} y={145} width={8} height={14} rx={3} fill={c.fill} />
-                    <rect x={110} y={145} width={8} height={14} rx={3} fill={c.fill} />
-                </g>
-            );
-        default:
-            return null;
-    }
+    return <>{variants[type] ?? variants.tshirt}</>;
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Color Utilities
-   ═══════════════════════════════════════════════════════════ */
+   SVG Layer 3 — Face Details
+   ═══════════════════════════════════════════════════════════
+   Rendered ABOVE clothing but BELOW hair.
+   Uses subtle darken() of the SAME skinColor — never a separate
+   colour. Ensures nose/mouth lines stay relative, not absolute.
+*/
 
-function darkenColor(hex: string, amount: number): string {
-    const num = parseInt(hex.replace('#', ''), 16);
-    const r = Math.max((num >> 16) - amount, 0);
-    const g = Math.max(((num >> 8) & 0x00FF) - amount, 0);
-    const b = Math.max((num & 0x0000FF) - amount, 0);
-    return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
-}
+function FaceDetails({ skinColor, gender }: { skinColor: string; gender: string }) {
+    const cy = 82; // same headCy
+    const lineColor = darken(skinColor, 0.28);
+    const isFemale = gender === 'female';
 
-function getHairColor(skinColor: string): string {
-    const hairMap: Record<string, string> = {
-        '#FDEBD0': '#D4A574',
-        '#F5CBA7': '#8B6914',
-        '#E0AC69': '#4A3728',
-        '#C68642': '#2C1A0E',
-        '#8D5524': '#1A0F08',
-        '#5C3A1E': '#0D0705',
-    };
-    return hairMap[skinColor] || '#2C1A0E';
+    return (
+        <g id="face-details">
+            {/* Eyes */}
+            <ellipse cx={CX - 10} cy={cy} rx={3} ry={3.2} fill="#1a1a1a" />
+            <ellipse cx={CX + 10} cy={cy} rx={3} ry={3.2} fill="#1a1a1a" />
+            {/* Eye highlights */}
+            <circle cx={CX - 9} cy={cy - 1} r={1.2} fill="white" />
+            <circle cx={CX + 11} cy={cy - 1} r={1.2} fill="white" />
+            {/* Eyebrows */}
+            <path
+                d={`M${CX - 16},${cy - 9} Q${CX - 10},${cy - 12} ${CX - 5},${cy - 9}`}
+                fill="none" stroke="#444" strokeWidth={isFemale ? 1.4 : 2} strokeLinecap="round"
+            />
+            <path
+                d={`M${CX + 5},${cy - 9} Q${CX + 10},${cy - 12} ${CX + 16},${cy - 9}`}
+                fill="none" stroke="#444" strokeWidth={isFemale ? 1.4 : 2} strokeLinecap="round"
+            />
+            {/* Nose */}
+            <path
+                d={`M${CX - 3},${cy + 9} Q${CX},${cy + 14} ${CX + 3},${cy + 9}`}
+                fill="none" stroke={lineColor} strokeWidth={1.4} strokeLinecap="round"
+            />
+            {/* Mouth — friendly smile */}
+            <path
+                d={`M${CX - 7},${cy + 20} Q${CX},${cy + 26} ${CX + 7},${cy + 20}`}
+                fill="none" stroke={lineColor} strokeWidth={1.6} strokeLinecap="round"
+            />
+            {/* Optional: blush for female */}
+            {isFemale && (
+                <>
+                    <circle cx={CX - 16} cy={cy + 10} r={5} fill="#F9A8D4" fillOpacity={0.2} />
+                    <circle cx={CX + 16} cy={cy + 10} r={5} fill="#F9A8D4" fillOpacity={0.2} />
+                </>
+            )}
+        </g>
+    );
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Avatar Preview Component
+   SVG Layer 4 — Hair Variants (map-based)
+   ═══════════════════════════════════════════════════════════
+   Every variant is its own distinct path group.
+   Positioned relative to the head centre (CX, headCy=82).
+   Hair NEVER uses skinColor — only hairColor.
+*/
+
+function HairLayer({ gender, type, hairColor }: { gender: string; type: string; hairColor: string }) {
+    const hc = hairColor;
+    const headTop = 45; // top of head ellipse
+
+    /** Male variants */
+    const maleVariants: Record<string, React.ReactNode> = {
+        short: (
+            <g id="hair-short">
+                {/* Cap of hair sitting on top of the head */}
+                <path
+                    d={`M${CX - 33},${headTop + 20}
+                        Q${CX - 34},${headTop + 2} ${CX - 20},${headTop - 4}
+                        Q${CX},${headTop - 12} ${CX + 20},${headTop - 4}
+                        Q${CX + 34},${headTop + 2} ${CX + 33},${headTop + 20}
+                        Q${CX + 20},${headTop + 12} ${CX},${headTop + 10}
+                        Q${CX - 20},${headTop + 12} ${CX - 33},${headTop + 20} Z`}
+                    fill={hc}
+                />
+                {/* Side coverage */}
+                <rect x={CX - 33} y={headTop + 14} width={8} height={24} rx={4} fill={hc} />
+                <rect x={CX + 25} y={headTop + 14} width={8} height={24} rx={4} fill={hc} />
+            </g>
+        ),
+        buzz: (
+            <g id="hair-buzz">
+                {/* Very thin layer — like 5 o'clock shadow on head */}
+                <ellipse cx={CX} cy={headTop + 10} rx={31} ry={18} fill={hc} fillOpacity={0.7} />
+            </g>
+        ),
+        curly: (
+            <g id="hair-curly">
+                {/* Bunch of overlapping circles above & around head */}
+                <circle cx={CX - 18} cy={headTop} r={14} fill={hc} />
+                <circle cx={CX} cy={headTop - 6} r={14} fill={hc} />
+                <circle cx={CX + 18} cy={headTop} r={14} fill={hc} />
+                <circle cx={CX - 26} cy={headTop + 12} r={12} fill={hc} />
+                <circle cx={CX + 26} cy={headTop + 12} r={12} fill={hc} />
+                <circle cx={CX - 10} cy={headTop - 4} r={11} fill={hc} />
+                <circle cx={CX + 10} cy={headTop - 4} r={11} fill={hc} />
+            </g>
+        ),
+        spiky: (
+            <g id="hair-spiky">
+                {/* Triangular spikes rising from head */}
+                <polygon points={`${CX - 20},${headTop + 14} ${CX - 14},${headTop - 18} ${CX - 6},${headTop + 14}`} fill={hc} />
+                <polygon points={`${CX - 8},${headTop + 10} ${CX},${headTop - 24} ${CX + 8},${headTop + 10}`} fill={hc} />
+                <polygon points={`${CX + 6},${headTop + 14} ${CX + 14},${headTop - 18} ${CX + 20},${headTop + 14}`} fill={hc} />
+                {/* Base band connecting spikes */}
+                <rect x={CX - 28} y={headTop + 8} width={56} height={12} rx={6} fill={hc} />
+            </g>
+        ),
+        slick: (
+            <g id="hair-slick">
+                {/* Smooth shell swept back */}
+                <path
+                    d={`M${CX - 34},${headTop + 22}
+                        Q${CX - 36},${headTop} ${CX - 22},${headTop - 8}
+                        Q${CX},${headTop - 16} ${CX + 22},${headTop - 8}
+                        Q${CX + 36},${headTop} ${CX + 34},${headTop + 22}
+                        Q${CX},${headTop + 15} ${CX - 34},${headTop + 22} Z`}
+                    fill={hc}
+                />
+                {/* Part line */}
+                <path
+                    d={`M${CX - 8},${headTop - 10} Q${CX - 4},${headTop + 6} ${CX - 10},${headTop + 20}`}
+                    fill="none" stroke={darken(hc, 0.2)} strokeWidth={1.2} strokeLinecap="round"
+                />
+            </g>
+        ),
+        none: null,
+    };
+
+    /** Female variants */
+    const femaleVariants: Record<string, React.ReactNode> = {
+        long: (
+            <g id="hair-long">
+                {/* Top cap */}
+                <path
+                    d={`M${CX - 34},${headTop + 18}
+                        Q${CX - 36},${headTop - 2} ${CX},${headTop - 14}
+                        Q${CX + 36},${headTop - 2} ${CX + 34},${headTop + 18}
+                        Z`}
+                    fill={hc}
+                />
+                {/* Left flowing hair */}
+                <path
+                    d={`M${CX - 34},${headTop + 16}
+                        Q${CX - 38},${headTop + 50} ${CX - 34},${headTop + 100}
+                        Q${CX - 30},${headTop + 104} ${CX - 24},${headTop + 98}
+                        Q${CX - 28},${headTop + 50} ${CX - 26},${headTop + 18}
+                        Z`}
+                    fill={hc}
+                />
+                {/* Right flowing hair */}
+                <path
+                    d={`M${CX + 34},${headTop + 16}
+                        Q${CX + 38},${headTop + 50} ${CX + 34},${headTop + 100}
+                        Q${CX + 30},${headTop + 104} ${CX + 24},${headTop + 98}
+                        Q${CX + 28},${headTop + 50} ${CX + 26},${headTop + 18}
+                        Z`}
+                    fill={hc}
+                />
+            </g>
+        ),
+        bob: (
+            <g id="hair-bob">
+                {/* Top cap */}
+                <path
+                    d={`M${CX - 34},${headTop + 22}
+                        Q${CX - 36},${headTop - 2} ${CX},${headTop - 14}
+                        Q${CX + 36},${headTop - 2} ${CX + 34},${headTop + 22}
+                        Z`}
+                    fill={hc}
+                />
+                {/* Rounded bob sides */}
+                <path
+                    d={`M${CX - 34},${headTop + 18}
+                        Q${CX - 40},${headTop + 50} ${CX - 32},${headTop + 60}
+                        Q${CX - 22},${headTop + 66} ${CX - 16},${headTop + 58}
+                        Q${CX - 24},${headTop + 40} ${CX - 26},${headTop + 20}
+                        Z`}
+                    fill={hc}
+                />
+                <path
+                    d={`M${CX + 34},${headTop + 18}
+                        Q${CX + 40},${headTop + 50} ${CX + 32},${headTop + 60}
+                        Q${CX + 22},${headTop + 66} ${CX + 16},${headTop + 58}
+                        Q${CX + 24},${headTop + 40} ${CX + 26},${headTop + 20}
+                        Z`}
+                    fill={hc}
+                />
+            </g>
+        ),
+        curly: (
+            <g id="hair-curly-f">
+                {/* Cloud of curls around head */}
+                <circle cx={CX - 20} cy={headTop - 2} r={16} fill={hc} />
+                <circle cx={CX} cy={headTop - 8} r={16} fill={hc} />
+                <circle cx={CX + 20} cy={headTop - 2} r={16} fill={hc} />
+                <circle cx={CX - 30} cy={headTop + 16} r={14} fill={hc} />
+                <circle cx={CX + 30} cy={headTop + 16} r={14} fill={hc} />
+                {/* Side volume flowing down */}
+                <circle cx={CX - 34} cy={headTop + 40} r={12} fill={hc} />
+                <circle cx={CX + 34} cy={headTop + 40} r={12} fill={hc} />
+                <circle cx={CX - 30} cy={headTop + 60} r={10} fill={hc} />
+                <circle cx={CX + 30} cy={headTop + 60} r={10} fill={hc} />
+            </g>
+        ),
+        ponytail: (
+            <g id="hair-ponytail">
+                {/* Top cap */}
+                <path
+                    d={`M${CX - 33},${headTop + 20}
+                        Q${CX - 34},${headTop - 2} ${CX},${headTop - 12}
+                        Q${CX + 34},${headTop - 2} ${CX + 33},${headTop + 20}
+                        Q${CX},${headTop + 14} ${CX - 33},${headTop + 20} Z`}
+                    fill={hc}
+                />
+                {/* Ponytail gathered at back-right */}
+                <ellipse cx={CX + 28} cy={headTop + 18} rx={6} ry={8} fill={hc} />
+                <path
+                    d={`M${CX + 26},${headTop + 24}
+                        Q${CX + 32},${headTop + 50} ${CX + 28},${headTop + 80}
+                        Q${CX + 26},${headTop + 86} ${CX + 22},${headTop + 78}
+                        Q${CX + 24},${headTop + 50} ${CX + 22},${headTop + 26}
+                        Z`}
+                    fill={hc}
+                />
+                {/* Hair tie */}
+                <ellipse cx={CX + 25} cy={headTop + 24} rx={4} ry={3} fill={darken(hc, 0.3)} />
+            </g>
+        ),
+        braids: (
+            <g id="hair-braids">
+                {/* Top cap */}
+                <path
+                    d={`M${CX - 34},${headTop + 20}
+                        Q${CX - 34},${headTop - 2} ${CX},${headTop - 12}
+                        Q${CX + 34},${headTop - 2} ${CX + 34},${headTop + 20}
+                        Q${CX},${headTop + 14} ${CX - 34},${headTop + 20} Z`}
+                    fill={hc}
+                />
+                {/* Left braid */}
+                <rect x={CX - 32} y={headTop + 16} width={7} height={80} rx={3.5} fill={hc} />
+                <circle cx={CX - 28.5} cy={headTop + 98} r={5} fill={darken(hc, 0.15)} />
+                {/* Right braid */}
+                <rect x={CX + 25} y={headTop + 16} width={7} height={80} rx={3.5} fill={hc} />
+                <circle cx={CX + 28.5} cy={headTop + 98} r={5} fill={darken(hc, 0.15)} />
+            </g>
+        ),
+        bun: (
+            <g id="hair-bun">
+                {/* Top cap */}
+                <path
+                    d={`M${CX - 33},${headTop + 20}
+                        Q${CX - 34},${headTop - 2} ${CX},${headTop - 12}
+                        Q${CX + 34},${headTop - 2} ${CX + 33},${headTop + 20}
+                        Q${CX},${headTop + 14} ${CX - 33},${headTop + 20} Z`}
+                    fill={hc}
+                />
+                {/* Bun on top */}
+                <circle cx={CX} cy={headTop - 12} r={14} fill={hc} />
+                <circle cx={CX} cy={headTop - 14} r={10} fill={darken(hc, 0.08)} />
+            </g>
+        ),
+    };
+
+    const variants = gender === 'male' ? maleVariants : femaleVariants;
+    return <>{variants[type] ?? null}</>;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Avatar Preview Component — Assembled with correct layer order
    ═══════════════════════════════════════════════════════════ */
 
 export function AvatarPreview({
@@ -333,44 +542,148 @@ export function AvatarPreview({
         <div
             className={cn(
                 'rounded-full overflow-hidden bg-gradient-to-b from-zinc-800 to-zinc-900 flex items-center justify-center',
-                className
+                className,
             )}
             style={{ width: size, height: size }}
         >
             <svg
-                viewBox="30 30 140 170"
+                viewBox="30 30 140 180"
                 width={size}
                 height={size}
                 xmlns="http://www.w3.org/2000/svg"
             >
-                {/* Background circle */}
+                {/* Background */}
                 <defs>
-                    <radialGradient id="avatarBg" cx="50%" cy="40%" r="60%">
+                    <radialGradient id="avatarBg" cx="50%" cy="38%" r="62%">
                         <stop offset="0%" stopColor="#27272a" />
                         <stop offset="100%" stopColor="#18181b" />
                     </radialGradient>
                 </defs>
-                <rect x={30} y={30} width={140} height={170} fill="url(#avatarBg)" />
+                <rect x={30} y={30} width={140} height={180} fill="url(#avatarBg)" />
 
-                {/* Clothing (behind head) */}
-                <ClothingShape type={config.clothing} skinColor={config.skinColor} />
+                {/*
+                    Layer order (back → front):
+                    1. Body skin (torso + arms + neck + head + ears)
+                    2. Clothing (wraps over torso, under head)
+                    3. Face details (eyes, brows, nose, mouth)
+                    4. Hair (on top of everything)
+                */}
 
-                {/* Head */}
-                <HeadShape skinColor={config.skinColor} gender={config.gender} />
+                {/* Layer 1 — Skin */}
+                <BodySkin skinColor={config.skinColor} gender={config.gender} />
 
-                {/* Hair (on top) */}
-                {config.gender === 'male' ? (
-                    <HairMale type={validHair} color={hairColor} />
-                ) : (
-                    <HairFemale type={validHair} color={hairColor} />
-                )}
+                {/* Layer 2 — Clothing */}
+                <ClothingLayer type={config.clothing} skinColor={config.skinColor} />
+
+                {/* Layer 3 — Face */}
+                <FaceDetails skinColor={config.skinColor} gender={config.gender} />
+
+                {/* Layer 4 — Hair */}
+                <HairLayer gender={config.gender} type={validHair} hairColor={hairColor} />
             </svg>
         </div>
     );
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Avatar Customizer Component
+   Reusable UI Primitives
+   ═══════════════════════════════════════════════════════════ */
+
+/** Card section wrapper with a consistent title style */
+export function CustomizationSection({
+    title,
+    children,
+}: {
+    title: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="space-y-3">
+            <h3 className="text-[11px] font-semibold text-zinc-400 uppercase tracking-[0.14em] px-1 select-none">
+                {title}
+            </h3>
+            <div className="rounded-2xl bg-zinc-950/40 border border-zinc-800/50 p-4">
+                {children}
+            </div>
+        </div>
+    );
+}
+
+/** Generic pill-button selector rendered as a responsive grid */
+export function OptionGrid({
+    options,
+    value,
+    onChange,
+    columns = 2,
+}: {
+    options: { label: string; value: string }[];
+    value: string;
+    onChange: (value: string) => void;
+    columns?: 2 | 3;
+}) {
+    return (
+        <div
+            className={cn(
+                'grid gap-2',
+                columns === 3 ? 'grid-cols-3' : 'grid-cols-2',
+            )}
+        >
+            {options.map((opt) => (
+                <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => onChange(opt.value)}
+                    className={cn(
+                        'relative py-2.5 px-3 rounded-xl border text-sm font-medium transition-all duration-200 capitalize',
+                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40',
+                        value === opt.value
+                            ? 'bg-white text-zinc-900 border-white/90 shadow-[0_0_14px_rgba(255,255,255,0.06)]'
+                            : 'bg-zinc-900/50 text-zinc-500 border-zinc-800/70 hover:border-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/60 active:scale-[0.97]',
+                    )}
+                >
+                    {opt.label}
+                </button>
+            ))}
+        </div>
+    );
+}
+
+/** Color swatch selector for skin tones */
+export function SkinTonePicker({
+    colors,
+    value,
+    onChange,
+}: {
+    colors: { label: string; value: string }[];
+    value: string;
+    onChange: (value: string) => void;
+}) {
+    return (
+        <div className="flex items-center gap-3 flex-wrap">
+            {colors.map((sc) => (
+                <button
+                    key={sc.value}
+                    type="button"
+                    onClick={() => onChange(sc.value)}
+                    className={cn(
+                        'w-10 h-10 rounded-full border-2 transition-all duration-200',
+                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40',
+                        'hover:scale-110 active:scale-100',
+                        value === sc.value
+                            ? 'border-white scale-110 ring-[3px] ring-white/20 shadow-lg'
+                            : 'border-zinc-700/40 hover:border-zinc-500',
+                    )}
+                    style={{ backgroundColor: sc.value }}
+                    title={sc.label}
+                    aria-label={`Skin tone: ${sc.label}`}
+                />
+            ))}
+        </div>
+    );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Avatar Customizer — Controls Panel
    ═══════════════════════════════════════════════════════════ */
 
 export function AvatarCustomizer({
@@ -384,111 +697,60 @@ export function AvatarCustomizer({
 
     const handleGenderChange = (gender: 'male' | 'female') => {
         const newHairTypes = gender === 'male' ? HAIR_TYPES_MALE : HAIR_TYPES_FEMALE;
-        onChange({
-            ...config,
-            gender,
-            hairType: newHairTypes[0] as string,
-        });
+        onChange({ ...config, gender, hairType: newHairTypes[0] as string });
     };
 
+    const genderOptions = [
+        { label: 'Male', value: 'male' },
+        { label: 'Female', value: 'female' },
+    ];
+
+    const hairOptions = hairTypes.map((ht) => ({
+        label: (ht as string).charAt(0).toUpperCase() + (ht as string).slice(1),
+        value: ht as string,
+    }));
+
+    const clothingOptions = CLOTHING_OPTIONS.map((co) => ({
+        label: co.label,
+        value: co.value,
+    }));
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-5">
+            <CustomizationSection title="Gender">
+                <OptionGrid
+                    options={genderOptions}
+                    value={config.gender}
+                    onChange={(v) => handleGenderChange(v as 'male' | 'female')}
+                    columns={2}
+                />
+            </CustomizationSection>
 
-            {/* Gender */}
-            <div className="space-y-2.5">
-                <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest pl-1">
-                    Gender
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                    {(['male', 'female'] as const).map((g) => (
-                        <button
-                            key={g}
-                            type="button"
-                            onClick={() => handleGenderChange(g)}
-                            className={cn(
-                                'py-2.5 rounded-xl border text-sm font-medium transition-all capitalize',
-                                config.gender === g
-                                    ? 'bg-white text-black border-white'
-                                    : 'bg-zinc-900/80 text-zinc-500 border-zinc-800 hover:border-zinc-700 hover:text-zinc-300'
-                            )}
-                        >
-                            {g}
-                        </button>
-                    ))}
-                </div>
-            </div>
+            <CustomizationSection title="Skin Tone">
+                <SkinTonePicker
+                    colors={SKIN_COLORS}
+                    value={config.skinColor}
+                    onChange={(v) => onChange({ ...config, skinColor: v })}
+                />
+            </CustomizationSection>
 
-            {/* Skin Color */}
-            <div className="space-y-2.5">
-                <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest pl-1">
-                    Skin Tone
-                </label>
-                <div className="flex gap-2">
-                    {SKIN_COLORS.map((sc) => (
-                        <button
-                            key={sc.value}
-                            type="button"
-                            onClick={() => onChange({ ...config, skinColor: sc.value })}
-                            className={cn(
-                                'w-9 h-9 rounded-full border-2 transition-all hover:scale-110',
-                                config.skinColor === sc.value
-                                    ? 'border-white scale-110 ring-2 ring-white/20'
-                                    : 'border-zinc-700 hover:border-zinc-500'
-                            )}
-                            style={{ backgroundColor: sc.value }}
-                            title={sc.label}
-                        />
-                    ))}
-                </div>
-            </div>
+            <CustomizationSection title="Hair Style">
+                <OptionGrid
+                    options={hairOptions}
+                    value={config.hairType}
+                    onChange={(v) => onChange({ ...config, hairType: v })}
+                    columns={3}
+                />
+            </CustomizationSection>
 
-            {/* Hair Type */}
-            <div className="space-y-2.5">
-                <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest pl-1">
-                    Hair Style
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                    {hairTypes.map((ht) => (
-                        <button
-                            key={ht}
-                            type="button"
-                            onClick={() => onChange({ ...config, hairType: ht as string })}
-                            className={cn(
-                                'py-2 rounded-xl border text-xs font-medium transition-all capitalize',
-                                config.hairType === ht
-                                    ? 'bg-white text-black border-white'
-                                    : 'bg-zinc-900/80 text-zinc-500 border-zinc-800 hover:border-zinc-700 hover:text-zinc-300'
-                            )}
-                        >
-                            {ht}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Clothing */}
-            <div className="space-y-2.5">
-                <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest pl-1">
-                    Clothing
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                    {CLOTHING_OPTIONS.map((co) => (
-                        <button
-                            key={co.value}
-                            type="button"
-                            onClick={() => onChange({ ...config, clothing: co.value })}
-                            className={cn(
-                                'py-2.5 rounded-xl border text-sm font-medium transition-all',
-                                config.clothing === co.value
-                                    ? 'bg-white text-black border-white'
-                                    : 'bg-zinc-900/80 text-zinc-500 border-zinc-800 hover:border-zinc-700 hover:text-zinc-300'
-                            )}
-                        >
-                            {co.label}
-                        </button>
-                    ))}
-                </div>
-            </div>
+            <CustomizationSection title="Clothing">
+                <OptionGrid
+                    options={clothingOptions}
+                    value={config.clothing}
+                    onChange={(v) => onChange({ ...config, clothing: v })}
+                    columns={2}
+                />
+            </CustomizationSection>
         </div>
     );
 }
