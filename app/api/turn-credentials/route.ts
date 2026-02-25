@@ -5,63 +5,59 @@ export async function GET() {
         const meteredDomain = process.env.NEXT_PUBLIC_METERED_DOMAIN;
         const apiKey = process.env.METERED_API_KEY;
 
-        // 1. Try fetching dynamic credentials from Metered if possible
+        // 1. Try fetching dynamic TURN credentials from Metered
+        // This is the RECOMMENDED path — dynamic credentials are time-limited and always valid.
         if (meteredDomain && apiKey) {
             try {
-                // Try v1 API
                 const response = await fetch(
                     `https://${meteredDomain}/api/v1/turn/credentials?apiKey=${apiKey}`,
-                    { next: { revalidate: 3600 } }
+                    { cache: 'no-store' } // Always fetch fresh credentials
                 );
 
                 if (response.ok) {
-                    const iceServers = await response.json();
-                    if (Array.isArray(iceServers) && iceServers.length > 0) {
+                    const meteredServers = await response.json();
+                    if (Array.isArray(meteredServers) && meteredServers.length > 0) {
+                        // Prepend STUN servers + append the dynamic TURN credentials
+                        const iceServers: RTCIceServer[] = [
+                            { urls: 'stun:stun.l.google.com:19302' },
+                            { urls: 'stun:stun1.l.google.com:19302' },
+                            { urls: 'stun:global.stun.twilio.com:3478' },
+                            ...meteredServers,
+                        ];
+                        console.log(`[TURN] Fetched ${meteredServers.length} dynamic TURN servers from Metered`);
                         return NextResponse.json({ iceServers });
                     }
+                } else {
+                    console.warn(`[TURN] Metered API returned ${response.status}: ${response.statusText}`);
                 }
             } catch (e) {
-                console.warn('Metered dynamic API failed:', e);
+                console.warn('[TURN] Metered dynamic API failed:', e);
             }
+        } else {
+            console.warn('[TURN] NEXT_PUBLIC_METERED_DOMAIN or METERED_API_KEY not set — TURN relay will NOT work across different networks!');
         }
 
-        // 2. Fallback to Open Relay Project (Free TURN servers by Metered)
-        // These are public and work without a specific account plan for testing
-        const iceServers = [
+        // 2. Fallback: STUN-only (works on same network, fails across NAT/firewalls)
+        // To fix cross-network calls, sign up at https://www.metered.ca/
+        // and set NEXT_PUBLIC_METERED_DOMAIN + METERED_API_KEY env vars.
+        const iceServers: RTCIceServer[] = [
             { urls: 'stun:stun.l.google.com:19302' },
             { urls: 'stun:stun1.l.google.com:19302' },
             { urls: 'stun:stun2.l.google.com:19302' },
+            { urls: 'stun:stun3.l.google.com:19302' },
+            { urls: 'stun:stun4.l.google.com:19302' },
             { urls: 'stun:global.stun.twilio.com:3478' },
-            {
-                urls: 'turn:openrelay.metered.ca:80',
-                username: 'openrelayproject',
-                credential: 'openrelayproject',
-            },
-            {
-                urls: 'turn:openrelay.metered.ca:80?transport=tcp',
-                username: 'openrelayproject',
-                credential: 'openrelayproject',
-            },
-            {
-                urls: 'turn:openrelay.metered.ca:443',
-                username: 'openrelayproject',
-                credential: 'openrelayproject',
-            },
-            {
-                urls: 'turns:openrelay.metered.ca:443?transport=tcp',
-                username: 'openrelayproject',
-                credential: 'openrelayproject',
-            },
         ];
 
-        return NextResponse.json({ iceServers });
+        return NextResponse.json({ iceServers, turnMissing: true });
     } catch (error) {
-        console.error('Error in turn-credentials API:', error);
+        console.error('[TURN] Error in turn-credentials API:', error);
         return NextResponse.json({
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
                 { urls: 'stun:global.stun.twilio.com:3478' },
-            ]
+            ],
+            turnMissing: true,
         }, { status: 500 });
     }
 }

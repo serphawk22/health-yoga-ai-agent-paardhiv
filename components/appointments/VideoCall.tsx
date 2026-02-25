@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import {
     Mic, MicOff, Video, VideoOff, PhoneOff,
-    Users, Shield, Signal,
+    Shield, Signal, AlertTriangle,
     Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -37,6 +37,7 @@ export function VideoCall({ appointmentId, meetingId, userName, otherName, role 
     const [showControls, setShowControls] = useState(true);
     const [connectionStrength, setConnectionStrength] = useState(3);
     const [status, setStatus] = useState('Initializing secure connection...');
+    const [turnMissing, setTurnMissing] = useState(false);
 
     // Refs for video elements
     const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -81,11 +82,16 @@ export function VideoCall({ appointmentId, meetingId, userName, otherName, role 
                         const data = await res.json();
                         if (data.iceServers && data.iceServers.length > 0) {
                             iceServers = data.iceServers;
-                            console.log('Got TURN credentials:', iceServers.length, 'servers');
+                            console.log('[ICE] Got', iceServers.length, 'servers, hasTURN:', iceServers.some((s: any) => JSON.stringify(s.urls || '').includes('turn:')));
+                        }
+                        if (data.turnMissing) {
+                            console.warn('[ICE] TURN servers missing — cross-network calls will fail!');
+                            setTurnMissing(true);
                         }
                     }
                 } catch (e) {
-                    console.warn('Failed to fetch TURN credentials, using STUN only:', e);
+                    console.warn('[ICE] Failed to fetch TURN credentials, using STUN only:', e);
+                    setTurnMissing(true);
                 }
 
                 // 3. Import PeerJS & Initialize
@@ -295,6 +301,18 @@ export function VideoCall({ appointmentId, meetingId, userName, otherName, role 
                                 <h3 className="text-xl font-bold text-white tracking-widest uppercase">{status}</h3>
                                 <p className="text-zinc-500 text-sm">Secure handshake in progress...</p>
                             </div>
+
+                            {turnMissing && (
+                                <div className="z-10 max-w-md mx-4 mt-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-md">
+                                    <div className="flex items-start gap-3">
+                                        <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                                        <div>
+                                            <p className="text-sm font-bold text-amber-400">TURN server not configured</p>
+                                            <p className="text-xs text-amber-400/70 mt-1">Video calls only work on the same network. To enable cross-network calls, configure TURN server credentials in environment variables.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -396,10 +414,6 @@ export function VideoCall({ appointmentId, meetingId, userName, otherName, role 
                                 onClick={toggleVideo}
                                 color={isVideoOff ? "bg-red-500/20 text-red-500 border-red-500/30" : "bg-white/5 text-white border-white/10"}
                             />
-                            <button className="w-14 h-14 rounded-2xl bg-white/5 text-white border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all active:scale-90">
-                                <Users className="w-6 h-6" />
-                            </button>
-
                             <div className="w-px h-10 bg-white/5 mx-2" />
 
                             <button
