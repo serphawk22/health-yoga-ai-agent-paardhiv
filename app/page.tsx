@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Typewriter } from '@/components/ui/typewriter';
 import { TubesBackground } from '@/components/ui/neon-flow';

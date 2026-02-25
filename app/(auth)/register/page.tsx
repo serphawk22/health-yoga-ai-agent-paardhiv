@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { signUp } from '@/lib/actions/auth';
 import { Eye, EyeOff, Loader2, ArrowRight } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 export default function RegisterPage() {

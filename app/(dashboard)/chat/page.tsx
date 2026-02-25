@@ -48,7 +48,7 @@ export default function ChatPage() {
         id: m.id,
         role: m.role === 'USER' ? 'user' : 'assistant',
         content: m.content,
-        createdAt: m.createdAt,
+        createdAt: new Date(m.createdAt),
       })));
       setShowSidebar(false); // Close sidebar on mobile after selection
     }

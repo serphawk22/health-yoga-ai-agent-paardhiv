@@ -24,6 +24,7 @@ const protectedRoutes = [
   '/profile',
   '/settings',
   '/doctor',
+  '/marketplace',
 ];
 
 export async function middleware(request: NextRequest) {
@@ -88,9 +89,9 @@ export async function middleware(request: NextRequest) {
 
       // Debug Env Var presence (DO NOT EXPOSE THE KEY)
       // Just check if it's the default or custom
-      const secret = process.env.AUTH_SECRET || 'health-agent-default-secret-key-change-me-in-prod';
+      const secret = process.env.AUTH_SECRET || 'health-agent-production-secret-key-fixed-2026';
       url.searchParams.set('slen', secret.length.toString());
-      url.searchParams.set('is_default', secret.includes('health-agent-default') ? 'true' : 'false');
+      url.searchParams.set('is_default', (!process.env.AUTH_SECRET) ? 'true' : 'false');
 
       const response = NextResponse.redirect(url);
 

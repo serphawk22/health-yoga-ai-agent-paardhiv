@@ -114,7 +114,7 @@ export function SellerDashboard() {
                         </Link>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto no-scrollbar">
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] border-b border-white/5 bg-white/[0.01]">

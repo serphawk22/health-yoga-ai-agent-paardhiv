@@ -9,7 +9,7 @@ import { GradientButton } from '@/components/ui/gradient-button';
 import { useRouter } from 'next/navigation';
 import { getNotifications, markAllNotificationsAsRead, markNotificationAsRead, clearAllNotifications } from '@/lib/actions/notification';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
 interface UserCapsuleProps {

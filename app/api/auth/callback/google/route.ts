@@ -29,7 +29,12 @@ export async function GET(request: Request) {
 
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  const origin = process.env.NEXT_PUBLIC_APP_URL || url.origin;
+  
+  // Use the actual request origin to avoid redirecting to localhost in production
+  const origin = url.origin.includes('localhost') && process.env.NEXT_PUBLIC_APP_URL 
+    ? process.env.NEXT_PUBLIC_APP_URL 
+    : url.origin;
+
   const redirectUri = `${origin}/api/auth/callback/google`;
 
   if (!clientId || !clientSecret) {

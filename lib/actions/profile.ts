@@ -63,11 +63,21 @@ export async function updateProfile(data: any): Promise<ProfileActionResult> {
       'fitnessGoals': 'secondaryGoals',
     };
 
+    const allowedFields = new Set([
+      'dateOfBirth', 'age', 'gender', 'height', 'weight', 'bloodType',
+      'existingConditions', 'allergies', 'medications', 'injuries',
+      'dietPreference', 'activityLevel', 'sleepQuality', 'stressLevel',
+      'smokingStatus', 'alcoholConsumption', 'primaryGoal', 'secondaryGoals',
+      'targetWeight', 'bmiScore', 'activityScore', 'sleepScore', 'stressScore',
+      'overallHealthScore', 'isComplete', 'completionStep',
+      'sleepHours', 'waterIntake',
+    ]);
+
     const mappedData: any = {};
     for (const [key, value] of Object.entries(data)) {
       const mappedKey = fieldMapping[key] || key;
-      if (mappedKey === 'id' || mappedKey === 'userId' || mappedKey === 'createdAt' || mappedKey === 'updatedAt') {
-        continue; // Skip these fields
+      if (!allowedFields.has(mappedKey)) {
+        continue; // Skip unknown or read-only fields
       }
       mappedData[mappedKey] = value;
     }

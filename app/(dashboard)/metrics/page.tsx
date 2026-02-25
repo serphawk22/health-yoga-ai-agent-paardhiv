@@ -361,16 +361,11 @@ export default function MetricsPage() {
                 {groupedMetrics[type.id] && groupedMetrics[type.id].length > 1 && (
                   <div className="mt-3 pt-3 border-t border-health-border">
                     <p className="text-xs text-health-muted mb-2">Recent readings:</p>
-                    <div className="flex gap-2 overflow-x-auto">
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar">
                       {groupedMetrics[type.id].slice(0, 5).map((m: any, i: number) => (
                         <div key={i} className="text-center shrink-0">
                           <p className="text-xs font-medium text-health-text">{m.value}</p>
-                          <p className="text-xs text-health-muted">
-                            {new Date(m.recordedAt).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric'
-                            })}
-                          </p>
+                          <p className="text-[10px] text-health-muted">{new Date(m.loggedAt).toLocaleDateString()}</p>
                         </div>
                       ))}
                     </div>

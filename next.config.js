@@ -4,11 +4,11 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
+    serverComponentsExternalPackages: ['bcryptjs', '@prisma/client', 'prisma'],
   },
   images: {
     domains: ['images.unsplash.com', 'unsplash.com', 'plus.unsplash.com'],
   },
-  output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true,
   },

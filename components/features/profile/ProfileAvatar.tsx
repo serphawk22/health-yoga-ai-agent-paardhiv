@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 interface ProfileAvatarProps {
     gender?: string; // Expecting 'MALE', 'FEMALE', or other string values

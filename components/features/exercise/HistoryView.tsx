@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function HistoryView({ filterType }: { filterType?: 'EXERCISE' | 'YOGA' }) {
     const [history, setHistory] = useState<any[]>([]);

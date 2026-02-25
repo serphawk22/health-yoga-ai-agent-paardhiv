@@ -2,7 +2,7 @@
 
 import { MotionValue, motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import {
@@ -21,6 +21,16 @@ import {
 export function Dock({ userRole = 'PATIENT' }: { userRole?: string }) {
     let mouseX = useMotionValue(Infinity);
     const pathname = usePathname();
+    const [disableHoverExpand, setDisableHoverExpand] = useState(false);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const mq = window.matchMedia('(hover: none)');
+        const update = () => setDisableHoverExpand(Boolean(mq.matches));
+        update();
+        mq.addEventListener('change', update);
+        return () => mq.removeEventListener('change', update);
+    }, []);
 
     const allItems = [
         { name: 'Dashboard', icon: Home, href: '/dashboard' },
@@ -45,11 +55,18 @@ export function Dock({ userRole = 'PATIENT' }: { userRole?: string }) {
         ];
 
     return (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+        <div
+            className="fixed left-1/2 -translate-x-1/2 z-50 bottom-2 md:bottom-8"
+            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 0.5rem)' }}
+        >
             <motion.div
-                onMouseMove={(e) => mouseX.set(e.pageX)}
-                onMouseLeave={() => mouseX.set(Infinity)}
-                className="mx-auto flex h-16 items-end gap-4 rounded-2xl bg-white/10 dark:bg-black/80 border border-white/20 dark:border-white/10 px-4 pb-3 backdrop-blur-md shadow-2xl"
+                onMouseMove={(e) => {
+                    if (!disableHoverExpand) mouseX.set(e.pageX);
+                }}
+                onMouseLeave={() => {
+                    if (!disableHoverExpand) mouseX.set(Infinity);
+                }}
+                className="mx-auto flex w-[calc(100vw-1rem)] md:w-auto max-w-[calc(100vw-1rem)] h-14 md:h-16 items-end justify-between md:justify-start gap-1 md:gap-4 rounded-2xl bg-white/10 dark:bg-black/80 border border-white/20 dark:border-white/10 px-2 md:px-4 pb-2 md:pb-3 backdrop-blur-md shadow-2xl overflow-hidden"
             >
                 {items.map((item) => (
                     <DockIcon
@@ -57,6 +74,7 @@ export function Dock({ userRole = 'PATIENT' }: { userRole?: string }) {
                         mouseX={mouseX}
                         {...item}
                         isActive={pathname === item.href || (item.href !== '/dashboard' && pathname?.startsWith(item.href))}
+                        disableHoverExpand={disableHoverExpand}
                     />
                 ))}
             </motion.div>
@@ -69,13 +87,15 @@ function DockIcon({
     icon: Icon,
     href,
     name,
-    isActive
+    isActive,
+    disableHoverExpand,
 }: {
     mouseX: MotionValue;
     icon: any;
     href: string;
     name: string;
     isActive: boolean;
+    disableHoverExpand: boolean;
 }) {
     let ref = useRef<HTMLDivElement>(null);
 
@@ -91,16 +111,16 @@ function DockIcon({
         <Link href={href}>
             <motion.div
                 ref={ref}
-                style={{ width }}
+                style={disableHoverExpand ? undefined : { width }}
                 className={cn(
-                    "aspect-square w-10 rounded-full flex items-center justify-center relative group transition-colors",
+                    "aspect-square w-9 md:w-10 rounded-full flex items-center justify-center relative group transition-colors shrink-0",
                     isActive
                         ? "bg-primary-100 dark:bg-primary-900/30"
                         : "bg-zinc-200 dark:bg-zinc-800"
                 )}
             >
                 <Icon className={cn(
-                    "h-5 w-5 transition-colors pointer-events-none",
+                    "h-4 w-4 md:h-5 md:w-5 transition-colors pointer-events-none",
                     isActive
                         ? "text-primary-600 dark:text-primary-400"
                         : "text-zinc-600 dark:text-zinc-300"

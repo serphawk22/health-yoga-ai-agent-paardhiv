@@ -155,17 +155,6 @@ export async function healthChat(
     }
 }
 
-function shouldAddDisclaimer(message: string, response: string): boolean {
-    const healthKeywords = [
-        'symptom', 'pain', 'disease', 'condition', 'treatment', 'medication',
-        'medicine', 'diagnosis', 'doctor', 'health', 'illness', 'sick',
-        'blood pressure', 'diabetes', 'heart', 'cancer', 'infection'
-    ];
-
-    const combined = (message + response).toLowerCase();
-    return healthKeywords.some(keyword => combined.includes(keyword));
-}
-
 // ==================== APPOINTMENT EXTRACTION ====================
 
 export async function extractAppointmentDetails(

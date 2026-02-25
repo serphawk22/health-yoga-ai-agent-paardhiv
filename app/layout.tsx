@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 
 import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider defaultTheme="dark" storageKey="health-agent-theme">
           {children}
+          <Toaster richColors position="top-right" />
         </ThemeProvider>
       </body>
     </html>

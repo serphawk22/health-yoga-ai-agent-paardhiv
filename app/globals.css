@@ -254,6 +254,17 @@
   animation: pulse-soft 2s infinite;
 }
 
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Markdown content styling */
 .prose {
   @apply text-health-text;

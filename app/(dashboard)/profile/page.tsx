@@ -24,7 +24,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { GradientButton } from '@/components/ui/gradient-button';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { ProfileAvatar } from '@/components/features/profile/ProfileAvatar';

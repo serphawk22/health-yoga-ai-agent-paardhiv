@@ -15,7 +15,7 @@ import {
   Eye,
   EyeOff,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/components/theme-provider';
 import { toast } from 'sonner';
 import { AvatarCustomizer, DEFAULT_AVATAR } from '@/components/ui/avatar-builder';
@@ -52,7 +52,7 @@ export default function SettingsPage() {
       const avatarData = await getAvatarConfig();
       if (avatarData) {
         if (avatarData.avatarConfig) {
-          setAvatarConfig(avatarData.avatarConfig as AvatarConfig);
+          setAvatarConfig(avatarData.avatarConfig as unknown as AvatarConfig);
         }
         setIsProfilePublic(avatarData.isProfilePublic ?? true);
         setUserName(avatarData.name || '');

@@ -103,7 +103,7 @@ export default function AssessmentPage() {
                     stroke="currentColor"
                     strokeWidth="12"
                     fill="none"
-                    className="text-gray-200"
+                    className="text-gray-200 dark:text-zinc-800"
                   />
                   <circle
                     cx="80"
@@ -131,17 +131,17 @@ export default function AssessmentPage() {
                 <p className="text-health-muted mb-4">{assessment.overall.summary}</p>
                 <div className="flex flex-wrap justify-center md:justify-start gap-2">
                   {assessment.overall.score >= 80 && (
-                    <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm flex items-center gap-1">
+                    <span className="px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm flex items-center gap-1">
                       <Star className="w-4 h-4" /> Excellent Health
                     </span>
                   )}
                   {assessment.overall.score >= 60 && assessment.overall.score < 80 && (
-                    <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm flex items-center gap-1">
+                    <span className="px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-sm flex items-center gap-1">
                       <TrendingUp className="w-4 h-4" /> Good Progress
                     </span>
                   )}
                   {assessment.overall.score < 60 && (
-                    <span className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm flex items-center gap-1">
+                    <span className="px-3 py-1 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-sm flex items-center gap-1">
                       <Target className="w-4 h-4" /> Room to Improve
                     </span>
                   )}
@@ -268,7 +268,7 @@ export default function AssessmentPage() {
           )}
 
           {/* Disclaimer */}
-          <div className="p-4 rounded-lg bg-gray-100 text-sm text-health-muted flex items-start gap-2">
+          <div className="p-4 rounded-lg bg-gray-100 dark:bg-zinc-900 text-sm text-health-muted flex items-start gap-2">
             <Info className="w-5 h-5 shrink-0 mt-0.5" />
             <div>
               <strong>Note:</strong> This health assessment is based on the information in your profile
@@ -324,7 +324,7 @@ function ScoreCard({
           <TrendingDown className="w-5 h-5 text-red-600" />
         )}
       </div>
-      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div className="w-full h-2 bg-gray-200 dark:bg-zinc-800 rounded-full overflow-hidden">
         <div
           className={`h-full ${colors.bar} transition-all duration-500`}
           style={{ width: `${score}%` }}

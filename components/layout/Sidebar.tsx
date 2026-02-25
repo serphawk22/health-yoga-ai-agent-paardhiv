@@ -46,7 +46,7 @@ const navigation = [
   { name: 'Diet Plan', href: '/diet', icon: Apple },
   { name: 'Exercise', href: '/exercise', icon: Dumbbell },
   { name: 'Health Assessment', href: '/assessment', icon: BarChart3 },
-  { name: 'Yoga', href: '/exercise?tab=yoga', icon: Flower }, // New Yoga Feature
+  { name: 'Yoga', href: '/yoga', icon: Flower },
   { name: 'Goal Planner', href: '/goals', icon: Target },
   { name: 'Health Metrics', href: '/metrics', icon: Activity },
 ];
@@ -110,35 +110,33 @@ export function Sidebar({ user }: SidebarProps) {
                 // Items allowed for doctors/instructors
                 const doctorAllowedItems = ['Dashboard', 'Appointments', 'Store'];
 
+                let href = item.href;
+
                 if (isDoctorOrInstructor) {
                   if (!doctorAllowedItems.includes(item.name)) {
                     return null;
                   }
                   // Remap Dashboard link for doctors
                   if (item.name === 'Dashboard') {
-                    item.href = '/doctor';
+                    href = '/doctor';
                   }
                   // Remap Store link for doctors
                   if (item.name === 'Store') {
-                    item.href = '/doctor/products';
+                    href = '/doctor/products';
                   }
                 }
 
                 // Check if active.
-                const tab = searchParams.get('tab');
-                let isActive = pathname === item.href;
+                let isActive = pathname === href;
 
                 if (item.name === 'Yoga') {
-                  isActive = pathname === '/exercise' && tab === 'yoga';
-                } else if (item.name === 'Exercise') {
-                  // Exercise tab is active if we are on /exercise AND tab is NOT yoga (default view)
-                  isActive = pathname === '/exercise' && tab !== 'yoga';
+                  isActive = pathname === '/yoga';
                 }
 
                 return (
                   <li key={item.name}>
                     <Link
-                      href={item.href}
+                      href={href}
                       className={cn(
                         isActive
                           ? 'bg-primary-600/20 text-primary-400'
