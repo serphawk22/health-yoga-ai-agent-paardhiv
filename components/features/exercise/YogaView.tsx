@@ -12,6 +12,8 @@ export function YogaView() {
     const [isSaving, setIsSaving] = useState(false);
     const [yogaPlan, setYogaPlan] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
+    const [planImageUrl, setPlanImageUrl] = useState<string | null>(null);
+    const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
     async function handleSaveSession() {
         if (!yogaPlan) return;
@@ -56,6 +58,24 @@ export function YogaView() {
 
         if (result.success) {
             setYogaPlan(result.data);
+            // Generate the visual yoga infographic in the background
+            const poses = result.data?.poses;
+            if (poses?.length) {
+                setIsGeneratingImage(true);
+                try {
+                    const imgRes = await fetch('/api/generate-workout-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ exercises: poses, type: 'YOGA' }),
+                    });
+                    const imgData = await imgRes.json();
+                    if (imgData.imageUrl) setPlanImageUrl(imgData.imageUrl);
+                } catch (imgErr) {
+                    console.error('Image generation failed:', imgErr);
+                } finally {
+                    setIsGeneratingImage(false);
+                }
+            }
         } else {
             setError(result.error || 'Failed to generate yoga plan');
         }
@@ -79,8 +99,10 @@ export function YogaView() {
                     type="YOGA"
                     plan={yogaPlan}
                     onSave={handleSaveSession}
-                    onReset={() => setYogaPlan(null)}
+                    onReset={() => { setYogaPlan(null); setPlanImageUrl(null); }}
                     isSaving={isSaving}
+                    planImageUrl={planImageUrl}
+                    isGeneratingImage={isGeneratingImage}
                 />
             )}
 

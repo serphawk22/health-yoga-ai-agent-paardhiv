@@ -12,6 +12,8 @@ export function WorkoutView() {
     const [isSaving, setIsSaving] = useState(false);
     const [exercisePlan, setExercisePlan] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
+    const [planImageUrl, setPlanImageUrl] = useState<string | null>(null);
+    const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
     // Save logic
     async function handleSaveSession() {
@@ -62,6 +64,23 @@ export function WorkoutView() {
 
         if (result.success) {
             setExercisePlan(result.data);
+            // Generate the visual workout infographic in the background
+            if (result.data?.exercises?.length) {
+                setIsGeneratingImage(true);
+                try {
+                    const imgRes = await fetch('/api/generate-workout-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ exercises: result.data.exercises, type: 'WORKOUT' }),
+                    });
+                    const imgData = await imgRes.json();
+                    if (imgData.imageUrl) setPlanImageUrl(imgData.imageUrl);
+                } catch (imgErr) {
+                    console.error('Image generation failed:', imgErr);
+                } finally {
+                    setIsGeneratingImage(false);
+                }
+            }
         } else {
             setError(result.error || 'Failed to generate exercise plan');
         }
@@ -85,8 +104,10 @@ export function WorkoutView() {
                     type="WORKOUT"
                     plan={exercisePlan}
                     onSave={handleSaveSession}
-                    onReset={() => setExercisePlan(null)}
+                    onReset={() => { setExercisePlan(null); setPlanImageUrl(null); }}
                     isSaving={isSaving}
+                    planImageUrl={planImageUrl}
+                    isGeneratingImage={isGeneratingImage}
                 />
             )}
 

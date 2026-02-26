@@ -22,14 +22,25 @@ export function Dock({ userRole = 'PATIENT' }: { userRole?: string }) {
     let mouseX = useMotionValue(Infinity);
     const pathname = usePathname();
     const [disableHoverExpand, setDisableHoverExpand] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
         const mq = window.matchMedia('(hover: none)');
-        const update = () => setDisableHoverExpand(Boolean(mq.matches));
+        const mobileCheck = window.matchMedia('(max-width: 768px)');
+        
+        const update = () => {
+            setDisableHoverExpand(Boolean(mq.matches));
+            setIsMobile(Boolean(mobileCheck.matches));
+        };
+        
         update();
         mq.addEventListener('change', update);
-        return () => mq.removeEventListener('change', update);
+        mobileCheck.addEventListener('change', update);
+        return () => {
+            mq.removeEventListener('change', update);
+            mobileCheck.removeEventListener('change', update);
+        };
     }, []);
 
     const allItems = [
@@ -56,17 +67,23 @@ export function Dock({ userRole = 'PATIENT' }: { userRole?: string }) {
 
     return (
         <div
-            className="fixed left-1/2 -translate-x-1/2 z-50 bottom-2 md:bottom-8"
+            className="fixed left-1/2 -translate-x-1/2 z-50 bottom-3 md:bottom-8"
             style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 0.5rem)' }}
         >
             <motion.div
                 onMouseMove={(e) => {
-                    if (!disableHoverExpand) mouseX.set(e.pageX);
+                    if (!disableHoverExpand && !isMobile) mouseX.set(e.pageX);
                 }}
                 onMouseLeave={() => {
-                    if (!disableHoverExpand) mouseX.set(Infinity);
+                    if (!disableHoverExpand && !isMobile) mouseX.set(Infinity);
                 }}
-                className="mx-auto flex w-[calc(100vw-1rem)] md:w-auto max-w-[calc(100vw-1rem)] h-14 md:h-16 items-end justify-between md:justify-start gap-1 md:gap-4 rounded-2xl bg-white/10 dark:bg-black/80 border border-white/20 dark:border-white/10 px-2 md:px-4 pb-2 md:pb-3 backdrop-blur-md shadow-2xl overflow-hidden"
+                className="mx-auto flex items-end justify-center md:justify-start gap-1 md:gap-3 rounded-2xl bg-white/10 dark:bg-black/80 border border-white/20 dark:border-white/10 px-2 md:px-4 pb-2 md:pb-3 pt-2 backdrop-blur-md shadow-2xl"
+                style={{
+                    width: isMobile ? 'min(calc(100vw - 1rem), 100%)' : 'auto',
+                    maxWidth: isMobile ? 'calc(100vw - 1rem)' : 'none',
+                    overflowX: isMobile ? 'auto' : 'visible',
+                    overflowY: 'visible',
+                }}
             >
                 {items.map((item) => (
                     <DockIcon
@@ -74,7 +91,7 @@ export function Dock({ userRole = 'PATIENT' }: { userRole?: string }) {
                         mouseX={mouseX}
                         {...item}
                         isActive={pathname === item.href || (item.href !== '/dashboard' && pathname?.startsWith(item.href))}
-                        disableHoverExpand={disableHoverExpand}
+                        disableHoverExpand={disableHoverExpand || isMobile}
                     />
                 ))}
             </motion.div>
@@ -104,7 +121,7 @@ function DockIcon({
         return val - bounds.x - bounds.width / 2;
     });
 
-    let widthSync = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
+    let widthSync = useTransform(distance, [-150, 0, 150], [40, 100, 40]);
     let width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 });
 
     return (
@@ -112,15 +129,18 @@ function DockIcon({
             <motion.div
                 ref={ref}
                 style={disableHoverExpand ? undefined : { width }}
+                whileHover={disableHoverExpand ? {} : { y: -6 }}
+                whileTap={{ scale: 0.92 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 className={cn(
-                    "aspect-square w-9 md:w-10 rounded-full flex items-center justify-center relative group transition-colors shrink-0",
+                    "relative aspect-square w-9 md:w-10 rounded-full flex items-center justify-center group shrink-0 cursor-pointer",
                     isActive
                         ? "bg-primary-100 dark:bg-primary-900/30"
-                        : "bg-zinc-200 dark:bg-zinc-800"
+                        : "bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700"
                 )}
             >
                 <Icon className={cn(
-                    "h-4 w-4 md:h-5 md:w-5 transition-colors pointer-events-none",
+                    "h-4 w-4 md:h-5 md:w-5 transition-colors duration-150 pointer-events-none",
                     isActive
                         ? "text-primary-600 dark:text-primary-400"
                         : "text-zinc-600 dark:text-zinc-300"
@@ -128,11 +148,15 @@ function DockIcon({
 
                 {/* Active Indicator */}
                 {isActive && (
-                    <span className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary-500 dark:bg-primary-400" />
+                    <motion.span
+                        layoutId="activeIndicator"
+                        className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary-500 dark:bg-primary-400"
+                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
                 )}
 
                 {/* Tooltip */}
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:block bg-black dark:bg-zinc-800 text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
                     {name}
                 </div>
             </motion.div>

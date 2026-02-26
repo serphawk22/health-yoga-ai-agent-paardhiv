@@ -77,21 +77,18 @@ export async function middleware(request: NextRequest) {
       await jwtVerify(token, getJwtSecretKey(), { clockTolerance: 15 });
       return NextResponse.next();
     } catch (error: any) {
-      console.error("Middleware Auth Error:", error);
+      console.error("Middleware Auth Error:", error?.code, error?.message);
+      if (!process.env.AUTH_SECRET) {
+        console.error(
+          "CRITICAL: AUTH_SECRET is not available in middleware! " +
+          "Ensure it is set in .env BEFORE running `next build` so it is " +
+          "inlined into the Edge Runtime bundle."
+        );
+      }
       // Invalid token, redirect to login
       const url = new URL('/login', request.url);
       url.searchParams.set('source', 'middleware_invalid');
-
-      // Add safe debug info
-      url.searchParams.set('error_name', error.name);
-      url.searchParams.set('error_msg', error.message.replace(/[^a-zA-Z0-9 ]/g, '')); // Sanitize
       url.searchParams.set('code', error.code || 'unknown');
-
-      // Debug Env Var presence (DO NOT EXPOSE THE KEY)
-      // Just check if it's the default or custom
-      const secret = process.env.AUTH_SECRET || 'health-agent-production-secret-key-fixed-2026';
-      url.searchParams.set('slen', secret.length.toString());
-      url.searchParams.set('is_default', (!process.env.AUTH_SECRET) ? 'true' : 'false');
 
       const response = NextResponse.redirect(url);
 

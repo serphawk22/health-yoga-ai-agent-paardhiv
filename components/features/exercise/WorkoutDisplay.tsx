@@ -7,9 +7,12 @@ import {
     Circle,
     Play,
     RotateCcw,
-    Save
+    Save,
+    ImageIcon,
+    Download
 } from 'lucide-react';
 import { useState } from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 interface WorkoutDisplayProps {
@@ -18,9 +21,11 @@ interface WorkoutDisplayProps {
     onReset: () => void;
     isSaving: boolean;
     type: 'WORKOUT' | 'YOGA';
+    planImageUrl?: string | null;
+    isGeneratingImage?: boolean;
 }
 
-export function WorkoutDisplay({ plan, onSave, onReset, isSaving, type }: WorkoutDisplayProps) {
+export function WorkoutDisplay({ plan, onSave, onReset, isSaving, type, planImageUrl, isGeneratingImage }: WorkoutDisplayProps) {
     const [completed, setCompleted] = useState<Set<number>>(new Set());
 
     const items = type === 'WORKOUT' ? plan.exercises : plan.poses;
@@ -51,6 +56,51 @@ export function WorkoutDisplay({ plan, onSave, onReset, isSaving, type }: Workou
                     <div className="text-xs text-zinc-400 uppercase tracking-wide">Complete</div>
                 </div>
             </div>
+
+            {/* 1b. Plan Visual Image */}
+            {(isGeneratingImage || planImageUrl) && (
+                <div className="mb-8">
+                    <div className="flex items-center gap-2 mb-3">
+                        <ImageIcon className="w-4 h-4 text-zinc-400" />
+                        <span className="text-sm font-medium text-zinc-400 uppercase tracking-wide">
+                            {type === 'YOGA' ? 'Pose Guide' : 'Exercise Guide'}
+                        </span>
+                        {planImageUrl && (
+                            <a
+                                href={planImageUrl}
+                                download="workout-plan.png"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="ml-auto flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
+                            >
+                                <Download className="w-3.5 h-3.5" />
+                                Save image
+                            </a>
+                        )}
+                    </div>
+
+                    {isGeneratingImage && !planImageUrl ? (
+                        // Skeleton shimmer while image generates
+                        <div className="w-full rounded-xl overflow-hidden bg-zinc-800/50 border border-zinc-700/50" style={{ aspectRatio: '1792/1024' }}>
+                            <div className="w-full h-full animate-pulse bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 flex flex-col items-center justify-center gap-3">
+                                <div className="w-10 h-10 rounded-full border-2 border-zinc-600 border-t-primary-500 animate-spin" />
+                                <p className="text-sm text-zinc-500">Generating your visual guide…</p>
+                            </div>
+                        </div>
+                    ) : planImageUrl ? (
+                        <div className="relative w-full rounded-xl overflow-hidden border border-zinc-700/50 shadow-2xl">
+                            <Image
+                                src={planImageUrl}
+                                alt={type === 'YOGA' ? 'Yoga pose visual guide' : 'Workout exercise visual guide'}
+                                width={1792}
+                                height={1024}
+                                className="w-full h-auto object-cover"
+                                unoptimized
+                            />
+                        </div>
+                    ) : null}
+                </div>
+            )}
 
             {/* 2. Timeline List */}
             <div className="relative border-l-2 border-zinc-100 dark:border-zinc-800 ml-3 space-y-8 pl-8 py-2">
