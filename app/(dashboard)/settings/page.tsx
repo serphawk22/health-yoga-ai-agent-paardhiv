@@ -20,7 +20,7 @@ import { useTheme } from '@/components/theme-provider';
 import { toast } from 'sonner';
 import { AvatarCustomizer, DEFAULT_AVATAR } from '@/components/ui/avatar-builder';
 import type { AvatarConfig } from '@/components/ui/avatar-builder';
-import { Avatar3D } from '@/components/ui/avatar-3d';
+import { AvatarPreview } from '@/components/ui/avatar-builder';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -153,7 +153,7 @@ export default function SettingsPage() {
           <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 overflow-hidden">
             {/* Avatar preview + edit toggle */}
             <div className="px-5 py-5 flex items-center gap-5">
-              <Avatar3D config={avatarConfig} className="w-[72px] h-[72px] rounded-full overflow-hidden bg-zinc-100 dark:bg-zinc-800/50" />
+              <AvatarPreview config={avatarConfig} className="w-[72px] h-[72px] rounded-full overflow-hidden bg-zinc-100 dark:bg-zinc-800/50" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-health-text truncate">
                   {userName || 'Your Avatar'}
@@ -185,13 +185,10 @@ export default function SettingsPage() {
                       <div className="flex flex-col md:flex-row gap-8">
 
                         {/* ── Left: Avatar Preview (focal point) ── */}
-                        <div className="md:w-[55%] flex flex-col items-center">
-                          <div className="w-full aspect-[4/5] rounded-3xl overflow-hidden bg-gradient-to-b from-zinc-100 to-zinc-50 dark:from-zinc-800/60 dark:to-zinc-900/80 border border-zinc-200 dark:border-zinc-700/40 shadow-[inset_0_1px_12px_rgba(0,0,0,0.04)] dark:shadow-[inset_0_1px_12px_rgba(0,0,0,0.2)]">
-                            <Avatar3D config={avatarConfig} className="w-full h-full" />
+                        <div className="md:w-[55%] flex flex-col items-center justify-center">
+                          <div className="w-full aspect-[4/5] rounded-3xl overflow-hidden bg-gradient-to-b from-zinc-100 to-zinc-50 dark:from-zinc-800/60 dark:to-zinc-900/80 border border-zinc-200 dark:border-zinc-700/40 shadow-[inset_0_1px_12px_rgba(0,0,0,0.04)] dark:shadow-[inset_0_1px_12px_rgba(0,0,0,0.2)] flex items-center justify-center p-8">
+                            <AvatarPreview config={avatarConfig} size={250} className="w-full max-w-[250px] aspect-square shadow-2xl ring-1 ring-black/5 dark:ring-white/10" />
                           </div>
-                          <p className="text-[11px] text-zinc-400 mt-3 text-center font-medium tracking-wide select-none">
-                            Drag to rotate
-                          </p>
                         </div>
 
                         {/* ── Right: Customization Controls ── */}

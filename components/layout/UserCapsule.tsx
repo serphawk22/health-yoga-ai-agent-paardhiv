@@ -11,6 +11,7 @@ import { getNotifications, markAllNotificationsAsRead, markNotificationAsRead, c
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import { AvatarPreview, DEFAULT_AVATAR, type AvatarConfig } from '@/components/ui/avatar-builder';
 
 interface UserCapsuleProps {
     user: {
@@ -19,6 +20,7 @@ interface UserCapsuleProps {
         healthProfile?: {
             isComplete: boolean;
         } | null;
+        avatarConfig?: any;
     };
 }
 
@@ -201,10 +203,8 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                             : "bg-zinc-900/80 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
                     )}
                 >
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-primary-600 to-primary-400 p-[1px]">
-                        <div className="w-full h-full rounded-full bg-zinc-900 flex items-center justify-center text-[13px] font-bold text-white">
-                            {getInitials(user.name)}
-                        </div>
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-primary-600 to-primary-400 p-[1px] shadow-sm">
+                        <AvatarPreview config={(user.avatarConfig as AvatarConfig) || DEFAULT_AVATAR} size={34} className="w-full h-full border-none" />
                     </div>
                     <span className="text-sm font-bold truncate max-w-[100px] hidden sm:block">{user.name.split(' ')[0]}</span>
                     <ChevronDown className={cn("w-4 h-4 transition-transform duration-300", showUserMenu && "rotate-180")} />
