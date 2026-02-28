@@ -1,17 +1,17 @@
-# Health Agent 🏥
+# Health Agent 
 
 A personalized health management platform built with Next.js 14. This application serves as a bridge between patients and health professionals, featuring AI-driven insights, marketplace integration, and comprehensive health tracking.
 
 ## Core Features
 
-### 👤 For Patients
+###  For Patients
 - **AI Health Advisor**: Context-aware chat powered by OpenAI to get immediate health-related guidance.
 - **Marketplace**: Browse and purchase health supplements, equipment, and courses curated by professionals.
 - **Health Tracking**: Manage diet plans, exercise routines, and specialized yoga sessions.
 - **Goal Setting**: Set and monitor long-term health objectives with visual progress metrics.
 - **Assessments**: Data-driven health scoring to track overall well-being over time.
 
-### 🩺 For Professionals (Doctors & Instructors)
+###  For Professionals (Doctors & Instructors)
 - **Product Management**: A dedicated seller dashboard to list and manage products in the marketplace.
 - **Patient Management**: Handle appointments and track patient progress (if assigned).
 - **Availability**: Manage schedule and consultation slots directly through the portal.
