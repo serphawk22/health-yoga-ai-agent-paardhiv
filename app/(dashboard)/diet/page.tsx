@@ -7,6 +7,7 @@ import { Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { GradientButton } from '@/components/ui/gradient-button';
+import ColorBends from '@/components/ui/ColorBends';
 
 export default function DietPage() {
   const [activeTab, setActiveTab] = useState<'generate' | 'history'>('generate');
@@ -61,7 +62,24 @@ export default function DietPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto pb-20 lg:pb-6">
+    <div className="max-w-5xl mx-auto pb-20 lg:pb-6 relative z-10 text-zinc-100 min-h-screen">
+      {/* Background */}
+      <div className="fixed inset-0 z-[-1] pointer-events-none">
+        <ColorBends
+          colors={["#ff5c7a", "#8a5cff", "#00ffd1"]}
+          rotation={0}
+          speed={0.2}
+          scale={1}
+          frequency={1}
+          warpStrength={1}
+          mouseInfluence={1}
+          parallax={0.5}
+          noise={0.1}
+          transparent
+          autoRotate={0}
+        />
+      </div>
+
       {/* Header */}
       <div className="mb-8 no-print">
         <h1 className="text-3xl font-bold tracking-tight text-white mb-1">Diet Plan</h1>
@@ -69,12 +87,12 @@ export default function DietPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex bg-zinc-900/50 p-1 rounded-2xl border border-zinc-800 mb-8 no-print w-fit">
+      <div className="flex bg-white/[0.03] backdrop-blur-md p-1.5 rounded-2xl border border-white/10 mb-8 no-print w-fit shadow-xl gap-1">
         <button
           onClick={() => setActiveTab('generate')}
           className={cn(
-            "px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300",
-            activeTab === 'generate' ? "bg-zinc-800 text-white shadow-xl" : "text-zinc-500 hover:text-zinc-300"
+            "px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+            activeTab === 'generate' ? "bg-white/10 text-white shadow-xl border border-white/5" : "text-zinc-500 hover:text-white"
           )}
         >
           Current Plan
@@ -82,8 +100,8 @@ export default function DietPage() {
         <button
           onClick={() => setActiveTab('history')}
           className={cn(
-            "px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300",
-            activeTab === 'history' ? "bg-zinc-800 text-white shadow-xl" : "text-zinc-500 hover:text-zinc-300"
+            "px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+            activeTab === 'history' ? "bg-white/10 text-white shadow-xl border border-white/5" : "text-zinc-500 hover:text-white"
           )}
         >
           History
@@ -94,9 +112,10 @@ export default function DietPage() {
       {activeTab === 'generate' && (
         <div className="animate-fadeIn space-y-6">
           {/* Request Section */}
-          <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 shadow-2xl no-print">
-            <h2 className="font-bold text-white text-lg mb-1">Generate New Plan</h2>
-            <p className="text-sm text-zinc-500 mb-5">
+          <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-3xl p-8 shadow-2xl no-print relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-500/[0.02] to-transparent pointer-events-none" />
+            <h2 className="font-bold text-white text-xl mb-1 relative z-10">Generate New Plan</h2>
+            <p className="text-sm text-zinc-400 mb-6 relative z-10">
               Our AI will create a personalized diet plan based on your health profile.
             </p>
 
@@ -104,7 +123,7 @@ export default function DietPage() {
               value={specificRequest}
               onChange={(e) => setSpecificRequest(e.target.value)}
               placeholder="e.g., 'I want a high protein vegetarian plan' (optional)"
-              className="w-full bg-zinc-950/50 border border-zinc-800 rounded-2xl p-4 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all resize-none mb-4"
+              className="w-full bg-white/[0.03] border border-white/10 rounded-2xl p-5 text-[15px] text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all resize-none mb-6 group-focus-within:bg-white/[0.05]"
               rows={2}
             />
 
@@ -152,7 +171,7 @@ export default function DietPage() {
               </div>
 
               {/* Overview */}
-              <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 shadow-2xl print:shadow-none print:border-gray-200">
+              <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-3xl p-8 shadow-2xl print:shadow-none print:border-gray-200">
                 <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-4">Daily Overview</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div className="p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 print:bg-gray-50 print:border-gray-200">
@@ -183,7 +202,7 @@ export default function DietPage() {
               </div>
 
               {/* Meals */}
-              <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 shadow-2xl print:shadow-none print:border-gray-200">
+              <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-3xl p-8 shadow-2xl print:shadow-none print:border-gray-200">
                 <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-4">Daily Meals</p>
                 <div className="space-y-3">
                   {dietPlan.meals?.map((meal: any, index: number) => (
@@ -195,7 +214,7 @@ export default function DietPage() {
               {/* Foods to Include/Avoid */}
               <div className="grid md:grid-cols-2 gap-4 print:block print:space-y-6">
                 {dietPlan.foodsToInclude && (
-                  <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 shadow-2xl print:shadow-none print:border-gray-200 print:break-inside-avoid">
+                  <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-3xl p-8 shadow-2xl print:shadow-none print:border-gray-200 print:break-inside-avoid">
                     <p className="text-[11px] font-bold text-green-400 uppercase tracking-widest mb-4">Foods to Include</p>
                     <ul className="space-y-2">
                       {dietPlan.foodsToInclude.map((food: string, i: number) => (
@@ -209,7 +228,7 @@ export default function DietPage() {
                 )}
 
                 {dietPlan.foodsToAvoid && (
-                  <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 shadow-2xl print:shadow-none print:border-gray-200 print:break-inside-avoid">
+                  <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-3xl p-8 shadow-2xl print:shadow-none print:border-gray-200 print:break-inside-avoid">
                     <p className="text-[11px] font-bold text-red-400 uppercase tracking-widest mb-4">Foods to Avoid</p>
                     <ul className="space-y-2">
                       {dietPlan.foodsToAvoid.map((food: string, i: number) => (
@@ -225,7 +244,7 @@ export default function DietPage() {
 
               {/* Hydration Tips */}
               {dietPlan.hydrationTips && (
-                <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 shadow-2xl print:shadow-none print:border-gray-200 print:break-inside-avoid">
+                <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-3xl p-8 shadow-2xl print:shadow-none print:border-gray-200 print:break-inside-avoid">
                   <p className="text-[11px] font-bold text-blue-400 uppercase tracking-widest mb-4">Hydration Tips</p>
                   <ul className="space-y-2">
                     {dietPlan.hydrationTips.map((tip: string, i: number) => (
@@ -275,7 +294,7 @@ export default function DietPage() {
                 <button
                   key={item.id}
                   onClick={() => loadFromHistory(item)}
-                  className="w-full p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800 hover:border-zinc-700 transition-all text-left group"
+                  className="w-full p-6 rounded-3xl bg-white/[0.03] backdrop-blur-3xl border border-white/10 shadow-lg hover:bg-white/[0.05] hover:border-white/20 hover:scale-[1.01] transition-all text-left group"
                 >
                   <div className="flex items-center justify-between">
                     <div>

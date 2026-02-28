@@ -6,6 +6,7 @@ import { SellerDashboard } from '@/components/marketplace/SellerDashboard';
 import { getUser } from '@/lib/actions/auth';
 import { Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ColorBends from '@/components/ui/ColorBends';
 
 export default function MarketplacePage() {
     const [user, setUser] = useState<any>(null);
@@ -34,7 +35,24 @@ export default function MarketplacePage() {
     const isSeller = user?.role === 'DOCTOR' || user?.role === 'YOGA_INSTRUCTOR';
 
     return (
-        <div className="max-w-7xl mx-auto pb-20 lg:pb-6 relative z-10">
+        <div className="max-w-7xl mx-auto pb-20 lg:pb-6 relative z-10 text-zinc-100 min-h-screen">
+            {/* Background */}
+            <div className="fixed inset-0 z-[-1] pointer-events-none">
+                <ColorBends
+                    colors={["#ff5c7a", "#8a5cff", "#00ffd1"]}
+                    rotation={0}
+                    speed={0.2}
+                    scale={1}
+                    frequency={1}
+                    warpStrength={1}
+                    mouseInfluence={1}
+                    parallax={0.5}
+                    noise={0.1}
+                    transparent
+                    autoRotate={0}
+                />
+            </div>
+
             <AnimatePresence mode="wait">
                 {isSeller ? (
                     <motion.div

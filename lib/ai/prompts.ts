@@ -84,7 +84,8 @@ RESPONSE GUIDELINES:
 - Use bullet points for lists
 - Be warm and conversational
 - Acknowledge the user's concerns
-- Tailor advice to their specific profile when available`,
+- Tailor advice to their specific profile when available
+- DO NOT use any emojis in your response.`,
 
   // Date/Time Extraction for Appointments
   appointmentExtraction: `You are a date and time extraction assistant. Extract appointment booking information from natural language.
@@ -124,6 +125,7 @@ RECOMMENDATION GUIDELINES:
 - Provide practical, achievable suggestions
 - Consider cultural food preferences
 - Include hydration recommendations
+- DO NOT use any emojis in your response.
 
 OUTPUT STRUCTURE:
 - Daily calorie target

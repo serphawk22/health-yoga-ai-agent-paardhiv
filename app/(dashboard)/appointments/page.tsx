@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   getDoctors,
   getDoctorAvailability,
-  extractAppointmentFromText,
   createAppointment,
   getUserAppointments,
   cancelAppointment
@@ -48,9 +47,6 @@ export default function AppointmentsPage() {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [availableSlots, setAvailableSlots] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [nlInput, setNlInput] = useState('');
-  const [nlExtraction, setNlExtraction] = useState<any>(null);
-  const [isExtracting, setIsExtracting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [reason, setReason] = useState('');
 
@@ -94,18 +90,6 @@ export default function AppointmentsPage() {
     if (appointmentsResult.success) setAppointments(appointmentsResult.data || []);
   }
 
-  async function handleNLExtraction() {
-    if (!nlInput.trim()) return;
-    setIsExtracting(true);
-    const result = await extractAppointmentFromText(nlInput);
-    if (result.success) {
-      setNlExtraction(result.data);
-      if (result.data.doctor) setSelectedDoctor(result.data.doctor);
-      if (result.data.date) setSelectedDate(new Date(result.data.date));
-      if (result.data.time) setSelectedTime(result.data.time);
-    }
-    setIsExtracting(false);
-  }
 
   async function handleBookAppointment() {
     if (!selectedDoctor || !selectedDate || !selectedTime) return;
@@ -116,10 +100,6 @@ export default function AppointmentsPage() {
     formData.append('scheduledDate', format(selectedDate, 'yyyy-MM-dd'));
     formData.append('scheduledTime', selectedTime);
     formData.append('reason', reason);
-    if (nlInput) {
-      formData.append('originalQuery', nlInput);
-      formData.append('extractedIntent', nlExtraction?.intent || '');
-    }
 
     const result = await createAppointment(formData);
     if (result.success) {
@@ -130,8 +110,6 @@ export default function AppointmentsPage() {
         setBookingSuccess(false);
         setSelectedDoctor(null);
         setSelectedTime(null);
-        setNlInput('');
-        setNlExtraction(null);
         setReason('');
       }, 2000);
     }
@@ -162,12 +140,12 @@ export default function AppointmentsPage() {
           <p className="text-zinc-500 font-medium">Book consultations with top-rated specialists</p>
         </div>
 
-        <div className="flex bg-zinc-900/50 p-1 rounded-2xl border border-zinc-800">
+        <div className="flex bg-white/[0.03] backdrop-blur-md p-1.5 rounded-2xl border border-white/10 shadow-xl w-fit">
           <button
             onClick={() => setView('book')}
             className={cn(
-              "px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300",
-              view === 'book' ? "bg-zinc-800 text-white shadow-xl" : "text-zinc-500 hover:text-zinc-300"
+              "px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+              view === 'book' ? "bg-white/10 text-white shadow-xl border border-white/5" : "text-zinc-500 hover:text-white"
             )}
           >
             Book Session
@@ -175,8 +153,8 @@ export default function AppointmentsPage() {
           <button
             onClick={() => setView('list')}
             className={cn(
-              "px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300",
-              view === 'list' ? "bg-zinc-800 text-white shadow-xl" : "text-zinc-500 hover:text-zinc-300"
+              "px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+              view === 'list' ? "bg-white/10 text-white shadow-xl border border-white/5" : "text-zinc-500 hover:text-white"
             )}
           >
             My Schedule
@@ -186,48 +164,8 @@ export default function AppointmentsPage() {
 
       {view === 'book' ? (
         <div className="grid lg:grid-cols-12 gap-8">
-          {/* Column 1: Smart Booking */}
-          <div className="lg:col-span-4 space-y-6">
-            <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 shadow-2xl">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 rounded-xl bg-primary-600/10 text-primary-500">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <h3 className="text-lg font-bold">Smart Booking</h3>
-              </div>
-              <p className="text-sm text-zinc-500 mb-4">Tell us who you want to meet and when. We&apos;ll handle the rest.</p>
-              <textarea
-                value={nlInput}
-                onChange={(e) => setNlInput(e.target.value)}
-                placeholder="e.g., Book an appointment with Dr. Sharma tomorrow morning"
-                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-2xl p-4 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all resize-none mb-4"
-                rows={3}
-              />
-              <GradientButton
-                variant="variant"
-                onClick={handleNLExtraction}
-                disabled={!nlInput.trim() || isExtracting}
-                className="w-full h-auto py-3 min-w-0"
-              >
-                {isExtracting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
-                {isExtracting ? 'Analyzing...' : 'Extract Details'}
-              </GradientButton>
-
-              {nlExtraction && (
-                <div className="mt-4 p-4 rounded-2xl bg-primary-950/20 border border-primary-900/30 animate-fadeIn">
-                  <p className="text-xs font-bold text-primary-400 uppercase tracking-widest mb-2">Analysis Result</p>
-                  <div className="space-y-1 text-sm text-zinc-300">
-                    <p className="flex items-center gap-2"><Calendar className="w-4 h-4 text-primary-400" /> {nlExtraction.date || 'TBD'}</p>
-                    <p className="flex items-center gap-2"><Clock className="w-4 h-4 text-primary-400" /> {nlExtraction.time || 'TBD'}</p>
-                    <p className="flex items-center gap-2"><User className="w-4 h-4 text-primary-400" /> {nlExtraction.doctorName || 'TBD'}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
           {/* Column 2: Doctor List / Details & Booking */}
-          <div className="lg:col-span-8 space-y-6">
+          <div className="lg:col-span-12 space-y-6">
             {selectedDoctor ? (
               <div className="animate-slideUp space-y-6">
                 {/* Back button to go back to list */}
@@ -239,40 +177,44 @@ export default function AppointmentsPage() {
                   Back to specialists
                 </button>
 
-                <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 shadow-2xl relative overflow-hidden">
+                <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 flex flex-col md:flex-row items-center gap-8 shadow-2xl relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-primary-600/5 rounded-full blur-3xl -mr-32 -mt-32" />
-                  <div className="relative w-24 h-24 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 p-0.5 shadow-2xl">
-                    <div className="w-full h-full rounded-2xl bg-zinc-950 flex items-center justify-center text-3xl font-bold text-white">
+                  <div className="relative w-28 h-28 rounded-3xl bg-gradient-to-br from-primary-500 to-primary-700 p-0.5 shadow-2xl">
+                    <div className="w-full h-full rounded-3xl bg-zinc-950 flex items-center justify-center text-4xl font-bold text-white">
                       {selectedDoctor.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                     </div>
                   </div>
                   <div className="flex-1 text-center md:text-left">
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
-                      <h2 className="text-3xl font-black text-white">{selectedDoctor.name}</h2>
-                      <span className="bg-primary-600/20 text-primary-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">{selectedDoctor.specialization}</span>
+                      <h2 className="text-4xl font-black text-white">{selectedDoctor.name}</h2>
+                      <span className="bg-primary-600/20 text-primary-400 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-primary-500/20">{selectedDoctor.specialization}</span>
                     </div>
-                    <p className="text-zinc-400 font-medium mb-4">{selectedDoctor.qualification}</p>
-                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-6">
-                      <div className="flex items-center gap-2">
-                        <Star className="w-4 h-4 text-amber-500 fill-current" />
+                    <p className="text-zinc-400 text-lg font-medium mb-6">{selectedDoctor.qualification}</p>
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-8">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                          <Star className="w-5 h-5 text-amber-500 fill-current" />
+                        </div>
                         <div>
-                          <p className="text-lg font-bold leading-tight">{selectedDoctor.rating}</p>
-                          <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">Rating</p>
+                          <p className="text-xl font-bold leading-tight">{selectedDoctor.rating}</p>
+                          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Rating</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <IndianRupee className="w-4 h-4 text-primary-500" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-primary-500/10 flex items-center justify-center">
+                          <IndianRupee className="w-5 h-5 text-primary-500" />
+                        </div>
                         <div>
-                          <p className="text-lg font-bold leading-tight">₹{selectedDoctor.consultationFee}</p>
-                          <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">Fee</p>
+                          <p className="text-xl font-bold leading-tight">₹{selectedDoctor.consultationFee}</p>
+                          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Consultation Fee</p>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 shadow-2xl">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
                     <div className="flex items-center justify-between mb-6">
                       <h3 className="font-bold flex items-center gap-2">
                         <CalendarDays className="w-5 h-5 text-primary-500" />
@@ -313,7 +255,7 @@ export default function AppointmentsPage() {
                     </div>
                   </div>
 
-                  <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 shadow-2xl">
+                  <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
                     <h3 className="font-bold flex items-center gap-2 mb-6">
                       <Clock className="w-5 h-5 text-primary-500" />
                       Available Slots
@@ -349,14 +291,14 @@ export default function AppointmentsPage() {
                 </div>
 
                 {selectedTime && (
-                  <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-8 shadow-2xl animate-slideUp">
+                  <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl animate-slideUp">
                     <div className="grid md:grid-cols-2 gap-8">
                       <div className="space-y-4">
                         <h3 className="text-lg font-bold">Booking Details</h3>
                         <textarea
                           value={reason}
                           onChange={(e) => setReason(e.target.value)}
-                          className="w-full bg-zinc-950/50 border border-zinc-800 rounded-2xl p-4 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                          className="w-full bg-white/[0.03] border border-white/10 rounded-2xl p-4 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                           placeholder="Reason for visit..."
                           rows={4}
                         />
@@ -383,18 +325,18 @@ export default function AppointmentsPage() {
               </div>
             ) : (
               /* Doctor List - shown when no doctor is selected */
-              <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 shadow-2xl">
+              <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
                 <h3 className="text-xl font-bold mb-2">Select a Doctor</h3>
                 <p className="text-sm text-zinc-500 mb-6">Pick a specialist to view their availability and book your session.</p>
 
-                <div className="flex bg-zinc-950/50 rounded-xl p-1 mb-6 border border-zinc-800">
+                <div className="flex bg-white/[0.05] backdrop-blur-md rounded-2xl p-1.5 mb-8 border border-white/10 shadow-xl w-fit gap-1">
                   {['all', 'doctors', 'instructors'].map((cat) => (
                     <button
                       key={cat}
                       onClick={() => setCategory(cat as any)}
                       className={cn(
-                        "flex-1 py-2 text-sm font-bold rounded-lg capitalize transition-all",
-                        category === cat ? "bg-zinc-800 text-white" : "text-zinc-600 hover:text-zinc-400"
+                        "px-6 py-2.5 text-sm font-bold rounded-xl capitalize transition-all duration-300",
+                        category === cat ? "bg-white/10 text-white shadow-lg border border-white/5" : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
                       )}
                     >
                       {cat}
@@ -407,21 +349,21 @@ export default function AppointmentsPage() {
                     <button
                       key={doctor.id}
                       onClick={() => setSelectedDoctor(doctor)}
-                      className="w-full p-5 rounded-2xl border border-zinc-800/50 bg-zinc-900/20 hover:bg-zinc-800/30 hover:border-zinc-700 transition-all duration-300 text-left group"
+                      className="w-full p-6 rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 transition-all duration-300 text-left group shadow-lg"
                     >
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-5">
                         <div className="relative">
-                          <div className="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-zinc-300 group-hover:bg-zinc-700 transition-colors">
+                          <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-bold text-zinc-300 group-hover:bg-primary-500/10 transition-colors shadow-inner">
                             {doctor.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                           </div>
-                          <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-green-500 border-2 border-black" />
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-green-500 border-2 border-zinc-950" />
                         </div>
                         <div className="flex-1 overflow-hidden">
-                          <div className="flex items-center justify-between gap-2 overflow-hidden">
-                            <p className="font-bold text-sm truncate">{doctor.name}</p>
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 font-bold">₹{doctor.consultationFee}</span>
+                          <div className="flex items-center justify-between gap-2 overflow-hidden mb-1">
+                            <p className="font-bold text-base truncate text-white group-hover:text-primary-400 transition-colors">{doctor.name}</p>
+                            <span className="text-[10px] px-2.5 py-1 rounded-lg bg-primary-500/10 text-primary-400 font-bold border border-primary-500/20">₹{doctor.consultationFee}</span>
                           </div>
-                          <p className="text-xs text-zinc-500 font-medium truncate">{doctor.specialization}</p>
+                          <p className="text-xs text-zinc-500 font-medium truncate uppercase tracking-widest">{doctor.specialization}</p>
                         </div>
                       </div>
                     </button>
