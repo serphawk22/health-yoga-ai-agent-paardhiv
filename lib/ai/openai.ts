@@ -121,7 +121,8 @@ export interface GoalPlan {
 export async function healthChat(
     message: string,
     chatHistory: ChatMessage[],
-    healthProfile: HealthProfile | null
+    healthProfile: HealthProfile | null,
+    attachment?: { type: string, name: string, mimeType: string, base64?: string, content?: string }
 ): Promise<string> {
     const profileContext = healthProfile
         ? `\n\nUSER'S HEALTH PROFILE:\n${formatHealthProfile(healthProfile)}`
@@ -129,13 +130,35 @@ export async function healthChat(
 
     const systemPrompt = SYSTEM_PROMPTS.healthChat + profileContext;
 
+    let userMessageContent: OpenAI.Chat.Completions.ChatCompletionContentPart[] = [
+        { type: 'text', text: message || "Please analyze this report." }
+    ];
+
+    if (attachment) {
+        if (attachment.type === 'image' && attachment.base64) {
+            userMessageContent.push({
+                type: 'image_url',
+                image_url: { url: attachment.base64 }
+            });
+            userMessageContent.push({
+                type: 'text',
+                text: `[Attached Image: ${attachment.name}]`
+            });
+        } else if (attachment.type === 'file' && attachment.content) {
+            userMessageContent.push({
+                type: 'text',
+                text: `\n\nATTACHED FILE CONTENT (${attachment.name}):\n${attachment.content}`
+            });
+        }
+    }
+
     const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
         { role: 'system', content: systemPrompt },
         ...chatHistory.map((msg) => ({
             role: msg.role as 'user' | 'assistant',
             content: msg.content,
         })),
-        { role: 'user', content: message },
+        { role: 'user', content: userMessageContent },
     ];
 
     try {

@@ -19,7 +19,8 @@ export interface ChatActionResult {
 
 export async function sendChatMessage(
   message: string,
-  sessionId?: string
+  sessionId?: string,
+  attachment?: { type: string, name: string, mimeType: string, base64?: string, content?: string }
 ): Promise<ChatActionResult> {
   try {
     const user = await getCurrentUser();
@@ -51,17 +52,22 @@ export async function sendChatMessage(
     });
 
     // Save user message
+    let storageContent = message;
+    if (attachment) {
+      storageContent += `\n\n[ATTACHED ${attachment.type.toUpperCase()}: ${attachment.name}]`;
+    }
+
     await prisma.chatHistory.create({
       data: {
         userId: user.id,
         sessionId: chatSessionId,
         role: 'USER',
-        content: message,
+        content: storageContent,
       },
     });
 
     // Generate AI response
-    const aiResponse = await healthChat(message, chatHistory, healthProfile);
+    const aiResponse = await healthChat(message, chatHistory, healthProfile, attachment);
 
     // Save AI response
     await prisma.chatHistory.create({
