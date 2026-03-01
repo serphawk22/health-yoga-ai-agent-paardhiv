@@ -93,7 +93,7 @@ export default function ChatPage() {
     setMessages(prev => [...prev, tempUserMsg]);
 
     try {
-      let attachmentData = null;
+      let attachmentData: { type: string, name: string, mimeType: string, base64?: string, content?: string } | undefined = undefined;
       if (currentAttachment) {
         if (currentAttachment.file.type.startsWith('image/')) {
           // Convert to base64 for vision processing
@@ -419,13 +419,13 @@ export default function ChatPage() {
 
               {isLoading && (
                 <div className="w-full max-w-5xl flex gap-[20px]">
-                  <div className="w-[34px] h-[34px] rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
-                    <BrainCircuit className="w-4 h-4 text-[#10b981]" />
+                  <div className="w-[36px] h-[36px] rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-md flex items-center justify-center shrink-0 mt-1 shadow-[0_0_15px_rgba(16,185,129,0.05)] ring-1 ring-white/5">
+                    <HeartPulse className="w-5 h-5 text-emerald-400/80" />
                   </div>
-                  <div className="bg-white/[0.16] backdrop-blur-[20px] border border-white/[0.25] rounded-[20px] rounded-tl-[4px] px-[22px] py-[16px] flex items-center gap-[5px] shadow-lg">
-                    <span className="w-[7px] h-[7px] rounded-full bg-white/50 animate-bounce" style={{ animationDelay: '0ms', animationDuration: '1.2s' }} />
-                    <span className="w-[7px] h-[7px] rounded-full bg-white/50 animate-bounce" style={{ animationDelay: '150ms', animationDuration: '1.2s' }} />
-                    <span className="w-[7px] h-[7px] rounded-full bg-white/50 animate-bounce" style={{ animationDelay: '300ms', animationDuration: '1.2s' }} />
+                  <div className="bg-zinc-950/30 backdrop-blur-[30px] border border-white/[0.05] rounded-[20px] rounded-tl-[4px] px-[22px] py-[16px] flex items-center gap-[5px] shadow-lg ring-1 ring-white/[0.02]">
+                    <span className="w-[7px] h-[7px] rounded-full bg-emerald-500/50 animate-bounce" style={{ animationDelay: '0ms', animationDuration: '1.2s' }} />
+                    <span className="w-[7px] h-[7px] rounded-full bg-emerald-500/50 animate-bounce" style={{ animationDelay: '150ms', animationDuration: '1.2s' }} />
+                    <span className="w-[7px] h-[7px] rounded-full bg-emerald-500/50 animate-bounce" style={{ animationDelay: '300ms', animationDuration: '1.2s' }} />
                   </div>
                 </div>
               )}
