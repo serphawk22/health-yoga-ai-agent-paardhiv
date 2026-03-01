@@ -110,14 +110,14 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
             <div className="relative z-10 px-6 py-8 md:px-12 max-w-7xl mx-auto space-y-10">
 
                 {/* Header */}
-                <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-zinc-800 pb-8 backdrop-blur-sm rounded-2xl p-8 bg-zinc-950/60">
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-10 backdrop-blur-[40px] saturate-[1.8] rounded-[2.5rem] p-10 bg-zinc-950/40 ring-1 ring-white/[0.05] shadow-[0_32px_64px_rgba(0,0,0,0.4)]">
                     <div>
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
                         >
-                            <h1 className="text-4xl md:text-6xl font-thin tracking-tight mb-2">
+                            <h1 className="text-4xl md:text-6xl font-extralight tracking-tight mb-2">
                                 Namaste, <span className="text-primary-400 uppercase font-thin">{userName}</span>
                             </h1>
                             <p className="text-lg md:text-xl text-zinc-400 font-light max-w-2xl">
@@ -127,11 +127,11 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                     </div>
 
                     <div className="text-right flex flex-col items-end">
-                        <div className="flex items-center gap-2 text-primary-400 mb-1">
-                            <Calendar className="w-4 h-4" />
-                            <span className="text-sm font-light tracking-wider uppercase">{formattedDate}</span>
+                        <div className="flex items-center gap-2 text-primary-400/80 mb-2">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span className="text-[11px] font-medium tracking-[0.2em] uppercase opacity-70">{formattedDate}</span>
                         </div>
-                        <div className="text-3xl md:text-5xl font-thin tracking-tighter tabular-nums text-white">
+                        <div className="text-4xl md:text-5xl font-extralight tracking-tighter tabular-nums text-white/90">
                             {formattedTime}
                         </div>
                     </div>
@@ -148,12 +148,12 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.2, duration: 0.5 }}
-                            className="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950/60 backdrop-blur-xl"
+                            className="group relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
                         >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary-500/50 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
 
                             <div className="p-8 flex flex-col items-center text-center">
-                                <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-primary-400 mb-6">International Day of Yoga</h3>
+                                <h3 className="text-[10px] font-medium uppercase tracking-[0.2em] text-primary-400 mb-8 opacity-60">International Day of Yoga</h3>
 
                                 {timeUntilYogaDay ? (
                                     <div className="grid grid-cols-4 gap-4 w-full">
@@ -166,7 +166,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                                     <div className="animate-pulse h-16 w-full bg-zinc-800/50 rounded-xl" />
                                 )}
 
-                                <p className="mt-6 text-xs text-zinc-500 font-medium">June 21st • Global Celebration</p>
+                                <p className="mt-8 text-[10px] text-zinc-500 font-medium uppercase tracking-widest opacity-40">June 21st • Global Celebration</p>
                             </div>
                         </motion.div>
 
@@ -175,10 +175,10 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.3, duration: 0.5 }}
-                            className="rounded-2xl p-8 bg-zinc-950/60 backdrop-blur-xl border border-zinc-800 relative overflow-hidden"
+                            className="rounded-[2rem] p-8 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)] relative overflow-hidden"
                         >
-                            <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
-                            <h3 className="text-xl font-semibold mb-6">
+                            <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
+                            <h3 className="text-xl font-medium mb-8 tracking-tight">
                                 Why Yoga Today?
                             </h3>
                             <ul className="space-y-4">
@@ -188,9 +188,9 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                                 <BenefitItem text="Enhances flexibility & strength" />
                             </ul>
 
-                            <div className="mt-8 pt-6 border-t border-zinc-800">
+                            <div className="mt-8 pt-6 border-t border-white/5">
                                 <Link href="/yoga">
-                                    <GradientButton className="w-full text-white" variant="variant">Start Today&apos;s Session</GradientButton>
+                                    <GradientButton className="w-full text-white rounded-2xl" variant="variant">Start Today&apos;s Session</GradientButton>
                                 </Link>
                             </div>
                         </motion.div>
@@ -204,18 +204,18 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4, duration: 0.5 }}
-                            className="md:col-span-2 rounded-2xl bg-zinc-950/60 backdrop-blur-xl border border-zinc-800 p-8"
+                            className="md:col-span-2 rounded-[2.5rem] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_32px_64px_rgba(0,0,0,0.3)] p-10"
                         >
-                            <div className="mb-6">
-                                <h2 className="text-2xl font-thin uppercase tracking-tight">Latest in <span className="text-primary-400">Yoga World</span></h2>
+                            <div className="mb-8">
+                                <h2 className="text-2xl font-extralight uppercase tracking-[0.1em]">Latest in <span className="text-primary-400 font-light">Yoga World</span></h2>
                             </div>
 
                             <div className="grid md:grid-cols-2 gap-6">
                                 {yogaNews.map((news) => (
-                                    <div key={news.id} className="group p-5 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:bg-zinc-800/60 hover:border-zinc-700 transition-all cursor-pointer">
-                                        <p className="text-xs font-bold text-primary-400 mb-2 uppercase tracking-wider">{news.source}</p>
-                                        <h4 className="text-lg font-semibold leading-tight mb-2 group-hover:text-primary-300 transition-colors">{news.title}</h4>
-                                        <p className="text-sm text-zinc-500 line-clamp-2">{news.summary}</p>
+                                    <div key={news.id} className="group p-6 rounded-[1.5rem] bg-zinc-950/30 border border-white/[0.05] hover:bg-zinc-900/40 hover:border-white/10 transition-all cursor-pointer ring-1 ring-white/[0.02]">
+                                        <p className="text-[10px] font-medium text-primary-400/80 mb-3 uppercase tracking-[0.2em] opacity-60">{news.source}</p>
+                                        <h4 className="text-[17px] font-medium leading-snug mb-3 group-hover:text-primary-300 transition-colors tracking-tight">{news.title}</h4>
+                                        <p className="text-sm text-zinc-500 font-light line-clamp-2 leading-relaxed">{news.summary}</p>
                                     </div>
                                 ))}
                             </div>
@@ -226,10 +226,10 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.5, duration: 0.5 }}
-                            className="md:col-span-2 rounded-2xl bg-zinc-950/60 backdrop-blur-xl border border-zinc-800 p-8 flex flex-col justify-between"
+                            className="md:col-span-2 rounded-[2.5rem] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_32px_64px_rgba(0,0,0,0.3)] p-10 flex flex-col justify-between"
                         >
                             <div>
-                                <h3 className="text-xl font-semibold mb-6">
+                                <h3 className="text-xl font-medium mb-8 tracking-tight">
                                     Upcoming Appointments
                                 </h3>
 
@@ -238,31 +238,31 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                                         {appointments.map((apt) => {
                                             const aptDate = new Date(apt.scheduledDate);
                                             return (
-                                                <div key={apt.id} className="flex items-start gap-3 pb-4 border-b border-zinc-800 last:border-0 last:pb-0">
-                                                    <div className="bg-primary-500/10 text-primary-400 rounded-lg p-2 text-center min-w-[50px]">
-                                                        <span className="block text-xs font-bold uppercase">{aptDate.toLocaleDateString('en-US', { month: 'short' })}</span>
-                                                        <span className="block text-lg font-bold leading-none">{aptDate.getDate()}</span>
+                                                <div key={apt.id} className="flex items-start gap-4 pb-6 border-b border-white/5 last:border-0 last:pb-0">
+                                                    <div className="bg-primary-500/10 text-primary-400 rounded-2xl p-2.5 text-center min-w-[55px] ring-1 ring-primary-500/20 shadow-lg">
+                                                        <span className="block text-[10px] font-bold uppercase tracking-wider opacity-60 font-sans">{aptDate.toLocaleDateString('en-US', { month: 'short' })}</span>
+                                                        <span className="block text-xl font-bold leading-tight mt-0.5">{aptDate.getDate()}</span>
                                                     </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center gap-2 mb-0.5">
-                                                            <h5 className="font-medium text-sm text-zinc-200 truncate">Dr. {apt.doctorName}</h5>
-                                                            <span className={cn("text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-full border", statusColors[apt.status] || "bg-zinc-500/20 text-zinc-300")}>
+                                                    <div className="flex-1 min-w-0 pt-0.5">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <h5 className="font-medium text-[15px] text-white/90 truncate tracking-tight">Dr. {apt.doctorName}</h5>
+                                                            <span className={cn("text-[9px] font-medium uppercase px-2 py-0.5 rounded-full border tracking-[0.1em]", statusColors[apt.status] || "bg-zinc-500/20 text-zinc-300 border-zinc-500/30")}>
                                                                 {apt.status}
                                                             </span>
                                                         </div>
-                                                        <p className="text-xs text-zinc-500 truncate">{apt.doctorSpecialization} • {typeLabels[apt.type] || apt.type}</p>
-                                                        <div className="flex items-center gap-3 mt-1">
-                                                            <div className="flex items-center gap-1 text-xs text-zinc-500">
-                                                                <Clock className="w-3 h-3" /> {apt.scheduledTime}
+                                                        <p className="text-[13px] text-zinc-500 font-light truncate">{apt.doctorSpecialization} • {typeLabels[apt.type] || apt.type}</p>
+                                                        <div className="flex items-center gap-3 mt-1.5">
+                                                            <div className="flex items-center gap-1.5 text-xs text-zinc-500 font-light">
+                                                                <Clock className="w-3.5 h-3.5 opacity-60" /> {apt.scheduledTime}
                                                             </div>
                                                             {apt.meetingId && (
-                                                                <Link href={`/appointments/call/${apt.meetingId}`} className="flex items-center gap-1 text-xs text-primary-400 hover:text-primary-300 transition-colors">
-                                                                    <Video className="w-3 h-3" /> Join Call
+                                                                <Link href={`/appointments/call/${apt.meetingId}`} className="flex items-center gap-1.5 text-xs text-primary-400 hover:text-primary-300 transition-colors">
+                                                                    <Video className="w-3.5 h-3.5" /> Join Call
                                                                 </Link>
                                                             )}
                                                         </div>
                                                         {apt.reason && (
-                                                            <p className="text-xs text-zinc-600 mt-1 truncate">Reason: {apt.reason}</p>
+                                                            <p className="text-xs text-zinc-600 mt-1.5 truncate font-light">Reason: {apt.reason}</p>
                                                         )}
                                                     </div>
                                                 </div>
@@ -274,14 +274,14 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                                         <div className="p-3 rounded-full bg-primary-500/10 mb-3">
                                             <Calendar className="w-6 h-6 text-primary-400" />
                                         </div>
-                                        <p className="text-sm text-zinc-400 mb-1">No upcoming appointments</p>
-                                        <p className="text-xs text-zinc-600">Book a consultation to get started</p>
+                                        <p className="text-sm text-zinc-400 mb-1 font-medium">No upcoming appointments</p>
+                                        <p className="text-xs text-zinc-600 font-light">Book a consultation to get started</p>
                                     </div>
                                 )}
                             </div>
-                            <div className="mt-6">
+                            <div className="mt-8">
                                 <Link href="/appointments">
-                                    <GradientButton className="w-full justify-center" variant="variant">
+                                    <GradientButton className="w-full justify-center rounded-2xl" variant="variant">
                                         {appointments.length > 0 ? 'View All Appointments' : 'Book an Appointment'}
                                     </GradientButton>
                                 </Link>
@@ -300,10 +300,10 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
 function TimeUnit({ value, label }: { value: number; label: string }) {
     return (
         <div className="flex flex-col items-center">
-            <div className="text-3xl lg:text-4xl font-thin text-white tabular-nums tracking-tighter">
+            <div className="text-4xl lg:text-5xl font-extralight text-white/90 tabular-nums tracking-tighter">
                 {value.toString().padStart(2, '0')}
             </div>
-            <span className="text-[10px] font-bold uppercase text-zinc-500 tracking-wider mt-1">{label}</span>
+            <span className="text-[10px] font-medium uppercase text-zinc-500 tracking-[0.2em] mt-2 opacity-50">{label}</span>
         </div>
     )
 }
