@@ -162,7 +162,7 @@ export default function ChatPage() {
 
   // Input Card Content Generator
   const renderInputCard = () => (
-    <div className="w-full max-w-[850px] mx-auto bg-black/[0.75] bg-gradient-to-b from-black/[0.60] to-black/[0.85] backdrop-blur-[80px] saturate-[1.5] border border-white/[0.15] rounded-[24px] p-[22px_24px_18px] shadow-[0_8px_48px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300 focus-within:shadow-[0_8px_60px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.2)] focus-within:border-white/[0.25] relative z-20">
+    <div className="w-full max-w-5xl mx-auto bg-black/[0.75] bg-gradient-to-b from-black/[0.60] to-black/[0.85] backdrop-blur-[80px] saturate-[1.5] border border-white/[0.15] rounded-[32px] p-[24px_32px_20px] shadow-[0_8px_48px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300 focus-within:shadow-[0_8px_60px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.2)] focus-within:border-white/[0.25] relative z-20">
       <textarea
         ref={inputRef}
         value={input}
@@ -174,19 +174,32 @@ export default function ChatPage() {
         placeholder="Ask a question or make a request…"
         rows={2}
         disabled={isLoading}
-        className="w-full bg-transparent border-none outline-none text-white/95 font-sans text-[15px] font-medium resize-none min-h-[52px] max-h-[140px] leading-[1.6] placeholder:text-white/70 caret-[#10b981] custom-scrollbar focus:ring-0"
+        className="w-full bg-transparent border-none outline-none text-white/95 font-sans text-[15px] font-light resize-none min-h-[52px] max-h-[140px] leading-[1.6] placeholder:text-white/40 caret-[#10b981] custom-scrollbar focus:ring-0"
       />
-      <div className="flex items-center justify-end mt-3.5">
+      <div className="flex items-center justify-between mt-3.5 border-t border-white/5 pt-3.5">
+        <div className="flex items-center gap-2">
+          <button className="p-2 text-white/40 hover:text-white/60 transition-colors">
+            <Paperclip className="w-4 h-4" />
+          </button>
+          <button className="p-2 text-white/40 hover:text-white/60 transition-colors">
+            <BrainCircuit className="w-4 h-4" />
+          </button>
+        </div>
         <button
           type="button"
           onClick={() => handleSubmit()}
           disabled={!input.trim() || isLoading}
-          className="w-10 h-10 rounded-full bg-gradient-to-br from-[#10b981] to-[#047857] border-none cursor-pointer flex items-center justify-center shadow-[0_4px_16px_rgba(16,185,129,0.45)] transition-all hover:scale-105 hover:shadow-[0_6px_24px_rgba(10,185,129,0.6)] disabled:opacity-45 disabled:cursor-not-allowed disabled:hover:scale-100 flex-shrink-0"
+          className="h-10 px-4 rounded-xl bg-white text-black font-semibold text-sm cursor-pointer flex items-center justify-center shadow-lg transition-all hover:bg-zinc-200 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 flex-shrink-0"
         >
-          {isLoading ? <Loader2 className="w-5 h-5 text-white animate-spin" /> : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="translate-x-[1px] translate-y-[-1px]">
-              <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" fill="white" stroke="none" />
-            </svg>
+          {isLoading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <span className="flex items-center gap-2">
+              Send
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
           )}
         </button>
       </div>
@@ -242,7 +255,7 @@ export default function ChatPage() {
 
             <motion.div
               initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-[850px]"
+              className="w-full max-w-5xl"
             >
               {renderInputCard()}
             </motion.div>
@@ -264,7 +277,7 @@ export default function ChatPage() {
               )}
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar px-6 lg:px-12 pt-4 pb-24 flex flex-col gap-7 items-center">
+            <div className="flex-1 overflow-y-auto custom-scrollbar px-6 lg:px-12 pt-4 pb-40 flex flex-col gap-7 items-center">
               {messages.map((message) => (
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
@@ -272,23 +285,23 @@ export default function ChatPage() {
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   key={message.id}
                   className={cn(
-                    "w-full max-w-[850px] flex gap-[14px]",
+                    "w-full max-w-5xl flex gap-[20px]",
                     message.role === 'user' ? 'justify-end' : 'justify-start'
                   )}
                 >
                   {message.role === 'assistant' && (
-                    <div className="w-[34px] h-[34px] rounded-full bg-gradient-to-br from-[#10b981] to-[#047857] border border-white/25 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
-                      <svg width="15" height="15" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="10" stroke="white" strokeWidth="1.5" /><circle cx="18" cy="18" r="4" stroke="white" strokeWidth="1.5" /><line x1="18" y1="8" x2="18" y2="14" stroke="white" strokeWidth="1.5" /><line x1="18" y1="22" x2="18" y2="28" stroke="white" strokeWidth="1.5" /><line x1="8" y1="18" x2="14" y2="18" stroke="white" strokeWidth="1.5" /><line x1="22" y1="18" x2="28" y2="18" stroke="white" strokeWidth="1.5" /></svg>
+                    <div className="w-[34px] h-[34px] rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
+                      <BrainCircuit className="w-4 h-4 text-[#10b981]" />
                     </div>
                   )}
 
-                  <div className="flex flex-col">
+                  <div className="flex flex-col flex-1 max-w-[95%]">
                     <div
                       className={cn(
-                        "max-w-[100%] sm:max-w-[82%] px-[22px] py-[16px] text-[14.5px] leading-[1.75] rounded-[20px]",
+                        "w-fit max-w-[100%] sm:max-w-[90%] px-[26px] py-[18px] text-[15px] font-light leading-[1.8] rounded-[24px]",
                         message.role === 'user'
-                          ? 'bg-white/[0.22] backdrop-blur-[20px] border border-white/[0.32] text-white/95 rounded-tr-[4px] shadow-lg self-end'
-                          : 'bg-white/[0.16] backdrop-blur-[20px] border border-white/[0.25] text-[rgba(255,255,255,0.92)] rounded-tl-[4px] shadow-lg self-start'
+                          ? 'bg-white/[0.12] backdrop-blur-[20px] border border-white/[0.1] text-white/95 rounded-tr-[4px] shadow-lg self-end'
+                          : 'bg-white/[0.06] backdrop-blur-[20px] border border-white/[0.08] text-[rgba(255,255,255,0.92)] rounded-tl-[4px] shadow-lg self-start'
                       )}
                     >
                       <div className="prose prose-sm prose-p:leading-[1.75] max-w-none whitespace-pre-wrap" style={{ color: "inherit" }}>
@@ -297,7 +310,7 @@ export default function ChatPage() {
                     </div>
                     <div
                       className={cn(
-                        "text-[10px] mt-2 opacity-40 font-medium tracking-[0.06em] uppercase",
+                        "text-[10px] mt-2 opacity-40 font-light tracking-[0.06em] uppercase",
                         message.role === 'user' ? 'text-right' : 'text-left'
                       )}
                     >
@@ -308,9 +321,9 @@ export default function ChatPage() {
               ))}
 
               {isLoading && (
-                <div className="w-full max-w-[850px] flex gap-[14px]">
-                  <div className="w-[34px] h-[34px] rounded-full bg-gradient-to-br from-[#10b981] to-[#047857] border border-white/25 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
-                    <svg width="15" height="15" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="10" stroke="white" strokeWidth="1.5" /><circle cx="18" cy="18" r="4" stroke="white" strokeWidth="1.5" /><line x1="18" y1="8" x2="18" y2="14" stroke="white" strokeWidth="1.5" /><line x1="18" y1="22" x2="18" y2="28" stroke="white" strokeWidth="1.5" /><line x1="8" y1="18" x2="14" y2="18" stroke="white" strokeWidth="1.5" /><line x1="22" y1="18" x2="28" y2="18" stroke="white" strokeWidth="1.5" /></svg>
+                <div className="w-full max-w-5xl flex gap-[20px]">
+                  <div className="w-[34px] h-[34px] rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
+                    <BrainCircuit className="w-4 h-4 text-[#10b981]" />
                   </div>
                   <div className="bg-white/[0.16] backdrop-blur-[20px] border border-white/[0.25] rounded-[20px] rounded-tl-[4px] px-[22px] py-[16px] flex items-center gap-[5px] shadow-lg">
                     <span className="w-[7px] h-[7px] rounded-full bg-white/50 animate-bounce" style={{ animationDelay: '0ms', animationDuration: '1.2s' }} />
@@ -323,7 +336,7 @@ export default function ChatPage() {
             </div>
 
             {/* Sticky Input Area */}
-            <div className="px-6 lg:px-12 pb-[28px] pt-4 w-full flex justify-center shrink-0">
+            <div className="px-6 lg:px-12 pb-[40px] pt-10 w-full flex justify-center shrink-0">
               {renderInputCard()}
             </div>
           </div>
