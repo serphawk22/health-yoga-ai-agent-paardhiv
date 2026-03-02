@@ -23,9 +23,10 @@ interface WorkoutDisplayProps {
     type: 'WORKOUT' | 'YOGA';
     planImageUrl?: string | null;
     isGeneratingImage?: boolean;
+    isLandingPage?: boolean;
 }
 
-export function WorkoutDisplay({ plan, onSave, onReset, isSaving, type, planImageUrl, isGeneratingImage }: WorkoutDisplayProps) {
+export function WorkoutDisplay({ plan, onSave, onReset, isSaving, type, planImageUrl, isGeneratingImage, isLandingPage = false }: WorkoutDisplayProps) {
     const [completed, setCompleted] = useState<Set<number>>(new Set());
 
     const items = type === 'WORKOUT' ? plan.exercises : plan.poses;
@@ -189,7 +190,7 @@ export function WorkoutDisplay({ plan, onSave, onReset, isSaving, type, planImag
                     className="px-8 py-3 rounded-full bg-black dark:bg-white text-white dark:text-black font-medium hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
                 >
                     <Save className="w-4 h-4" />
-                    {isSaving ? 'Saving...' : 'Save Session'}
+                    {isSaving ? 'Saving...' : isLandingPage ? 'Sign Up to Save' : 'Save Session'}
                 </button>
             </div>
 

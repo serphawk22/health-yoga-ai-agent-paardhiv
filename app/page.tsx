@@ -8,6 +8,7 @@ import { GradientButton } from '@/components/ui/gradient-button';
 import { Typewriter } from '@/components/ui/typewriter';
 import { TubesBackground } from '@/components/ui/neon-flow';
 import { ArrowDown, ArrowRight } from 'lucide-react';
+import { YogaView } from '@/components/features/exercise/YogaView';
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -177,60 +178,33 @@ export default function HomePage() {
         </div>
       </motion.section>
 
-      {/* ═══ Section 3: Features ═══ */}
-      <motion.section
-        style={{ opacity: featuresOpacity }}
-        className="relative z-10 py-32 px-6"
-      >
+
+
+      {/* ═══ Section 4: Interactive Yoga Showcase ═══ */}
+      <section className="relative z-10 py-32 px-6 border-t border-white/[0.02]">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-20">
-            <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.3em] mb-6">
-              What we offer
+          <div className="text-center mb-16">
+            <p className="text-[11px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-300 uppercase tracking-[0.3em] mb-4">
+              Try It Now
             </p>
-            <h2 className="text-3xl lg:text-4xl font-light text-white tracking-tight">
-              Everything you need, nothing you don&apos;t
+            <h2 className="text-3xl lg:text-4xl font-light text-white tracking-tight leading-[1.2] mb-4">
+              Generate a personalized yoga sequence
             </h2>
+            <p className="text-zinc-500 font-light text-sm sm:text-base max-w-xl mx-auto">
+              Experience the power of our AI wellness engine. Tell us what you need, and we&apos;ll create a custom routine.
+            </p>
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-6">
-            {[
-              {
-                title: 'AI Diet Plans',
-                description: 'Nutrition plans tailored to your body type, dietary preferences, and health goals.',
-              },
-              {
-                title: 'Guided Workouts',
-                description: 'Exercise routines from strength training to yoga, adapting as you progress.',
-              },
-              {
-                title: 'Doctor Consults',
-                description: 'Book appointments with verified professionals and consult from anywhere.',
-              },
-            ].map((feature, i) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ delay: i * 0.15, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="group rounded-3xl bg-zinc-900/50 border border-zinc-800/60 p-8 hover:border-zinc-700/60 transition-all duration-500"
-              >
-                <div className="w-10 h-10 rounded-xl bg-zinc-800/80 flex items-center justify-center mb-6 group-hover:bg-zinc-800 transition-colors">
-                  <div className="w-2 h-2 rounded-full bg-zinc-500 group-hover:bg-primary-500 transition-colors" />
-                </div>
-                <h3 className="text-base font-medium text-white mb-3 tracking-tight">
-                  {feature.title}
-                </h3>
-                <p className="text-sm text-zinc-500 leading-relaxed font-light">
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
+          <div className="bg-zinc-950/40 backdrop-blur-xl border border-white/[0.05] rounded-[2.5rem] p-6 sm:p-10 shadow-[0_32px_64px_rgba(0,0,0,0.4)] relative overflow-hidden">
+            {/* Subtle ambient glow behind the interactive component */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
+
+            <YogaView isLandingPage={true} />
           </div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* ═══ Section 4: CTA ═══ */}
+      {/* ═══ Section 5: CTA ═══ */}
       <section className="relative z-10 py-32 px-6">
         <div className="max-w-xl mx-auto text-center">
           <motion.div
@@ -256,19 +230,29 @@ export default function HomePage() {
       </section>
 
       {/* ═══ Footer ═══ */}
-      <footer className="relative z-10 border-t border-zinc-900 py-12 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-zinc-700 font-medium">
-            Health Agent
-          </p>
-          <div className="flex items-center gap-6">
-            <Link href="/login" className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">
-              Sign In
-            </Link>
-            <Link href="/register" className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">
-              Register
-            </Link>
-          </div>
+      <footer className="relative z-10 bg-[#050505] overflow-hidden">
+        <div className="w-full flex items-center justify-center pt-32 pb-20">
+          <h1
+            className="
+        font-extrabold
+        tracking-[-0.04em]
+        leading-[1]
+        text-[24vw]
+        md:text-[18vw]
+        lg:text-[14vw]
+        select-none
+        whitespace-nowrap
+        bg-gradient-to-r 
+        from-white 
+        via-zinc-300 
+        to-zinc-500 
+        bg-clip-text 
+        text-transparent
+        py-4
+      "
+          >
+            Health-Agent
+          </h1>
         </div>
       </footer>
     </div>
