@@ -251,7 +251,14 @@ export default function HomePage() {
         py-4
       "
           >
-            Health-Agent
+            Health-<Typewriter
+              text={["Agent", "Partner", "Guide"]}
+              speed={70}
+              waitTime={2000}
+              deleteSpeed={40}
+              cursorChar=""
+              showCursor={false}
+            />
           </h1>
         </div>
       </footer>
