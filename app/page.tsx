@@ -231,24 +231,24 @@ export default function HomePage() {
 
       {/* ═══ Footer ═══ */}
       <footer className="relative z-10 bg-[#050505] overflow-hidden">
-        <div className="w-full flex items-center justify-center pt-32 pb-20">
+        <div className="w-full flex items-center justify-center pt-20 pb-12">
           <h1
             className="
         font-extrabold
         tracking-[-0.04em]
         leading-[1]
-        text-[24vw]
-        md:text-[18vw]
-        lg:text-[14vw]
+        text-[18vw]
+        md:text-[12vw]
+        lg:text-[10vw]
         select-none
         whitespace-nowrap
         bg-gradient-to-r 
         from-white 
-        via-zinc-300 
-        to-zinc-500 
+        via-zinc-100 
+        to-zinc-200 
         bg-clip-text 
         text-transparent
-        py-4
+        py-2
       "
           >
             Health-<Typewriter
