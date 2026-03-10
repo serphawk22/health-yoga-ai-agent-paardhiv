@@ -209,6 +209,16 @@ export function HistoryView({ filterType }: { filterType?: 'EXERCISE' | 'YOGA' }
                                                 Saved Plan
                                             </h4>
 
+                                            {session.exercises?.planImageUrl && (
+                                                <div className="mb-6 rounded-xl overflow-hidden shadow-lg border border-white/5">
+                                                    <img
+                                                        src={session.exercises.planImageUrl}
+                                                        alt="Plan Visual Guide"
+                                                        className="w-full h-auto object-cover"
+                                                    />
+                                                </div>
+                                            )}
+
                                             <div className="relative border-l-2 border-zinc-100 dark:border-zinc-800 ml-3 space-y-5 pl-6 py-1">
 
                                                 {/* Warmup */}
