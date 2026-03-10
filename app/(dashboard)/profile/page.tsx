@@ -144,13 +144,16 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.05 }}
-          className="flex items-end justify-between"
+          className="flex items-center justify-between"
         >
-          <div>
-            <p className="text-zinc-500 font-medium text-sm uppercase tracking-wider mb-1">Health Hub</p>
-            <h1 className="text-3xl font-light text-health-text tracking-tight">
-              My Profile
-            </h1>
+          <div className="flex items-center gap-6">
+            <ProfileAvatar gender={profile.gender} size={64} />
+            <div>
+              <p className="text-zinc-500 font-medium text-sm uppercase tracking-wider mb-1">Health Hub</p>
+              <h1 className="text-3xl font-light text-health-text tracking-tight">
+                My Profile
+              </h1>
+            </div>
           </div>
           <div className="flex gap-3">
             {!isEditing ? (
@@ -302,11 +305,12 @@ export default function ProfilePage() {
                 </Field>
                 <Field label="Water">
                   <Slider
-                    value={formData.waterIntake || 8}
+                    value={formData.waterIntake || 2.5}
                     min={0}
-                    max={20}
+                    max={10}
+                    step={0.1}
                     onChange={(val) => setFormData({ ...formData, waterIntake: val })}
-                    unit="gls"
+                    unit="L"
                   />
                 </Field>
               </div>
@@ -315,7 +319,7 @@ export default function ProfilePage() {
                 <MetricCard icon={Activity} label="Activity" value={formatEnumValue(profile.activityLevel)} />
                 <MetricCard icon={Heart} label="Sleep" value={profile.sleepHours || '-'} unit="hr" />
                 <MetricCard icon={Activity} label="Stress" value={formatEnumValue(profile.stressLevel)} />
-                <MetricCard icon={Activity} label="Water" value={profile.waterIntake || '-'} unit="gls" />
+                <MetricCard icon={Activity} label="Water" value={profile.waterIntake || '-'} unit="L" />
               </div>
             )}
           </Section>
@@ -466,10 +470,7 @@ export default function ProfilePage() {
             )}
           </Section>
 
-          {/* Profile Avatar Section */}
-          <div className="flex justify-center py-8">
-            <ProfileAvatar gender={profile.gender} />
-          </div>
+
 
         </div>
       </div>

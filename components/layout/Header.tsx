@@ -229,7 +229,6 @@ export function Header({ user }: HeaderProps) {
                 { name: 'Dashboard', href: '/dashboard' },
                 { name: 'Health Chat', href: '/chat' },
                 { name: 'Appointments', href: '/appointments' },
-                { name: 'Diet Plan', href: '/diet' },
                 { name: 'Exercise', href: '/exercise' },
                 { name: 'Yoga', href: '/yoga' },
                 { name: 'Health Assessment', href: '/assessment' },

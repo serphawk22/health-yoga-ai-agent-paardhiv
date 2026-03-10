@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import {
     MessageCircle,
-    Apple,
     Dumbbell,
     Flower2,
     Calendar,
@@ -28,12 +27,12 @@ export function Dock({ userRole = 'PATIENT' }: { userRole?: string }) {
         if (typeof window === 'undefined') return;
         const mq = window.matchMedia('(hover: none)');
         const mobileCheck = window.matchMedia('(max-width: 768px)');
-        
+
         const update = () => {
             setDisableHoverExpand(Boolean(mq.matches));
             setIsMobile(Boolean(mobileCheck.matches));
         };
-        
+
         update();
         mq.addEventListener('change', update);
         mobileCheck.addEventListener('change', update);
@@ -47,7 +46,6 @@ export function Dock({ userRole = 'PATIENT' }: { userRole?: string }) {
         { name: 'Dashboard', icon: Home, href: '/dashboard' },
         { name: 'Store', icon: ShoppingBag, href: '/marketplace' },
         { name: 'AI Chat', icon: MessageCircle, href: '/chat' },
-        { name: 'Diet', icon: Apple, href: '/diet' },
         { name: 'Exercise', icon: Dumbbell, href: '/exercise' },
         { name: 'Yoga', icon: Flower2, href: '/yoga' },
         { name: 'Schedule', icon: Calendar, href: '/appointments' },

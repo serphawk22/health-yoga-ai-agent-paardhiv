@@ -7,6 +7,7 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { Calendar, Clock, Activity, Leaf, Sun, Heart, Stethoscope, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { DietPlanner } from "./DietPlanner";
 
 interface AppointmentData {
     id: string;
@@ -290,6 +291,9 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
 
                     </div>
                 </div>
+
+                {/* Diet Planner appended to dashboard */}
+                <DietPlanner />
             </div>
         </div>
     );

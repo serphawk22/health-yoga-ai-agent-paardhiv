@@ -8,9 +8,10 @@ import { toast } from 'sonner';
 
 interface ProfileAvatarProps {
     gender?: string;
+    size?: number;
 }
 
-export function ProfileAvatar({ gender }: ProfileAvatarProps) {
+export function ProfileAvatar({ gender, size = 80 }: ProfileAvatarProps) {
     const [config, setConfig] = useState<AvatarConfig>(DEFAULT_AVATAR);
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -80,7 +81,7 @@ export function ProfileAvatar({ gender }: ProfileAvatarProps) {
                     whileTap={{ scale: 0.95 }}
                     className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                 >
-                    <AvatarPreview config={config} size={80} className="shadow-lg border-2 border-white dark:border-zinc-700" />
+                    <AvatarPreview config={config} size={size} className="shadow-lg border-2 border-white dark:border-zinc-700" />
                 </motion.div>
 
             </div>

@@ -43,7 +43,6 @@ const navigation = [
   { name: 'Health Chat', href: '/chat', icon: MessageCircle },
   { name: 'Appointments', href: '/appointments', icon: Calendar },
   { name: 'Store', href: '/marketplace', icon: ShoppingBag },
-  { name: 'Diet Plan', href: '/diet', icon: Apple },
   { name: 'Exercise', href: '/exercise', icon: Dumbbell },
   { name: 'Health Assessment', href: '/assessment', icon: BarChart3 },
   { name: 'Yoga', href: '/yoga', icon: Flower },
@@ -198,7 +197,6 @@ export function Sidebar({ user }: SidebarProps) {
           {[
             { name: 'Home', href: '/dashboard', icon: LayoutDashboard },
             { name: 'Chat', href: '/chat', icon: MessageCircle },
-            { name: 'Diet', href: '/diet', icon: Apple },
             { name: 'Exercise', href: '/exercise', icon: Dumbbell },
             { name: 'Profile', href: '/profile', icon: User },
           ].map((item) => {
