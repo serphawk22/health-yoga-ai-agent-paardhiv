@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import {
-    MessageCircle,
     Dumbbell,
     Flower2,
     Calendar,
@@ -45,7 +44,6 @@ export function Dock({ userRole = 'PATIENT' }: { userRole?: string }) {
     const allItems = [
         { name: 'Dashboard', icon: Home, href: '/dashboard' },
         { name: 'Store', icon: ShoppingBag, href: '/marketplace' },
-        { name: 'AI Chat', icon: MessageCircle, href: '/chat' },
         { name: 'Exercise', icon: Dumbbell, href: '/exercise' },
         { name: 'Yoga', icon: Flower2, href: '/yoga' },
         { name: 'Schedule', icon: Calendar, href: '/appointments' },

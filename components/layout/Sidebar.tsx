@@ -22,6 +22,9 @@ import {
   Pill,
   Flower,
   ShoppingBag,
+  FileText,
+  Users,
+  BookOpen,
 } from 'lucide-react';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Typewriter } from '@/components/ui/typewriter';
@@ -40,14 +43,16 @@ interface SidebarProps {
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Health Chat', href: '/chat', icon: MessageCircle },
   { name: 'Appointments', href: '/appointments', icon: Calendar },
   { name: 'Store', href: '/marketplace', icon: ShoppingBag },
   { name: 'Exercise', href: '/exercise', icon: Dumbbell },
   { name: 'Health Assessment', href: '/assessment', icon: BarChart3 },
   { name: 'Yoga', href: '/yoga', icon: Flower },
+  { name: 'Yoga Library', href: '/yoga/library', icon: BookOpen },
   { name: 'Goal Planner', href: '/goals', icon: Target },
   { name: 'Health Metrics', href: '/metrics', icon: Activity },
+  { name: 'Health Articles', href: '/blogs', icon: FileText },
+  { name: 'Nutritionists', href: '/nutritionists', icon: Users },
 ];
 
 const bottomNavigation = [
@@ -196,7 +201,6 @@ export function Sidebar({ user }: SidebarProps) {
         <div className="flex justify-around py-2">
           {[
             { name: 'Home', href: '/dashboard', icon: LayoutDashboard },
-            { name: 'Chat', href: '/chat', icon: MessageCircle },
             { name: 'Exercise', href: '/exercise', icon: Dumbbell },
             { name: 'Profile', href: '/profile', icon: User },
           ].map((item) => {

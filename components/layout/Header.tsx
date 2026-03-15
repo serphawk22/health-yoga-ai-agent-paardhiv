@@ -227,7 +227,6 @@ export function Header({ user }: HeaderProps) {
             <nav className="px-4 py-4 space-y-1">
               {[
                 { name: 'Dashboard', href: '/dashboard' },
-                { name: 'Health Chat', href: '/chat' },
                 { name: 'Appointments', href: '/appointments' },
                 { name: 'Exercise', href: '/exercise' },
                 { name: 'Yoga', href: '/yoga' },

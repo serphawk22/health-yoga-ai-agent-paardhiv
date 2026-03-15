@@ -1,0 +1,130 @@
+import { getBlogBySlug } from '@/lib/actions/blog';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { ArrowLeft, Calendar, User } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const result = await getBlogBySlug(params.slug);
+  if (!result.success || !result.data) {
+    return { title: 'Article Not Found' };
+  }
+  return {
+    title: result.data.seoTitle || result.data.title,
+    description: result.data.metaDescription,
+  };
+}
+
+export default async function BlogPage({ params }: { params: { slug: string } }) {
+  const result = await getBlogBySlug(params.slug);
+
+  if (!result.success || !result.data) {
+    notFound();
+  }
+
+  const blog = result.data;
+
+  return (
+    <div className="max-w-3xl mx-auto pb-20 pt-6">
+      {/* Back Link */}
+      <Link
+        href="/blogs"
+        className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-primary-400 transition-colors mb-8"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Articles
+      </Link>
+
+      {/* Article Header */}
+      <article>
+        <header className="mb-10">
+          <h1 className="text-3xl md:text-4xl font-light text-health-text tracking-tight leading-tight mb-4">
+            {blog.title}
+          </h1>
+          {blog.metaDescription && (
+            <p className="text-lg text-zinc-400 font-light leading-relaxed mb-6">
+              {blog.metaDescription}
+            </p>
+          )}
+          <div className="flex items-center gap-4 text-sm text-zinc-500">
+            <div className="flex items-center gap-1.5">
+              <Calendar className="w-4 h-4" />
+              {new Date(blog.createdAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            </div>
+            {blog.user?.name && (
+              <div className="flex items-center gap-1.5">
+                <User className="w-4 h-4" />
+                {blog.user.name}
+              </div>
+            )}
+          </div>
+        </header>
+
+        {/* Source Query */}
+        {blog.sourceQuery && (
+          <div className="rounded-2xl bg-primary-600/10 border border-primary-500/20 p-6 mb-10">
+            <p className="text-xs font-bold text-primary-400 uppercase tracking-widest mb-2">Original Question</p>
+            <p className="text-sm text-primary-300 font-light italic">&ldquo;{blog.sourceQuery}&rdquo;</p>
+          </div>
+        )}
+
+        {/* Symptoms Section */}
+        {blog.symptoms && (
+          <section className="mb-10">
+            <h2 className="text-xl font-medium text-health-text mb-4 tracking-tight">Symptoms</h2>
+            <div className="rounded-2xl bg-zinc-900 border border-zinc-800 p-6">
+              <div className="prose prose-sm max-w-none whitespace-pre-wrap text-zinc-300 font-light leading-relaxed">
+                {blog.symptoms}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Possible Causes Section */}
+        {blog.possibleCauses && (
+          <section className="mb-10">
+            <h2 className="text-xl font-medium text-health-text mb-4 tracking-tight">Possible Causes</h2>
+            <div className="rounded-2xl bg-zinc-900 border border-zinc-800 p-6">
+              <div className="prose prose-sm max-w-none whitespace-pre-wrap text-zinc-300 font-light leading-relaxed">
+                {blog.possibleCauses}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Diet Recommendations Section */}
+        {blog.dietRecs && (
+          <section className="mb-10">
+            <h2 className="text-xl font-medium text-health-text mb-4 tracking-tight">Diet Recommendations</h2>
+            <div className="rounded-2xl bg-zinc-900 border border-zinc-800 p-6">
+              <div className="prose prose-sm max-w-none whitespace-pre-wrap text-zinc-300 font-light leading-relaxed">
+                {blog.dietRecs}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Lifestyle Improvements Section */}
+        {blog.lifestyleRecs && (
+          <section className="mb-10">
+            <h2 className="text-xl font-medium text-health-text mb-4 tracking-tight">Lifestyle Improvements</h2>
+            <div className="rounded-2xl bg-zinc-900 border border-zinc-800 p-6">
+              <div className="prose prose-sm max-w-none whitespace-pre-wrap text-zinc-300 font-light leading-relaxed">
+                {blog.lifestyleRecs}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Disclaimer */}
+        <div className="rounded-2xl bg-amber-500/10 border border-amber-500/20 p-6 mt-10">
+          <p className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Disclaimer</p>
+          <p className="text-sm text-amber-300/80 font-light leading-relaxed">
+            This article was generated by an AI health assistant based on a conversation. It is for informational purposes only and should not replace professional medical advice. Always consult a healthcare provider for personalized guidance.
+          </p>
+        </div>
+      </article>
+    </div>
+  );
+}

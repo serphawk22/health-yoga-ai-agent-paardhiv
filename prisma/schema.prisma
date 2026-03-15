@@ -34,6 +34,9 @@ model User {
   workoutSessions WorkoutSession[]
   activePlan      ActivePlan?
   planHistory     PlanHistory[]
+  blogs           Blog[]
+  dailyPlanLogs   DailyPlanLog[]
+  onboarding      OnboardingProgress?
 
   @@index([email])
 }
@@ -330,6 +333,55 @@ model PlanHistory {
   user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model Blog {
+  id              String   @id @default(cuid())
+  userId          String
+  slug            String   @unique
+  title           String
+  seoTitle        String?
+  metaDescription String?
+  sourceQuery     String?
+  symptoms        String?
+  possibleCauses  String?
+  dietRecs        String?
+  lifestyleRecs   String?
+  fullContent     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([slug])
+}
+
+model DailyPlanLog {
+  id               String   @id @default(cuid())
+  userId           String
+  activePlanId     String
+  date             DateTime @default(now())
+  followedDiet     Boolean  @default(false)
+  completedWorkout Boolean  @default(false)
+  skipped          Boolean  @default(false)
+  notes            String?
+  createdAt        DateTime @default(now())
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, activePlanId, date])
+  @@index([userId])
+}
+
+model OnboardingProgress {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  allergiesComplete   Boolean  @default(false)
+  conditionsComplete  Boolean  @default(false)
+  medicationsComplete Boolean  @default(false)
+  goalsComplete       Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Role {

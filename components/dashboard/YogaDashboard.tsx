@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import ColorBends from "@/components/ui/ColorBends";
 import { GradientButton } from "@/components/ui/gradient-button";
-import { Calendar, Clock, Activity, Leaf, Sun, Heart, Stethoscope, Video } from "lucide-react";
+import { Calendar, Clock, Activity, Leaf, Sun, Heart, Stethoscope, Video, ClipboardList, BookOpen, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { DietPlanner } from "./DietPlanner";
+import { DashboardHeroChat } from "./DashboardHeroChat";
+import { OnboardingNotification } from "./OnboardingNotification";
 
 interface AppointmentData {
     id: string;
@@ -292,9 +293,60 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                     </div>
                 </div>
 
-                {/* Diet Planner appended to dashboard */}
-                <DietPlanner />
+                {/* Dashboard Hero Chat Section */}
+                <DashboardHeroChat />
+
+                {/* Quick Access Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
+                  <Link href="/plan">
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                      className="group rounded-[2rem] p-6 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)] hover:border-white/[0.15] transition-all cursor-pointer"
+                    >
+                      <div className="p-3 bg-primary-600/10 rounded-xl w-fit mb-4">
+                        <ClipboardList className="w-5 h-5 text-primary-400" />
+                      </div>
+                      <h3 className="text-sm font-medium text-health-text mb-1">View My Current Plan</h3>
+                      <p className="text-xs text-zinc-500 font-light">Track daily adherence and view weekly progress</p>
+                    </motion.div>
+                  </Link>
+
+                  <Link href="/metrics/knowledge">
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.55 }}
+                      className="group rounded-[2rem] p-6 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)] hover:border-white/[0.15] transition-all cursor-pointer"
+                    >
+                      <div className="p-3 bg-blue-500/10 rounded-xl w-fit mb-4">
+                        <BookOpen className="w-5 h-5 text-blue-400" />
+                      </div>
+                      <h3 className="text-sm font-medium text-health-text mb-1">Health Metrics Guide</h3>
+                      <p className="text-xs text-zinc-500 font-light">Learn about blood pressure, blood sugar, and more</p>
+                    </motion.div>
+                  </Link>
+
+                  <Link href="/nutritionists">
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 }}
+                      className="group rounded-[2rem] p-6 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)] hover:border-white/[0.15] transition-all cursor-pointer"
+                    >
+                      <div className="p-3 bg-purple-500/10 rounded-xl w-fit mb-4">
+                        <Users className="w-5 h-5 text-purple-400" />
+                      </div>
+                      <h3 className="text-sm font-medium text-health-text mb-1">Our Nutritionists</h3>
+                      <p className="text-xs text-zinc-500 font-light">Meet certified health and nutrition experts</p>
+                    </motion.div>
+                  </Link>
+                </div>
             </div>
+
+            {/* Progressive Onboarding Notification */}
+            <OnboardingNotification />
         </div>
     );
 }
