@@ -199,7 +199,6 @@ export function DashboardHeroChat() {
                           onClick={() => handleSubmit(suggestion)}
                           className="px-5 py-4 rounded-2xl bg-white/5 border border-white/5 text-xs text-zinc-400 hover:text-white hover:bg-white/[0.08] hover:border-white/10 transition-all text-left group"
                         >
-                          <span className="opacity-40 group-hover:opacity-100 transition-opacity mr-2">/</span>
                           {suggestion}
                         </button>
                       ))}

@@ -152,8 +152,6 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             transition={{ delay: 0.2, duration: 0.5 }}
                             className="group relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
                         >
-                            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary-500/50 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
-
                             <div className="p-8 flex flex-col items-center text-center">
                                 <h3 className="text-[10px] font-medium uppercase tracking-[0.2em] text-primary-400 mb-8 opacity-60">International Day of Yoga</h3>
 
