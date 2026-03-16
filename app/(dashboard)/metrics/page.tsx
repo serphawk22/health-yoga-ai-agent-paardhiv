@@ -26,7 +26,9 @@ import {
   ChevronDown,
   CheckCircle,
   Info,
+  BookOpen,
 } from 'lucide-react';
+import Link from 'next/link';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -248,6 +250,23 @@ export default function MetricsPage() {
           Log Metric
         </GradientButton>
       </div>
+
+      {/* Knowledge Guide Banner */}
+      <Link href="/metrics/knowledge">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="group rounded-[24px] p-6 mb-8 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-blue-500/20 ring-1 ring-blue-500/10 shadow-[0_20px_40px_rgba(0,0,0,0.3)] hover:border-blue-500/40 transition-all cursor-pointer flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6"
+        >
+          <div className="p-4 bg-blue-500/10 rounded-[1.5rem] w-fit shrink-0">
+            <BookOpen className="w-6 h-6 text-blue-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">Health Metrics Guide</h3>
+            <p className="text-sm text-zinc-400 font-light">Learn all about what these numbers mean: blood pressure, blood sugar, BMI, and more.</p>
+          </div>
+        </motion.div>
+      </Link>
 
       {/* Date Range Filter */}
       <div className="bg-zinc-900/80 border border-zinc-800 rounded-[24px] mb-8 p-6 shadow-sm">
