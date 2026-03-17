@@ -6,6 +6,7 @@ import { UserCapsule } from '@/components/layout/UserCapsule';
 import { ProfileAlert } from '@/components/dashboard/ProfileAlert';
 import { CartProvider } from '@/components/providers/CartProvider';
 import { Dock } from '@/components/ui/dock';
+import { DashboardHeroChat } from '@/components/dashboard/DashboardHeroChat';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,6 +34,7 @@ export default async function DashboardLayout({
             {children}
           </main>
           <Dock userRole={user.role} />
+          <DashboardHeroChat />
         </div>
       </CartProvider>
     </div>

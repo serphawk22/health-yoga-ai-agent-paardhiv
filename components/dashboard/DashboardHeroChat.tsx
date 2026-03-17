@@ -141,7 +141,7 @@ export function DashboardHeroChat() {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 left-6 z-[90] w-14 h-14 bg-primary-600 hover:bg-primary-500 rounded-full shadow-2xl shadow-primary-500/30 flex items-center justify-center transition-transform hover:scale-105"
+        className="fixed bottom-6 right-6 z-[90] w-14 h-14 bg-primary-600 hover:bg-primary-500 rounded-full shadow-2xl shadow-primary-500/30 flex items-center justify-center transition-transform hover:scale-105"
       >
         {isOpen ? (
           <X className="w-6 h-6 text-zinc-950" />
@@ -157,7 +157,7 @@ export function DashboardHeroChat() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 left-6 z-[90] w-[380px] max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-8rem)] flex flex-col rounded-[2rem] bg-zinc-950/95 backdrop-blur-xl border border-white/10 shadow-[0_32px_128px_rgba(0,0,0,0.6)] overflow-hidden"
+            className="fixed bottom-24 right-6 z-[90] w-[380px] max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-8rem)] flex flex-col rounded-[2rem] bg-zinc-950/95 backdrop-blur-xl border border-white/10 shadow-[0_32px_128px_rgba(0,0,0,0.6)] overflow-hidden"
           >
             {/* Header */}
             <div className="p-4 border-b border-white/5 flex items-center gap-3 bg-white/[0.02]">

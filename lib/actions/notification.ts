@@ -65,15 +65,16 @@ export async function getNotifications(): Promise<NotificationActionResult> {
 
             if (!log) {
                 const reminderTitle = "Daily Progress Reminder";
-                const existingReminder = await prisma.notification.findFirst({
-                    where: {
-                        userId: session.userId,
-                        title: reminderTitle,
-                        createdAt: { gte: today },
-                    }
+                const todayString = today.toISOString().split('T')[0];
+
+                const userRecord = await prisma.user.findUnique({
+                    where: { id: session.userId },
+                    select: { preferences: true }
                 });
 
-                if (!existingReminder) {
+                const prefs = (userRecord?.preferences as Record<string, any>) || {};
+
+                if (prefs.lastDailyReminderDate !== todayString) {
                     await prisma.notification.create({
                         data: {
                             userId: session.userId,
@@ -81,6 +82,17 @@ export async function getNotifications(): Promise<NotificationActionResult> {
                             message: "You haven't logged your daily progress today. Please update it!",
                             type: 'WARNING',
                             resourceType: 'DAILY_PROGRESS',
+                        }
+                    });
+
+                    // Update preferences so we don't create it again today
+                    await prisma.user.update({
+                        where: { id: session.userId },
+                        data: {
+                            preferences: {
+                                ...prefs,
+                                lastDailyReminderDate: todayString
+                            }
                         }
                     });
                 }

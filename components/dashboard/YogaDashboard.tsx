@@ -7,7 +7,6 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { Calendar, Clock, Activity, Leaf, Sun, Heart, Stethoscope, Video, ClipboardList, BookOpen, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { DashboardHeroChat } from "./DashboardHeroChat";
 import { DietPlanner } from "./DietPlanner";
 import { OnboardingNotification } from "./OnboardingNotification";
 
@@ -328,9 +327,6 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                   </Link>
                 </div>
             </div>
-
-            {/* Floating AI Chat */}
-            <DashboardHeroChat />
 
             {/* Progressive Onboarding Notification Removed */}
         </div>
