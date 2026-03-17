@@ -91,7 +91,7 @@ export function YogaView({ isLandingPage = false }: { isLandingPage?: boolean } 
                 router.push('/register');
                 return;
             }
-            router.push('/exercise?tab=history');
+            router.push('/yoga?tab=history');
         } catch (err) {
             console.error(err);
             setError('An error occurred while saving');
@@ -125,7 +125,7 @@ export function YogaView({ isLandingPage = false }: { isLandingPage?: boolean } 
             let newPlanId = null;
             if (!isLandingPage) {
                 const saveRes = await saveActivePlan(result.data);
-                if (saveRes.success) {
+                if (saveRes.success && saveRes.data) {
                     newPlanId = saveRes.data.id;
                     setActivePlanId(newPlanId);
                 }
@@ -189,13 +189,14 @@ export function YogaView({ isLandingPage = false }: { isLandingPage?: boolean } 
 
                             {planImageUrl && (
                                 <div className="w-full aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img src={planImageUrl} alt="Current Routine" className="w-full h-full object-cover" />
                                 </div>
                             )}
 
                             <div className="w-full space-y-3">
                                 <GradientButton onClick={() => setViewMode('PLAN')} className="w-full py-4 text-lg">
-                                    Continue Today's Session
+                                    Continue Today&apos;s Session
                                 </GradientButton>
 
                                 <button

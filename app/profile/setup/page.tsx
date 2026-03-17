@@ -97,7 +97,7 @@ export default function ProfileSetupPage() {
             Setup Your Profile
           </h1>
           <p className="text-zinc-400 max-w-lg mx-auto text-lg">
-            Let's personalize your health journey. This helps our AI tailor recommendations just for you.
+            Let&apos;s personalize your health journey. This helps our AI tailor recommendations just for you.
           </p>
         </div>
 
@@ -678,7 +678,7 @@ function GoalsStep({ data, onChange }: { data: Record<string, any>; onChange: (d
 
         <div>
           <InputLabel>Secondary Goals (Optional)</InputLabel>
-          <p className="text-sm text-zinc-500 mb-3">Select any additional areas you'd like to improve.</p>
+          <p className="text-sm text-zinc-500 mb-3">Select any additional areas you&apos;d like to improve.</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {goals.filter(g => g.value !== data.primaryGoal).map((goal) => {
               const check = (data.secondaryGoals || []).includes(goal.value);

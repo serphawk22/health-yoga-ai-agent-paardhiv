@@ -1,8 +1,0 @@
-﻿M	app/(dashboard)/appointments/page.tsx
-M	app/(dashboard)/assessment/page.tsx
-M	app/(dashboard)/dashboard/page.tsx
-M	app/(dashboard)/diet/page.tsx
-M	app/(dashboard)/metrics/page.tsx
-M	app/(dashboard)/profile/page.tsx
-M	components/dashboard/ProfileSidebar.tsx
-M	components/features/exercise/HistoryView.tsx

@@ -211,6 +211,7 @@ export function HistoryView({ filterType }: { filterType?: 'EXERCISE' | 'YOGA' }
 
                                             {session.exercises?.planImageUrl && (
                                                 <div className="mb-6 rounded-xl overflow-hidden shadow-lg border border-white/5">
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
                                                     <img
                                                         src={session.exercises.planImageUrl}
                                                         alt="Plan Visual Guide"

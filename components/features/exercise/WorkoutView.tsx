@@ -24,7 +24,7 @@ export function WorkoutView() {
     useEffect(() => {
         async function fetchActivePlan() {
             const result = await getActivePlan();
-            if (result.success && result.data && result.data.poses?._type === 'WORKOUT') {
+            if (result.success && result.data && (result.data.poses as any)?._type === 'WORKOUT') {
                 const dbPlan = result.data;
                 setExercisePlan(dbPlan.poses);
                 setPlanImageUrl(dbPlan.planImageUrl);
@@ -91,7 +91,7 @@ export function WorkoutView() {
             // Save as active plan
             let newPlanId = null;
             const saveRes = await saveActivePlan(returnedPlan);
-            if (saveRes.success) {
+            if (saveRes.success && saveRes.data) {
                 newPlanId = saveRes.data.id;
                 setActivePlanId(newPlanId);
             }
@@ -138,13 +138,14 @@ export function WorkoutView() {
 
                     {planImageUrl && (
                         <div className="w-full aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={planImageUrl} alt="Current Routine" className="w-full h-full object-cover" />
                         </div>
                     )}
 
                     <div className="w-full space-y-3">
                         <GradientButton onClick={() => setViewMode('PLAN')} className="w-full py-4 text-lg">
-                            Continue Today's Session
+                            Continue Today&apos;s Session
                         </GradientButton>
 
                         <button

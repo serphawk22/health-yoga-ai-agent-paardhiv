@@ -177,6 +177,7 @@ export function VideoCall({ appointmentId, meetingId, userName, otherName, role 
             // Destroy peer
             if (peerInstance) peerInstance.destroy();
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [meetingId, role, myPeerId]); // Re-run if ID changes (shouldn't happen often)
 
     // Re-attach remote stream whenever remoteStream state changes

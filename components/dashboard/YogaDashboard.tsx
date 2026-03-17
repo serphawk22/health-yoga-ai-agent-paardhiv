@@ -8,6 +8,7 @@ import { Calendar, Clock, Activity, Leaf, Sun, Heart, Stethoscope, Video, Clipbo
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { DashboardHeroChat } from "./DashboardHeroChat";
+import { DietPlanner } from "./DietPlanner";
 import { OnboardingNotification } from "./OnboardingNotification";
 
 interface AppointmentData {
@@ -291,8 +292,8 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                     </div>
                 </div>
 
-                {/* Dashboard Hero Chat Section */}
-                <DashboardHeroChat />
+                {/* Diet Planner Section */}
+                <DietPlanner />
 
                 {/* Quick Access Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
@@ -328,8 +329,10 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                 </div>
             </div>
 
-            {/* Progressive Onboarding Notification */}
-            <OnboardingNotification />
+            {/* Floating AI Chat */}
+            <DashboardHeroChat />
+
+            {/* Progressive Onboarding Notification Removed */}
         </div>
     );
 }

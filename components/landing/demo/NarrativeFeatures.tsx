@@ -40,7 +40,7 @@ export function NarrativeFeatures() {
                                         <span className="text-neutral-400 text-sm">You</span>
                                     </div>
                                     <div className="bg-neutral-800 rounded-2xl rounded-tl-sm px-6 py-4 text-neutral-200">
-                                        "I tweaked my back yesterday. Can you adjust my workout plan for the week?"
+                                        &quot;I tweaked my back yesterday. Can you adjust my workout plan for the week?&quot;
                                     </div>
                                 </div>
 
@@ -50,11 +50,11 @@ export function NarrativeFeatures() {
                                     </div>
                                     <div className="space-y-4 w-full">
                                         <div className="bg-primary-900/20 border border-primary-500/20 rounded-2xl rounded-tl-sm px-6 py-4 text-primary-100">
-                                            <p className="mb-2">I've updated your schedule:</p>
+                                            <p className="mb-2">I&apos;ve updated your schedule:</p>
                                             <ul className="list-disc pl-4 space-y-1 text-sm opacity-90">
                                                 <li>Replaced Heavy Squats with Mobility Flow (15 min)</li>
-                                                <li>Added "Lower Back Relief" Yoga session for Tuesday</li>
-                                                <li>Reduced intensity on Wednesday's cardio</li>
+                                                <li>Added &quot;Lower Back Relief&quot; Yoga session for Tuesday</li>
+                                                <li>Reduced intensity on Wednesday&apos;s cardio</li>
                                             </ul>
                                         </div>
                                     </div>

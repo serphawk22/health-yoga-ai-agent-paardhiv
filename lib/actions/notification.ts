@@ -44,6 +44,49 @@ export async function getNotifications(): Promise<NotificationActionResult> {
         const session = await getSession();
         if (!session) return { success: false, error: 'Not authenticated' };
 
+        // Check if daily progress has been filled out
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const activePlan = await prisma.activePlan.findUnique({
+            where: { userId: session.userId },
+        });
+
+        if (activePlan) {
+            const log = await prisma.dailyPlanLog.findUnique({
+                where: {
+                    userId_activePlanId_date: {
+                        userId: session.userId,
+                        activePlanId: activePlan.id,
+                        date: today,
+                    }
+                }
+            });
+
+            if (!log) {
+                const reminderTitle = "Daily Progress Reminder";
+                const existingReminder = await prisma.notification.findFirst({
+                    where: {
+                        userId: session.userId,
+                        title: reminderTitle,
+                        createdAt: { gte: today },
+                    }
+                });
+
+                if (!existingReminder) {
+                    await prisma.notification.create({
+                        data: {
+                            userId: session.userId,
+                            title: reminderTitle,
+                            message: "You haven't logged your daily progress today. Please update it!",
+                            type: 'WARNING',
+                            resourceType: 'DAILY_PROGRESS',
+                        }
+                    });
+                }
+            }
+        }
+
         const notifications = await prisma.notification.findMany({
             where: {
                 userId: session.userId,
