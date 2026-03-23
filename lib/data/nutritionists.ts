@@ -43,8 +43,8 @@ export const nutritionists: Nutritionist[] = [
       { title: 'Anti-Inflammatory Diet: A Complete Guide', summary: 'How dietary choices can reduce chronic inflammation and support immune function.' },
     ],
     videos: [
-      { title: 'Meal Prep for Busy Professionals', url: 'https://www.youtube.com/watch?v=example1', description: 'Learn how to prepare a full week of nutritious meals in just 2 hours.' },
-      { title: 'Reading Nutrition Labels Like a Pro', url: 'https://www.youtube.com/watch?v=example2', description: 'Decode food labels and make informed choices at the grocery store.' },
+      { title: 'Meal Prep for Busy Professionals', url: 'https://www.youtube.com/watch?v=gQ13c3lznFM', description: 'Learn how to prepare a full week of nutritious meals in just 2 hours.' },
+      { title: 'Reading Nutrition Labels Like a Pro', url: 'https://www.youtube.com/watch?v=R-o-83k8dP0', description: 'Decode food labels and make informed choices at the grocery store.' },
     ],
     tips: [
       'Start each morning with a glass of warm water and lemon to kickstart digestion.',
@@ -80,8 +80,8 @@ export const nutritionists: Nutritionist[] = [
       { title: 'Building Muscle on a Vegetarian Diet', summary: 'Complete guide to meeting protein needs and building lean muscle mass without meat.' },
     ],
     videos: [
-      { title: 'High-Protein Meal Planning', url: 'https://www.youtube.com/watch?v=example3', description: 'Step-by-step guide to creating protein-rich meal plans for muscle growth.' },
-      { title: 'Understanding Supplements: What Works', url: 'https://www.youtube.com/watch?v=example4', description: 'Evidence-based review of common fitness supplements and their effectiveness.' },
+      { title: 'High-Protein Meal Planning', url: 'https://www.youtube.com/watch?v=Ecpc0GHbO_M', description: 'Step-by-step guide to creating protein-rich meal plans for muscle growth.' },
+      { title: 'Understanding Supplements: What Works', url: 'https://www.youtube.com/watch?v=gexpGeSvAxk', description: 'Evidence-based review of common fitness supplements and their effectiveness.' },
     ],
     tips: [
       'Consume protein within 30 minutes after your workout for optimal recovery.',
@@ -117,7 +117,7 @@ export const nutritionists: Nutritionist[] = [
       { title: 'Seasonal Eating: An Ayurvedic Approach', summary: 'Aligning your diet with nature s seasons for better digestion and overall health.' },
     ],
     videos: [
-      { title: 'Ayurvedic Morning Routine for Digestion', url: 'https://www.youtube.com/watch?v=example5', description: 'Start your day with these Ayurvedic practices for optimal digestive fire.' },
+      { title: 'Ayurvedic Morning Routine for Digestion', url: 'https://www.youtube.com/watch?v=0-S3NIR-4-c', description: 'Start your day with these Ayurvedic practices for optimal digestive fire.' },
     ],
     tips: [
       'Eat your largest meal at midday when digestive fire is strongest.',
@@ -153,7 +153,7 @@ export const nutritionists: Nutritionist[] = [
       { title: 'Managing Picky Eating in Toddlers', summary: 'Evidence-based strategies to expand your child s palate without mealtime battles.' },
     ],
     videos: [
-      { title: 'Age-Appropriate Portion Sizes', url: 'https://www.youtube.com/watch?v=example6', description: 'Visual guide to understanding how much food children need at different ages.' },
+      { title: 'Age-Appropriate Portion Sizes', url: 'https://www.youtube.com/watch?v=Q7w-PbTW7DQ', description: 'Visual guide to understanding how much food children need at different ages.' },
     ],
     tips: [
       'Lead by example - children mimic the eating behaviors of their parents.',

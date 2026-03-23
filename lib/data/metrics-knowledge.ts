@@ -39,7 +39,7 @@ export const metricsKnowledge: MetricKnowledge[] = [
       'Record both numbers (systolic/diastolic) and the date.',
       'Take 2-3 readings one minute apart and note the average.',
     ],
-    videoUrl: 'https://www.youtube.com/watch?v=sI9F2IVXlHk',
+    videoUrl: 'https://www.youtube.com/watch?v=mfwBpBXUYHs',
     videoTitle: 'How to Measure Blood Pressure at Home Correctly',
   },
   {
@@ -63,7 +63,7 @@ export const metricsKnowledge: MetricKnowledge[] = [
       'Wait for the meter to display your reading (usually 5-10 seconds).',
       'Record your reading along with the time and any notes about meals.',
     ],
-    videoUrl: 'https://www.youtube.com/watch?v=OFOR6Nbc_XA',
+    videoUrl: 'https://www.youtube.com/watch?v=qAZAWBJfCqs',
     videoTitle: 'How to Check Your Blood Sugar at Home',
   },
   {
@@ -111,7 +111,7 @@ export const metricsKnowledge: MetricKnowledge[] = [
       'Avoid measuring right after exercise, caffeine, or a stressful event.',
       'Record your readings and note any activities or stressors.',
     ],
-    videoUrl: 'https://www.youtube.com/watch?v=example_hr',
+    videoUrl: 'https://www.youtube.com/watch?v=Kqg1XC8bc78',
     videoTitle: 'How to Check Your Heart Rate at Home',
   },
 ];

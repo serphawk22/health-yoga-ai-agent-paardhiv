@@ -60,7 +60,7 @@ export const yogaAsanas: YogaAsana[] = [
     ],
     targetAreas: ['Shoulders', 'Hamstrings', 'Calves', 'Back', 'Arms'],
     duration: '30-60 seconds',
-    videoUrl: 'https://www.youtube.com/watch?v=j97SSGBkyN4',
+    videoUrl: 'https://www.youtube.com/watch?v=Wf2hXzDXGT4',
   },
   {
     id: '2',
@@ -308,7 +308,7 @@ export const yogaAsanas: YogaAsana[] = [
     ],
     targetAreas: ['Back', 'Glutes', 'Chest', 'Hip Flexors', 'Thighs'],
     duration: '30-60 seconds',
-    videoUrl: 'https://www.youtube.com/watch?v=OFOR6Nbc_XA',
+    videoUrl: 'https://www.youtube.com/watch?v=quKKO1fT27E',
   },
   {
     id: '8',
@@ -349,7 +349,7 @@ export const yogaAsanas: YogaAsana[] = [
     ],
     targetAreas: ['Hamstrings', 'Spine', 'Shoulders', 'Lower Back'],
     duration: '1-3 minutes',
-    videoUrl: 'https://www.youtube.com/watch?v=dGe_3G9BGCQ',
+    videoUrl: 'https://www.youtube.com/watch?v=uZx7tGgEwpI',
   },
   {
     id: '9',
@@ -390,7 +390,7 @@ export const yogaAsanas: YogaAsana[] = [
     ],
     targetAreas: ['Full Body', 'Mind', 'Nervous System'],
     duration: '5-15 minutes',
-    videoUrl: 'https://www.youtube.com/watch?v=1VYlOKUdylM',
+    videoUrl: 'https://www.youtube.com/watch?v=9ZsTLblha9o',
   },
   {
     id: '10',
@@ -439,8 +439,8 @@ export const topTenPoses = yogaAsanas.slice(0, 10);
 
 // For Top 100, we generate additional poses programmatically
 const additionalPoses: Omit<YogaAsana, 'id'>[] = [
-  { slug: 'warrior-two', englishName: 'Warrior II', sanskritName: 'Virabhadrasana II', category: 'Standing', difficulty: 'Beginner', introduction: 'Warrior II is a powerful standing pose that strengthens the legs and opens the hips. It builds stamina and concentration while encouraging a strong, grounded stance.', benefits: ['Strengthens legs and ankles', 'Stretches hips and groin', 'Opens chest and lungs', 'Builds stamina'], instructions: ['Stand with feet wide apart.', 'Turn right foot out 90 degrees.', 'Bend right knee over the ankle.', 'Extend arms parallel to the floor.', 'Gaze over your right hand.', 'Hold for 5-8 breaths.'], commonMistakes: ['Knee going past ankle', 'Leaning forward'], safetyPrecautions: ['Modify for knee injuries'], targetAreas: ['Legs', 'Hips'], duration: '30-60 seconds', videoUrl: 'https://www.youtube.com/watch?v=QMV_LT6bJHs' },
-  { slug: 'warrior-three', englishName: 'Warrior III', sanskritName: 'Virabhadrasana III', category: 'Balancing', difficulty: 'Intermediate', introduction: 'Warrior III is an advanced balancing pose that strengthens the entire back body while improving focus and coordination.', benefits: ['Strengthens back, legs, shoulders', 'Improves balance', 'Tones the abdomen', 'Builds mental focus'], instructions: ['Start in Warrior I.', 'Shift weight to front foot.', 'Lift back leg parallel to floor.', 'Extend arms forward.', 'Keep hips level.', 'Hold for 5 breaths.'], commonMistakes: ['Dropping the lifted hip', 'Rounding the back'], safetyPrecautions: ['Avoid with balance disorders'], targetAreas: ['Back', 'Legs', 'Core'], duration: '20-30 seconds', videoUrl: 'https://www.youtube.com/watch?v=Kp01a6P8sH0' },
+  { slug: 'warrior-two', englishName: 'Warrior II', sanskritName: 'Virabhadrasana II', category: 'Standing', difficulty: 'Beginner', introduction: 'Warrior II is a powerful standing pose that strengthens the legs and opens the hips. It builds stamina and concentration while encouraging a strong, grounded stance.', benefits: ['Strengthens legs and ankles', 'Stretches hips and groin', 'Opens chest and lungs', 'Builds stamina'], instructions: ['Stand with feet wide apart.', 'Turn right foot out 90 degrees.', 'Bend right knee over the ankle.', 'Extend arms parallel to the floor.', 'Gaze over your right hand.', 'Hold for 5-8 breaths.'], commonMistakes: ['Knee going past ankle', 'Leaning forward'], safetyPrecautions: ['Modify for knee injuries'], targetAreas: ['Legs', 'Hips'], duration: '30-60 seconds', videoUrl: 'https://www.youtube.com/watch?v=vxvLxyahNOA' },
+  { slug: 'warrior-three', englishName: 'Warrior III', sanskritName: 'Virabhadrasana III', category: 'Balancing', difficulty: 'Intermediate', introduction: 'Warrior III is an advanced balancing pose that strengthens the entire back body while improving focus and coordination.', benefits: ['Strengthens back, legs, shoulders', 'Improves balance', 'Tones the abdomen', 'Builds mental focus'], instructions: ['Start in Warrior I.', 'Shift weight to front foot.', 'Lift back leg parallel to floor.', 'Extend arms forward.', 'Keep hips level.', 'Hold for 5 breaths.'], commonMistakes: ['Dropping the lifted hip', 'Rounding the back'], safetyPrecautions: ['Avoid with balance disorders'], targetAreas: ['Back', 'Legs', 'Core'], duration: '20-30 seconds', videoUrl: 'https://www.youtube.com/watch?v=ICGCs5COHvs' },
   { slug: 'plank-pose', englishName: 'Plank Pose', sanskritName: 'Phalakasana', category: 'Core', difficulty: 'Beginner', introduction: 'Plank Pose is a fundamental strength-building posture that engages the entire body, particularly the core muscles.', benefits: ['Strengthens core muscles', 'Tones arms and wrists', 'Improves posture', 'Builds endurance'], instructions: ['Start on hands and knees.', 'Step feet back one at a time.', 'Form a straight line from head to heels.', 'Engage your core.', 'Hold for 30-60 seconds.'], commonMistakes: ['Sagging hips', 'Raising hips too high'], safetyPrecautions: ['Modify on knees for beginners'], targetAreas: ['Core', 'Arms', 'Shoulders'], duration: '30-60 seconds' },
   { slug: 'pigeon-pose', englishName: 'Pigeon Pose', sanskritName: 'Eka Pada Rajakapotasana', category: 'Hip Opener', difficulty: 'Intermediate', introduction: 'Pigeon Pose is a deep hip opener that releases stored tension and tightness in the hip flexors and glutes.', benefits: ['Deep hip opening', 'Stretches hip flexors', 'Relieves lower back tension', 'Helps with sciatica'], instructions: ['From Downward Dog, bring right shin forward.', 'Lower left leg to the mat.', 'Square your hips forward.', 'Walk hands forward and fold.', 'Hold for 1-3 minutes.'], commonMistakes: ['Hips not square', 'Knee pain'], safetyPrecautions: ['Use a blanket under the hip', 'Avoid with knee injuries'], targetAreas: ['Hips', 'Glutes', 'Lower Back'], duration: '1-3 minutes each side' },
   { slug: 'cat-cow-pose', englishName: 'Cat-Cow Pose', sanskritName: 'Marjaryasana-Bitilasana', category: 'Warm-up', difficulty: 'Beginner', introduction: 'Cat-Cow is a gentle flow between two poses that warms the body and brings flexibility to the spine. It is one of the best movements for spinal health.', benefits: ['Increases spinal flexibility', 'Improves posture', 'Relieves back tension', 'Calms the mind'], instructions: ['Start on hands and knees.', 'Inhale: arch back, lift head (Cow).', 'Exhale: round spine, tuck chin (Cat).', 'Flow between poses for 1-2 minutes.'], commonMistakes: ['Moving too quickly', 'Not syncing with breath'], safetyPrecautions: ['Pad knees if needed'], targetAreas: ['Spine', 'Core', 'Neck'], duration: '1-2 minutes' },
