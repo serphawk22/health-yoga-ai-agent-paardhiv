@@ -170,8 +170,8 @@ export function DashboardHeroChat() {
                     />
                 </div>
                 <div>
-                    <h3 className="text-sm font-medium text-white">Zenya</h3>
-                    <p className="text-[10px] text-primary-400 capitalize tracking-wider">Health Expert</p>
+                    <h3 className="text-[0.8125rem] font-medium text-white">Zenya</h3>
+                    <p className="text-[0.8125rem] text-primary-400 capitalize tracking-wider">Health Expert</p>
                 </div>
             </div>
 
@@ -181,8 +181,8 @@ export function DashboardHeroChat() {
                 {messages.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center space-y-8">
                     <div className="space-y-2">
-                      <h4 className="text-xl font-light text-white tracking-tight italic">Namaste, How can I assist you today?</h4>
-                      <p className="text-zinc-500 text-xs font-light max-w-[250px] mx-auto">I am ready to help with your diet, yoga, or any health concerns.</p>
+                      <h4 className="text-[1.75rem] font-light text-white tracking-tight italic">Namaste, How can I assist you today?</h4>
+                      <p className="text-zinc-500 text-[0.8125rem] font-light max-w-[250px] mx-auto">I am ready to help with your diet, yoga, or any health concerns.</p>
                     </div>
                     
                     <div className="flex flex-col gap-2 w-full">
@@ -190,7 +190,7 @@ export function DashboardHeroChat() {
                         <button
                           key={suggestion}
                           onClick={() => handleSubmit(suggestion)}
-                          className="px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-zinc-400 hover:text-white hover:bg-white/[0.08] hover:border-white/10 transition-all text-left"
+                          className="px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-[0.8125rem] text-zinc-400 hover:text-white hover:bg-white/[0.08] hover:border-white/10 transition-all text-left"
                         >
                           {suggestion}
                         </button>
@@ -215,7 +215,7 @@ export function DashboardHeroChat() {
                         )}>
                           <div
                             className={cn(
-                              'px-4 py-3 text-[14px] font-light leading-relaxed rounded-2xl transition-all duration-300',
+                              'px-4 py-3 text-[0.8125rem] font-light leading-relaxed rounded-2xl transition-all duration-300',
                               message.role === 'user'
                                 ? 'bg-zinc-100 text-zinc-950 rounded-tr-none font-normal'
                                 : 'bg-[#0a0a0b] text-zinc-100 border border-white/5 rounded-tl-none shadow-md'
@@ -228,7 +228,7 @@ export function DashboardHeroChat() {
                             <button
                               onClick={() => handleGenerateBlog(message)}
                               disabled={generatingBlogFor === message.id}
-                              className="flex items-center gap-1.5 text-[9px] text-zinc-600 hover:text-primary-400 transition-colors font-bold uppercase tracking-[0.1em] ml-1"
+                              className="flex items-center gap-1.5 text-[0.8125rem] text-zinc-600 hover:text-primary-400 transition-colors font-bold uppercase tracking-[0.1em] ml-1"
                             >
                               {generatingBlogFor === message.id ? (
                                 <Loader2 className="w-3 h-3 animate-spin" />
@@ -271,7 +271,7 @@ export function DashboardHeroChat() {
                   placeholder="Ask a health question..."
                   rows={1}
                   disabled={isLoading}
-                  className="flex-1 bg-transparent border-none outline-none px-3 py-2.5 text-[13px] min-h-[40px] max-h-[120px] resize-none text-zinc-100 placeholder:text-zinc-600 font-light"
+                  className="flex-1 bg-transparent border-none outline-none px-3 py-2.5 text-[0.8125rem] min-h-[40px] max-h-[120px] resize-none text-zinc-100 placeholder:text-zinc-600 font-light"
                 />
                 <div className="pb-1.5 shrink-0">
                   <motion.button

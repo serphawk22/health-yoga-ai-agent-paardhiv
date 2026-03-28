@@ -84,7 +84,7 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                 >
                     <Bell className="w-5 h-5" />
                     {unreadCount > 0 && (
-                        <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary-600 px-1 text-[10px] font-bold text-white ring-2 ring-black">
+                        <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary-600 px-1 text-[0.8125rem] font-bold text-white ring-2 ring-black">
                             {unreadCount}
                         </span>
                     )}
@@ -109,8 +109,8 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                             >
                                 {/* Header */}
                                 <div className="px-5 py-3.5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-zinc-100/50 dark:bg-zinc-800/30">
-                                    <h3 className="text-sm font-semibold text-health-text">Notifications</h3>
-                                    <span className="text-[10px] uppercase tracking-wider font-bold text-primary-600 dark:text-primary-400 bg-primary-500/10 px-2 py-0.5 rounded-full">
+                                    <h3 className="text-[0.8125rem] font-semibold text-health-text">Notifications</h3>
+                                    <span className="text-[0.8125rem] uppercase tracking-wider font-bold text-primary-600 dark:text-primary-400 bg-primary-500/10 px-2 py-0.5 rounded-full">
                                         {unreadCount} New
                                     </span>
                                 </div>
@@ -122,7 +122,7 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                                             <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
                                                 <Bell className="w-5 h-5 text-zinc-400 dark:text-zinc-600" />
                                             </div>
-                                            <p className="text-xs text-zinc-500 font-medium tracking-tight">Everything is up to date.</p>
+                                            <p className="text-[0.8125rem] text-zinc-500 font-medium tracking-tight">Everything is up to date.</p>
                                         </div>
                                     ) : (
                                         notifications.map((notification) => (
@@ -149,16 +149,16 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex justify-between items-baseline mb-0.5 gap-2">
                                                         <h4 className={cn(
-                                                            "text-[13px] font-semibold truncate leading-none",
+                                                            "text-[0.8125rem] font-semibold truncate leading-none",
                                                             !notification.read ? "text-health-text" : "text-zinc-500"
                                                         )}>
                                                             {notification.title}
                                                         </h4>
-                                                        <span className="text-[9px] text-zinc-400 font-medium shrink-0 uppercase tracking-tighter">
+                                                        <span className="text-[0.8125rem] text-zinc-400 font-medium shrink-0 uppercase tracking-tighter">
                                                             {notification.time}
                                                         </span>
                                                     </div>
-                                                    <p className="text-[11px] text-zinc-500 line-clamp-2 leading-relaxed">
+                                                    <p className="text-[0.8125rem] text-zinc-500 line-clamp-2 leading-relaxed">
                                                         {notification.message}
                                                     </p>
                                                 </div>
@@ -172,14 +172,14 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                                     <button
                                         onClick={handleMarkAllAsRead}
                                         disabled={notifications.length === 0}
-                                        className="text-center text-[11px] font-semibold py-2 px-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-health-text hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-800 transition-all disabled:opacity-50"
+                                        className="text-center text-[0.8125rem] font-semibold py-2 px-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-health-text hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-800 transition-all disabled:opacity-50"
                                     >
                                         Mark as read
                                     </button>
                                     <button
                                         onClick={handleClearAll}
                                         disabled={notifications.length === 0}
-                                        className="text-center text-[11px] font-semibold py-2 px-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-red-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-800 transition-all disabled:opacity-50"
+                                        className="text-center text-[0.8125rem] font-semibold py-2 px-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-red-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-800 transition-all disabled:opacity-50"
                                     >
                                         Clear all
                                     </button>
@@ -206,7 +206,7 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                     <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-primary-600 to-primary-400 p-[1px] shadow-sm">
                         <AvatarPreview config={(user.avatarConfig as AvatarConfig) || DEFAULT_AVATAR} size={34} className="w-full h-full border-none" />
                     </div>
-                    <span className="text-sm font-bold truncate max-w-[100px] hidden sm:block">{user.name.split(' ')[0]}</span>
+                    <span className="text-[0.8125rem] font-bold truncate max-w-[100px] hidden sm:block">{user.name.split(' ')[0]}</span>
                     <ChevronDown className={cn("w-4 h-4 transition-transform duration-300", showUserMenu && "rotate-180")} />
                 </motion.button>
 
@@ -227,15 +227,15 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                                 className="absolute right-0 mt-3 w-64 bg-zinc-950/90 backdrop-blur-3xl rounded-3xl shadow-2xl border border-white/10 z-50 p-2 overflow-hidden"
                             >
                                 <div className="px-5 py-4 mb-2">
-                                    <p className="text-xs font-bold text-zinc-600 uppercase tracking-widest mb-1">Account</p>
-                                    <p className="font-bold text-white truncate">{user.name}</p>
-                                    <p className="text-xs text-zinc-500 truncate">{user.email}</p>
+                                    <p className="text-[0.8125rem] font-bold text-zinc-600 uppercase tracking-widest mb-1">Account</p>
+                                    <p className="font-bold text-white truncate text-[0.8125rem]">{user.name}</p>
+                                    <p className="text-[0.8125rem] text-zinc-500 truncate">{user.email}</p>
                                 </div>
 
                                 <div className="space-y-1 px-1">
                                     <Link
                                         href="/profile"
-                                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all"
+                                        className="flex items-center gap-3 px-4 py-3 text-[0.8125rem] font-medium text-zinc-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all"
                                         onClick={() => setShowUserMenu(false)}
                                     >
                                         <div className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center">
@@ -245,7 +245,7 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                                     </Link>
                                     <Link
                                         href="/settings"
-                                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all"
+                                        className="flex items-center gap-3 px-4 py-3 text-[0.8125rem] font-medium text-zinc-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all"
                                         onClick={() => setShowUserMenu(false)}
                                     >
                                         <div className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center">
@@ -259,7 +259,7 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                                     <form action={signOut}>
                                         <GradientButton
                                             variant="variant"
-                                            className="w-full text-xs py-3 h-auto min-w-0 shadow-none hover:shadow-none"
+                                            className="w-full text-[0.8125rem] py-3 h-auto min-w-0 shadow-none hover:shadow-none"
                                         >
                                             <LogOut className="w-4 h-4 mr-2" />
                                             Sign Out

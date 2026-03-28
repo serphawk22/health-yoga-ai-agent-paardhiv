@@ -152,7 +152,7 @@ function DockIcon({
                 )}
 
                 {/* Tooltip */}
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:block bg-black dark:bg-zinc-800 text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:block bg-black dark:bg-zinc-800 text-white text-[0.8125rem] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
                     {name}
                 </div>
             </motion.div>
