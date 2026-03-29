@@ -19,6 +19,7 @@ export function YogaView({ isLandingPage = false }: { isLandingPage?: boolean } 
     const [activePlanId, setActivePlanId] = useState<string | null>(null);
     const [viewMode, setViewMode] = useState<'HOME' | 'GENERATOR' | 'PLAN'>('HOME');
     const [isAppMounted, setIsAppMounted] = useState(false);
+    const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
 
     const [usageCount, setUsageCount] = useState<number>(() => {
         if (typeof window !== 'undefined') {
@@ -47,6 +48,7 @@ export function YogaView({ isLandingPage = false }: { isLandingPage?: boolean } 
                 });
                 setPlanImageUrl(dbPlan.planImageUrl);
                 setActivePlanId(dbPlan.id);
+                setUpdatedAt(new Date(dbPlan.updatedAt));
                 setViewMode('HOME');
             } else {
                 setViewMode('GENERATOR');
@@ -58,6 +60,37 @@ export function YogaView({ isLandingPage = false }: { isLandingPage?: boolean } 
             fetchActivePlan();
         }
     }, [isLandingPage, isAppMounted]);
+
+    // Handle session start with image regeneration check
+    async function handleContinueSession() {
+        if (!yogaPlan || !activePlanId) return;
+
+        setViewMode('PLAN');
+
+        // Check if image needs regeneration (OpenAI URLs expire after 2h)
+        const isExpired = updatedAt && (new Date().getTime() - updatedAt.getTime() > 90 * 60 * 1000); // 1.5 hours
+        
+        if (!planImageUrl || isExpired) {
+            setIsGeneratingImage(true);
+            try {
+                const imgRes = await fetch('/api/generate-workout-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ exercises: yogaPlan.poses, type: 'YOGA' }),
+                });
+                const imgData = await imgRes.json();
+                if (imgData.imageUrl) {
+                    setPlanImageUrl(imgData.imageUrl);
+                    await updateActivePlanImage(activePlanId, imgData.imageUrl);
+                    setUpdatedAt(new Date());
+                }
+            } catch (err) {
+                console.error('Failed to refresh yoga image:', err);
+            } finally {
+                setIsGeneratingImage(false);
+            }
+        }
+    }
 
     async function handleSaveSession() {
         if (!yogaPlan) return;
@@ -187,15 +220,10 @@ export function YogaView({ isLandingPage = false }: { isLandingPage?: boolean } 
                                 <h2 className="text-3xl font-light text-white">{yogaPlan.focusArea || 'Yoga Plan'}</h2>
                             </div>
 
-                            {planImageUrl && (
-                                <div className="w-full aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={planImageUrl} alt="Current Routine" className="w-full h-full object-cover" />
-                                </div>
-                            )}
+                            {/* Image removed from HOME view as per request */}
 
                             <div className="w-full space-y-3">
-                                <GradientButton onClick={() => setViewMode('PLAN')} className="w-full py-4 text-lg">
+                                <GradientButton onClick={handleContinueSession} className="w-full py-4 text-lg">
                                     Continue Today&apos;s Session
                                 </GradientButton>
 

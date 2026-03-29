@@ -139,16 +139,33 @@ export function DashboardHeroChat() {
   return (
     <>
       {/* Floating Button */}
-      <button
+      <motion.button
+        whileHover={{ scale: 1.1, y: -2 }}
+        whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-[90] w-14 h-14 bg-primary-600 hover:bg-primary-500 rounded-full shadow-2xl shadow-primary-500/30 flex items-center justify-center transition-transform hover:scale-105"
-      >
-        {isOpen ? (
-          <X className="w-6 h-6 text-zinc-950" />
-        ) : (
-          <MessageCircle className="w-6 h-6 text-zinc-950" />
+        className={cn(
+          "fixed bottom-8 right-8 z-[100] w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden",
+          isOpen 
+            ? "bg-zinc-900/90 border border-white/20 text-white" 
+            : "bg-zinc-950/60 backdrop-blur-2xl border border-white/10 text-primary-400 hover:border-primary-500/50 hover:shadow-primary-500/20"
         )}
-      </button>
+      >
+        {/* Glow effect inside button */}
+        {!isOpen && (
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        )}
+        
+        <div className="relative z-10">
+          {isOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <div className="relative">
+                <MessageCircle className="w-6 h-6" />
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(var(--primary-rgb),0.6)]" />
+            </div>
+          )}
+        </div>
+      </motion.button>
 
       {/* Floating Chat Container */}
       <AnimatePresence>
@@ -171,7 +188,7 @@ export function DashboardHeroChat() {
                 </div>
                 <div>
                     <h3 className="text-[0.8125rem] font-medium text-white">Zenya</h3>
-                    <p className="text-[0.8125rem] text-primary-400 capitalize tracking-wider">Health Expert</p>
+                    <p className="text-[0.8125rem] text-primary-400 capitalize tracking-wider">Wellness Guide</p>
                 </div>
             </div>
 
@@ -182,7 +199,7 @@ export function DashboardHeroChat() {
                   <div className="h-full flex flex-col items-center justify-center text-center space-y-8">
                     <div className="space-y-2">
                       <h4 className="text-[1.75rem] font-light text-white tracking-tight italic">Namaste, How can I assist you today?</h4>
-                      <p className="text-zinc-500 text-[0.8125rem] font-light max-w-[250px] mx-auto">I am ready to help with your diet, yoga, or any health concerns.</p>
+                      <p className="text-zinc-500 text-[0.8125rem] font-light max-w-[250px] mx-auto">I am ready to help with your yoga practice, wellness routines, or any mindfulness concerns.</p>
                     </div>
                     
                     <div className="flex flex-col gap-2 w-full">
@@ -268,7 +285,7 @@ export function DashboardHeroChat() {
                     autoResize(e.target);
                   }}
                   onKeyDown={handleKeyDown}
-                  placeholder="Ask a health question..."
+                  placeholder="Ask a wellness question..."
                   rows={1}
                   disabled={isLoading}
                   className="flex-1 bg-transparent border-none outline-none px-3 py-2.5 text-[0.8125rem] min-h-[40px] max-h-[120px] resize-none text-zinc-100 placeholder:text-zinc-600 font-light"

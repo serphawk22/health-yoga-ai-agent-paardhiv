@@ -46,12 +46,12 @@ const navigation = [
   { name: 'Appointments', href: '/appointments', icon: Calendar },
   { name: 'Store', href: '/marketplace', icon: ShoppingBag },
   { name: 'Exercise', href: '/exercise', icon: Dumbbell },
-  { name: 'Health Assessment', href: '/assessment', icon: BarChart3 },
+  { name: 'Wellness Assessment', href: '/assessment', icon: BarChart3 },
   { name: 'Yoga', href: '/yoga', icon: Flower },
   { name: 'Yoga Library', href: '/yoga/library', icon: BookOpen },
   { name: 'Goal Planner', href: '/goals', icon: Target },
-  { name: 'Health Metrics', href: '/metrics', icon: Activity },
-  { name: 'Health Articles', href: '/blogs', icon: FileText },
+  { name: 'Yoga Metrics', href: '/metrics', icon: Activity },
+  { name: 'Yoga Insights', href: '/blogs', icon: FileText },
   { name: 'Nutritionists', href: '/nutritionists', icon: Users },
 ];
 
@@ -73,10 +73,10 @@ export function Sidebar({ user }: SidebarProps) {
           <div className="flex h-16 shrink-0 items-center gap-3">
 
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-health-text leading-tight">Health</span>
+              <span className="text-xl font-bold text-health-text leading-tight">Yoga</span>
               <div className="text-sm font-medium text-primary-500">
                 <Typewriter
-                  text={["Agent", "Partner", "Advisor"]}
+                  text={["Women", "for Everyone"]}
                   speed={70}
                   waitTime={1500}
                   deleteSpeed={40}

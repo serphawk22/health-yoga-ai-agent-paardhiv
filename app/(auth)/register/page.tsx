@@ -62,10 +62,10 @@ export default function RegisterPage() {
       {/* Brand */}
       <div className="text-center mb-10">
         <Link href="/" className="inline-block mb-6">
-          <span className="text-lg font-semibold text-white tracking-tight">Health Agent</span>
+          <span className="text-lg font-semibold text-white tracking-tight">Yoga Women</span>
         </Link>
         <h1 className="text-3xl font-light text-white tracking-tight mb-3">Create your account</h1>
-        <p className="text-sm text-zinc-500 font-light">Start your personalized health journey</p>
+        <p className="text-sm text-zinc-500 font-light">Start your personalized yoga journey</p>
       </div>
 
       {error && (

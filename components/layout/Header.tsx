@@ -66,7 +66,7 @@ export function Header({ user }: HeaderProps) {
         return [{
           id: 'local-profile',
           title: 'Complete your profile',
-          message: 'Your health profile is incomplete. Complete it now to get personalized recommendations.',
+          message: 'Your wellness profile is incomplete. Complete it now to get personalized recommendations.',
           time: 'Action Required',
           read: false,
           type: 'WARNING',

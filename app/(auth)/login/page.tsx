@@ -54,10 +54,10 @@ export default function LoginPage() {
       {/* Brand */}
       <div className="text-center mb-12">
         <Link href="/" className="inline-block mb-8">
-          <span className="text-lg font-semibold text-white tracking-tight">Health Agent</span>
+          <span className="text-lg font-semibold text-white tracking-tight">Yoga Women</span>
         </Link>
         <h1 className="text-3xl font-light text-white tracking-tight mb-3">Welcome back</h1>
-        <p className="text-sm text-zinc-500 font-light">Sign in to continue your journey</p>
+        <p className="text-sm text-zinc-500 font-light">Sign in to continue your yoga journey</p>
       </div>
 
       {error && (

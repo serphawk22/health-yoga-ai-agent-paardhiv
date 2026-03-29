@@ -33,10 +33,10 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center gap-2">
-              <span className="text-lg font-semibold text-white tracking-tight">Health</span>
+              <span className="text-lg font-semibold text-white tracking-tight">Yoga</span>
               <div className="text-sm font-medium text-zinc-500">
                 <Typewriter
-                  text={["Agent", "Partner", "Guide"]}
+                  text={["Women", "for Everyone"]}
                   speed={70}
                   waitTime={2000}
                   deleteSpeed={40}
@@ -75,7 +75,7 @@ export default function HomePage() {
               className="max-w-2xl mx-auto pointer-events-auto"
             >
               <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-[0.3em] mb-8">
-                Your Personal Wellness Companion
+                Your Personal Yoga Companion
               </p>
 
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light text-white tracking-tight leading-[1.1] mb-8 drop-shadow-[0_0_40px_rgba(0,0,0,0.8)]">
@@ -88,7 +88,7 @@ export default function HomePage() {
               </h1>
 
               <p className="text-lg text-zinc-400 leading-relaxed max-w-md mx-auto mb-12 font-light drop-shadow-[0_0_20px_rgba(0,0,0,0.9)]">
-                Personalized health plans, AI-guided routines, and expert consultations — all in one serene space.
+                Personalized yoga plans, AI-guided routines, and expert consultations — all in one serene space.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -217,7 +217,7 @@ export default function HomePage() {
               Begin today
             </h2>
             <p className="text-zinc-500 mb-10 font-light leading-relaxed">
-              Join thousands who have transformed their health with a personalized, AI-powered experience.
+              Join thousands who have transformed their life through yoga with a personalized, AI-powered experience.
             </p>
             <GradientButton asChild className="h-14 px-12 text-base rounded-full min-w-[220px]">
               <Link href="/register">
@@ -251,8 +251,8 @@ export default function HomePage() {
         py-2
       "
           >
-            Health-<Typewriter
-              text={["Agent", "Partner", "Guide"]}
+            Yoga-<Typewriter
+              text={["Women", "for Everyone"]}
               speed={70}
               waitTime={2000}
               deleteSpeed={40}

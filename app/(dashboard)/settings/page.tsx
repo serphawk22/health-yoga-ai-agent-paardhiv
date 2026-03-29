@@ -14,6 +14,7 @@ import {
   Sun,
   Eye,
   EyeOff,
+  Shield,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/components/theme-provider';
@@ -344,6 +345,29 @@ export default function SettingsPage() {
               </div>
               <span className="text-[10px] text-zinc-400 bg-zinc-200 dark:bg-zinc-800 px-2 py-0.5 rounded-full uppercase tracking-wider font-medium">Soon</span>
             </div>
+          </div>
+        </motion.div>
+
+        {/* Admin Access */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.18 }}
+          className="space-y-3"
+        >
+          <h2 className="text-xs font-semibold text-primary-500/60 uppercase tracking-wider">Admin Access</h2>
+
+          <div className="rounded-2xl border border-primary-500/15 bg-primary-500/[0.03] overflow-hidden">
+            <button
+              onClick={() => router.push('/admin')}
+              className="w-full flex items-center justify-between px-5 py-4 hover:bg-primary-500/5 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <Shield className="w-4 h-4 text-primary-500" />
+                <span className="text-sm font-medium text-health-text">Admin Panel</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-primary-500/40" />
+            </button>
           </div>
         </motion.div>
 
