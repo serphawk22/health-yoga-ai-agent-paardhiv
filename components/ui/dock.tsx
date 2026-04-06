@@ -13,7 +13,8 @@ import {
     Home,
     ShoppingBag,
     User,
-    Settings
+    Settings,
+    Music
 } from 'lucide-react';
 
 export function Dock({ userRole = 'PATIENT' }: { userRole?: string }) {
@@ -46,6 +47,7 @@ export function Dock({ userRole = 'PATIENT' }: { userRole?: string }) {
         { name: 'Store', icon: ShoppingBag, href: '/marketplace' },
         { name: 'Exercise', icon: Dumbbell, href: '/exercise' },
         { name: 'Yoga', icon: Flower2, href: '/yoga' },
+        { name: 'Music', icon: Music, href: '/music' },
         { name: 'Schedule', icon: Calendar, href: '/appointments' },
         { name: 'Metrics', icon: Activity, href: '/metrics' },
         { name: 'Profile', icon: User, href: '/profile' },

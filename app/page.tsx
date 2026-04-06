@@ -9,6 +9,7 @@ import { Typewriter } from '@/components/ui/typewriter';
 import { TubesBackground } from '@/components/ui/neon-flow';
 import { ArrowDown, ArrowRight } from 'lucide-react';
 import { YogaView } from '@/components/features/exercise/YogaView';
+import { YogaScrollAnimation } from '@/components/ui/yoga-scroll-animation';
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -120,63 +121,8 @@ export default function HomePage() {
         </TubesBackground>
       </motion.section>
 
-      {/* ═══ Section 2: Yoga Hero Image ═══ */}
-      <motion.section
-        ref={yogaSectionRef}
-        style={{ scale: yogaScale, opacity: yogaOpacity }}
-        className="relative z-10 min-h-screen flex items-center justify-center px-6"
-      >
-        <div className="max-w-5xl mx-auto w-full">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            {/* Image */}
-            <div className="relative order-2 md:order-1">
-              <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden">
-                {/* Soft glow behind image */}
-                <div className="absolute inset-0 -m-8 bg-gradient-to-br from-primary-500/5 via-transparent to-blue-500/5 rounded-[3rem] blur-2xl" />
-                <Image
-                  src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80&auto=format&fit=crop"
-                  alt="Woman in a serene yoga pose"
-                  fill
-                  className="object-cover rounded-[2rem] relative z-10"
-                  priority
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                {/* Overlay fades */}
-                <div className="absolute inset-0 z-20 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60" />
-                <div className="absolute inset-0 z-20 bg-gradient-to-r from-[#050505] via-transparent to-transparent opacity-30" />
-              </div>
-            </div>
-
-            {/* Text */}
-            <div className="order-1 md:order-2 space-y-8">
-              <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.3em]">
-                Mind, Body, Balance
-              </p>
-              <h2 className="text-4xl lg:text-5xl font-light text-white tracking-tight leading-[1.15]">
-                Strength is built
-                <br />
-                in stillness
-              </h2>
-              <p className="text-zinc-500 leading-relaxed max-w-sm font-light">
-                Science-backed yoga flows, guided breathing exercises, and meditation routines customized to your body and goals.
-              </p>
-              <div className="flex items-center gap-6 pt-2">
-                <GradientButton asChild variant="variant" className="h-12 px-8 text-sm rounded-full min-w-0">
-                  <Link href="/register">
-                    Start Free
-                  </Link>
-                </GradientButton>
-                <Link
-                  href="/login"
-                  className="text-sm text-zinc-500 hover:text-white transition-colors font-medium flex items-center gap-2"
-                >
-                  Learn more <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.section>
+      {/* ═══ Section 2: Interactive Yoga Scroll Animation ═══ */}
+      <YogaScrollAnimation />
 
 
 
