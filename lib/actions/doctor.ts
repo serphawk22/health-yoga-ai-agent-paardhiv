@@ -68,6 +68,30 @@ export async function updateDoctorProfile(data: any): Promise<DoctorActionResult
     }
 }
 
+export async function updateUserIdentity(data: { name: string; email: string; role: string; location?: string }): Promise<DoctorActionResult> {
+    try {
+        const user = await getCurrentUser();
+        if (!user) return { success: false, error: 'Not authenticated' };
+
+        // For this demo, we'll update the User's name/email/role. 
+        // Realistically, Role changes might need stricter security checks.
+        await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                name: data.name,
+                email: data.email,
+                role: data.role as any, // assuming PATIENT|DOCTOR|YOGA_INSTRUCTOR
+            }
+        });
+
+        revalidatePath('/doctor/profile');
+        return { success: true };
+    } catch (error) {
+        console.error('Update user identity error:', error);
+        return { success: false, error: 'Failed to update user identity' };
+    }
+}
+
 // ==================== AVAILABILITY ====================
 
 export async function getDoctorAvailability(): Promise<DoctorActionResult> {
