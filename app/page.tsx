@@ -1,19 +1,36 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Typewriter } from '@/components/ui/typewriter';
 import { TubesBackground } from '@/components/ui/neon-flow';
 import { ArrowDown, ArrowRight } from 'lucide-react';
-import { YogaView } from '@/components/features/exercise/YogaView';
-import { YogaScrollAnimation } from '@/components/ui/yoga-scroll-animation';
+
+const YogaView = dynamic(
+  () => import('@/components/features/exercise/YogaView').then((mod) => mod.YogaView),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full rounded-3xl border border-white/10 bg-black/20 p-10 text-center text-zinc-500">
+        Loading yoga generator...
+      </div>
+    ),
+  }
+);
+
+const YogaScrollAnimation = dynamic(
+  () => import('@/components/ui/yoga-scroll-animation').then((mod) => mod.YogaScrollAnimation),
+  {
+    ssr: false,
+    loading: () => <div className="h-[300vh] w-full bg-black" />,
+  }
+);
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const yogaSectionRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -22,9 +39,6 @@ export default function HomePage() {
 
   const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 0.25], [0, -80]);
-  const yogaScale = useTransform(scrollYProgress, [0.2, 0.5], [0.9, 1]);
-  const yogaOpacity = useTransform(scrollYProgress, [0.2, 0.4], [0, 1]);
-  const featuresOpacity = useTransform(scrollYProgress, [0.55, 0.7], [0, 1]);
 
   return (
     <div ref={containerRef} className="relative bg-[#050505]">

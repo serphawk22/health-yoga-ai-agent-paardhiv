@@ -117,7 +117,7 @@ export default function DoctorDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pt-8">
                 <div className="lg:col-span-2 space-y-8">
                     <div className="flex items-center justify-between px-2">
-                        <h2 className="text-xl font-medium text-white uppercase tracking-wider">Today's Schedule</h2>
+                        <h2 className="text-xl font-medium text-white uppercase tracking-wider">Today&apos;s Schedule</h2>
                         <Link href="/appointments" className="text-emerald-400 text-xs font-medium uppercase tracking-wider hover:text-emerald-300 transition-colors">See Full Agenda →</Link>
                     </div>
 
