@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { applyRateLimit, getClientIdentifier } from '@/lib/security/rate-limit';
+import { cookies } from 'next/headers';
+import { createOAuthState, getOAuthStateNonceCookieName } from '@/lib/security/oauth-state';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   const identifier = getClientIdentifier(request);
@@ -44,7 +48,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Google Client ID not configured' }, { status: 500 });
   }
 
-  const state = Buffer.from(JSON.stringify({ role, isLogin })).toString('base64');
+  const { token: state, nonce, maxAge } = await createOAuthState('google', {
+    role,
+    isLogin,
+  });
+
+  const cookieStore = await cookies();
+  cookieStore.set(getOAuthStateNonceCookieName('google'), nonce, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge,
+  });
 
   const googleAuthUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
   googleAuthUrl.searchParams.append('client_id', clientId);

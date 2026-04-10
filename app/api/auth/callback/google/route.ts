@@ -1,31 +1,55 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { createSession, hashPassword } from '@/lib/auth';
+import { applyRateLimit, getClientIdentifier } from '@/lib/security/rate-limit';
+import { cookies } from 'next/headers';
+import { getOAuthStateNonceCookieName, verifyOAuthState } from '@/lib/security/oauth-state';
 
-export async function GET(request: Request) {
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const code = url.searchParams.get('code');
-  const state = url.searchParams.get('state');
+  const stateToken = url.searchParams.get('state');
+
+  const identifier = getClientIdentifier(request);
+  const rateLimit = applyRateLimit({
+    key: `auth-google-callback:${identifier}`,
+    limit: 40,
+    windowMs: 60 * 1000,
+  });
+
+  if (!rateLimit.allowed) {
+    return NextResponse.redirect(new URL('/login?error=Too many authentication attempts', request.url));
+  }
   
   if (!code) {
     return NextResponse.redirect(new URL('/login?error=No code provided', request.url));
   }
 
-  let role = 'PATIENT';
-  let isLogin = false;
-  if (state) {
-    try {
-      const decodedState = JSON.parse(Buffer.from(state, 'base64').toString('utf-8'));
-      if (decodedState.role) {
-        role = decodedState.role;
-      }
-      if (decodedState.isLogin) {
-        isLogin = decodedState.isLogin;
-      }
-    } catch (e) {
-      console.error('Failed to parse state', e);
-    }
+  if (!stateToken) {
+    return NextResponse.redirect(new URL('/login?error=Invalid OAuth state', request.url));
   }
+
+  const cookieStore = await cookies();
+  const nonceCookieName = getOAuthStateNonceCookieName('google');
+  const expectedNonce = cookieStore.get(nonceCookieName)?.value;
+  cookieStore.delete(nonceCookieName);
+
+  if (!expectedNonce) {
+    return NextResponse.redirect(new URL('/login?error=Invalid OAuth state', request.url));
+  }
+
+  const verifiedState = await verifyOAuthState(stateToken, 'google');
+  if (!verifiedState || verifiedState.nonce !== expectedNonce) {
+    return NextResponse.redirect(new URL('/login?error=Invalid OAuth state', request.url));
+  }
+
+  const allowedRoles = ['PATIENT', 'DOCTOR', 'YOGA_INSTRUCTOR'];
+  const role = verifiedState.role && allowedRoles.includes(verifiedState.role)
+    ? verifiedState.role
+    : 'PATIENT';
+  const isLogin = verifiedState.isLogin === true;
 
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;

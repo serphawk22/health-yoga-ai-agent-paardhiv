@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { hashPassword, verifyPassword, createSession, destroySession, getCurrentUser } from '@/lib/auth';
+import { headers } from 'next/headers';
+import { applyRateLimit, getClientIdentifierFromHeaders } from '@/lib/security/rate-limit';
 
 // ==================== VALIDATION SCHEMAS ====================
 
@@ -54,6 +56,21 @@ export async function signUp(formData: FormData): Promise<AuthActionResult> {
   }
 
   const { name, email, password, role } = validationResult.data;
+
+  const incomingHeaders = await headers();
+  const identifier = getClientIdentifierFromHeaders(incomingHeaders);
+  const rateLimit = applyRateLimit({
+    key: `signup:${identifier}`,
+    limit: 10,
+    windowMs: 10 * 60 * 1000,
+  });
+
+  if (!rateLimit.allowed) {
+    return {
+      success: false,
+      error: 'Too many sign up attempts. Please try again later.',
+    };
+  }
 
   try {
     // Check if user already exists
@@ -133,6 +150,21 @@ export async function signIn(formData: FormData): Promise<AuthActionResult> {
   }
 
   const { email, password } = validationResult.data;
+
+  const incomingHeaders = await headers();
+  const identifier = getClientIdentifierFromHeaders(incomingHeaders);
+  const rateLimit = applyRateLimit({
+    key: `signin:${identifier}`,
+    limit: 20,
+    windowMs: 10 * 60 * 1000,
+  });
+
+  if (!rateLimit.allowed) {
+    return {
+      success: false,
+      error: 'Too many login attempts. Please try again later.',
+    };
+  }
 
   try {
     // Find user

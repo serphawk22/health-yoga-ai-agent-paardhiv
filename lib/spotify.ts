@@ -11,7 +11,7 @@ export interface SpotifyTokenResponse {
   refresh_token: string;
 }
 
-export async function getSpotifyAuthUrl() {
+export async function getSpotifyAuthUrl(state?: string) {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const redirectUri = process.env.SPOTIFY_REDIRECT_URI;
   
@@ -38,6 +38,9 @@ export async function getSpotifyAuthUrl() {
   url.searchParams.set('scope', scopes);
   url.searchParams.set('redirect_uri', redirectUri);
   url.searchParams.set('show_dialog', 'true');
+  if (state) {
+    url.searchParams.set('state', state);
+  }
 
   return url.toString();
 }
