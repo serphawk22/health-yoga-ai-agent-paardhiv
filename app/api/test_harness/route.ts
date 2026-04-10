@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     try {
         const identifier = getClientIdentifier(req);
-        const rateLimit = applyRateLimit({
+        const rateLimit = await applyRateLimit({
             key: `test-harness:${identifier}`,
             limit: 30,
             windowMs: 60 * 1000,

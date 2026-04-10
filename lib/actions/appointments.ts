@@ -2,9 +2,13 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
+import { randomBytes } from 'crypto';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { extractAppointmentDetails } from '@/lib/ai';
+import { Prisma } from '@prisma/client';
+import { applyRateLimit, getClientIdentifierFromHeaders } from '@/lib/security/rate-limit';
 import { format, parse, isValid, isBefore, startOfDay } from 'date-fns';
 
 // ==================== TYPES ====================
@@ -13,6 +17,10 @@ export interface AppointmentActionResult {
   success: boolean;
   error?: string;
   data?: any;
+}
+
+function generateSecureMeetingId(): string {
+  return randomBytes(6).toString('hex').toUpperCase();
 }
 
 // ==================== GET DOCTORS ====================
@@ -161,6 +169,18 @@ export async function createAppointment(formData: FormData): Promise<Appointment
       return { success: false, error: 'Not authenticated' };
     }
 
+    const incomingHeaders = await headers();
+    const identifier = getClientIdentifierFromHeaders(incomingHeaders);
+    const rateLimit = await applyRateLimit({
+      key: `appointments:create:${user.id}:${identifier}`,
+      limit: 20,
+      windowMs: 10 * 60 * 1000,
+    });
+
+    if (!rateLimit.allowed) {
+      return { success: false, error: 'Too many appointment requests. Please try again later.' };
+    }
+
     const doctorId = formData.get('doctorId') as string;
     const scheduledDate = formData.get('scheduledDate') as string;
     const scheduledTime = formData.get('scheduledTime') as string;
@@ -174,44 +194,110 @@ export async function createAppointment(formData: FormData): Promise<Appointment
       return { success: false, error: 'Missing required fields' };
     }
 
+    if (reason && reason.length > 1000) {
+      return { success: false, error: 'Reason is too long.' };
+    }
+
+    if (originalQuery && originalQuery.length > 2000) {
+      return { success: false, error: 'Original query is too long.' };
+    }
+
+    if (extractedIntent && extractedIntent.length > 2000) {
+      return { success: false, error: 'Extracted intent is too long.' };
+    }
+
+    if (!/^([01]\d|2[0-3]):([0-5]\d)$/.test(scheduledTime)) {
+      return { success: false, error: 'Invalid time format.' };
+    }
+
     // Parse date
     const appointmentDate = new Date(scheduledDate);
     if (!isValid(appointmentDate)) {
       return { success: false, error: 'Invalid date' };
     }
 
-    // Check if slot is still available
-    const existingAppointment = await prisma.appointment.findFirst({
-      where: {
-        doctorId,
-        scheduledDate: appointmentDate,
-        scheduledTime,
-        status: { notIn: ['CANCELLED'] },
-      },
-    });
-
-    if (existingAppointment) {
-      return { success: false, error: 'This time slot is no longer available' };
+    if (isBefore(startOfDay(appointmentDate), startOfDay(new Date()))) {
+      return { success: false, error: 'Cannot create appointments in the past.' };
     }
 
-    // Create appointment
-    const appointment = await prisma.appointment.create({
-      data: {
-        userId: user.id,
-        doctorId,
-        scheduledDate: appointmentDate,
-        scheduledTime,
-        reason,
-        type,
-        originalQuery,
-        extractedIntent,
-        status: 'CONFIRMED',
-        meetingId: Math.random().toString(36).substring(2, 12).toUpperCase(), // Generate unique room ID
-      },
-      include: {
-        doctor: true,
-      },
+    const doctor = await prisma.doctor.findUnique({
+      where: { id: doctorId },
+      select: { id: true, isActive: true },
     });
+
+    if (!doctor || !doctor.isActive) {
+      return { success: false, error: 'Selected doctor is not available.' };
+    }
+
+    // Create appointment with serializable transaction to reduce slot race conditions
+    // and collision-safe meeting ID generation.
+    let appointment: any = null;
+    const maxAttempts = 5;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const meetingId = generateSecureMeetingId();
+
+      try {
+        appointment = await prisma.$transaction(async (tx) => {
+          const existingAppointment = await tx.appointment.findFirst({
+            where: {
+              doctorId,
+              scheduledDate: appointmentDate,
+              scheduledTime,
+              status: { notIn: ['CANCELLED'] },
+            },
+            select: { id: true },
+          });
+
+          if (existingAppointment) {
+            throw new Error('SLOT_TAKEN');
+          }
+
+          return tx.appointment.create({
+            data: {
+              userId: user.id,
+              doctorId,
+              scheduledDate: appointmentDate,
+              scheduledTime,
+              reason,
+              type,
+              originalQuery,
+              extractedIntent,
+              status: 'CONFIRMED',
+              meetingId,
+            },
+            include: {
+              doctor: true,
+            },
+          });
+        }, {
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        });
+        break;
+      } catch (error) {
+        if (error instanceof Error && error.message === 'SLOT_TAKEN') {
+          return { success: false, error: 'This time slot is no longer available' };
+        }
+
+        const isMeetingIdCollision =
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === 'P2002' &&
+          Array.isArray(error.meta?.target) &&
+          (error.meta?.target as string[]).includes('meetingId');
+
+        const isSerializationConflict =
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === 'P2034';
+
+        if (!isMeetingIdCollision && !isSerializationConflict) {
+          throw error;
+        }
+      }
+    }
+
+    if (!appointment) {
+      return { success: false, error: 'Failed to create a secure meeting ID. Please retry.' };
+    }
 
     revalidatePath('/appointments');
     revalidatePath('/dashboard');

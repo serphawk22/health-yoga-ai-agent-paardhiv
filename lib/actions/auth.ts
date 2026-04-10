@@ -7,6 +7,7 @@ import prisma from '@/lib/prisma';
 import { hashPassword, verifyPassword, createSession, destroySession, getCurrentUser } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { applyRateLimit, getClientIdentifierFromHeaders } from '@/lib/security/rate-limit';
+import { logSecurityEvent } from '@/lib/security/audit-log';
 
 // ==================== VALIDATION SCHEMAS ====================
 
@@ -35,6 +36,14 @@ export interface AuthActionResult {
   role?: string;
 }
 
+function getEmailDomain(email: string): string {
+  const atIndex = email.indexOf('@');
+  if (atIndex === -1) {
+    return 'invalid';
+  }
+  return email.slice(atIndex + 1).toLowerCase();
+}
+
 
 export async function signUp(formData: FormData): Promise<AuthActionResult> {
   const rawData = {
@@ -59,13 +68,19 @@ export async function signUp(formData: FormData): Promise<AuthActionResult> {
 
   const incomingHeaders = await headers();
   const identifier = getClientIdentifierFromHeaders(incomingHeaders);
-  const rateLimit = applyRateLimit({
+  const rateLimit = await applyRateLimit({
     key: `signup:${identifier}`,
     limit: 10,
     windowMs: 10 * 60 * 1000,
   });
 
   if (!rateLimit.allowed) {
+    logSecurityEvent({
+      event: 'signup_rate_limited',
+      severity: 'warn',
+      identifier,
+      route: 'lib/actions/auth.signUp',
+    });
     return {
       success: false,
       error: 'Too many sign up attempts. Please try again later.',
@@ -153,13 +168,19 @@ export async function signIn(formData: FormData): Promise<AuthActionResult> {
 
   const incomingHeaders = await headers();
   const identifier = getClientIdentifierFromHeaders(incomingHeaders);
-  const rateLimit = applyRateLimit({
+  const rateLimit = await applyRateLimit({
     key: `signin:${identifier}`,
     limit: 20,
     windowMs: 10 * 60 * 1000,
   });
 
   if (!rateLimit.allowed) {
+    logSecurityEvent({
+      event: 'signin_rate_limited',
+      severity: 'warn',
+      identifier,
+      route: 'lib/actions/auth.signIn',
+    });
     return {
       success: false,
       error: 'Too many login attempts. Please try again later.',
@@ -173,6 +194,13 @@ export async function signIn(formData: FormData): Promise<AuthActionResult> {
     });
 
     if (!user) {
+      logSecurityEvent({
+        event: 'signin_invalid_credentials',
+        severity: 'warn',
+        identifier,
+        route: 'lib/actions/auth.signIn',
+        metadata: { emailDomain: getEmailDomain(email) },
+      });
       return {
         success: false,
         error: 'Invalid email or password',
@@ -183,6 +211,14 @@ export async function signIn(formData: FormData): Promise<AuthActionResult> {
     const isValidPassword = await verifyPassword(password, user.password);
 
     if (!isValidPassword) {
+      logSecurityEvent({
+        event: 'signin_invalid_credentials',
+        severity: 'warn',
+        identifier,
+        route: 'lib/actions/auth.signIn',
+        userId: user.id,
+        metadata: { emailDomain: getEmailDomain(email) },
+      });
       return {
         success: false,
         error: 'Invalid email or password',

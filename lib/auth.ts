@@ -7,6 +7,55 @@ import { getJwtSecretKey } from './jwt-config';
 
 const COOKIE_NAME = 'health-agent-session';
 const TOKEN_EXPIRY = '7d';
+const TOKEN_EXPIRY_DAYS = 7;
+const MAX_ACTIVE_SESSIONS_PER_USER = 5;
+
+const globalForSessionCleanup = globalThis as unknown as {
+  __healthAgentSessionCleanupAt?: number;
+};
+
+function getSessionExpiryDate() {
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + TOKEN_EXPIRY_DAYS);
+  return expiresAt;
+}
+
+async function cleanupExpiredSessionsIfNeeded() {
+  const now = Date.now();
+  const nextCleanupAt = globalForSessionCleanup.__healthAgentSessionCleanupAt ?? 0;
+
+  if (now < nextCleanupAt) {
+    return;
+  }
+
+  globalForSessionCleanup.__healthAgentSessionCleanupAt = now + 60 * 60 * 1000;
+  await prisma.session.deleteMany({
+    where: {
+      expiresAt: { lt: new Date(now) },
+    },
+  });
+}
+
+async function enforceSessionLimitForUser(userId: string) {
+  const overflowSessions = await prisma.session.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    skip: MAX_ACTIVE_SESSIONS_PER_USER,
+    select: { id: true },
+  });
+
+  if (overflowSessions.length === 0) {
+    return;
+  }
+
+  await prisma.session.deleteMany({
+    where: {
+      id: {
+        in: overflowSessions.map((session) => session.id),
+      },
+    },
+  });
+}
 
 // ==================== PASSWORD UTILITIES ====================
 
@@ -48,10 +97,17 @@ export async function verifyToken(token: string): Promise<TokenPayload | null> {
 
 export async function createSession(userId: string, email: string, name: string, role: string = 'PATIENT'): Promise<string> {
   const token = await createToken({ userId, email, name, role });
+  const expiresAt = getSessionExpiryDate();
 
-  // Calculate expiry date
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 7);
+  await cleanupExpiredSessionsIfNeeded();
+
+  // Cleanup expired sessions for this user before creating a new one.
+  await prisma.session.deleteMany({
+    where: {
+      userId,
+      expiresAt: { lt: new Date() },
+    },
+  });
 
   // Store session in database
   await prisma.session.create({
@@ -61,6 +117,9 @@ export async function createSession(userId: string, email: string, name: string,
       expiresAt,
     },
   });
+
+  // Keep only a small number of active sessions per user.
+  await enforceSessionLimitForUser(userId);
 
   // Set cookie
   const cookieStore = await cookies();
@@ -82,9 +141,14 @@ export async function getSession(): Promise<TokenPayload | null> {
 
   if (!token) return null;
 
+  await cleanupExpiredSessionsIfNeeded();
+
   // Verify token
   const payload = await verifyToken(token);
-  if (!payload) return null;
+  if (!payload) {
+    await prisma.session.deleteMany({ where: { token } });
+    return null;
+  }
 
   // Check if session exists in database
   const session = await prisma.session.findUnique({
@@ -92,6 +156,7 @@ export async function getSession(): Promise<TokenPayload | null> {
   });
 
   if (!session || session.expiresAt < new Date()) {
+    await prisma.session.deleteMany({ where: { token } });
     // Session expired or doesn't exist
     // cannot delete cookie in server component
     return null;

@@ -2,8 +2,10 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
+import { applyRateLimit, getClientIdentifierFromHeaders } from '@/lib/security/rate-limit';
 import {
   generateDietPlan,
   generateExercisePlan,
@@ -23,6 +25,45 @@ export interface RecommendationActionResult {
   data?: any;
 }
 
+const AI_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+
+async function enforceAiRateLimit(
+  userId: string,
+  action: string,
+  actionLimit: number
+): Promise<RecommendationActionResult | null> {
+  const incomingHeaders = await headers();
+  const identifier = getClientIdentifierFromHeaders(incomingHeaders);
+
+  const overallLimit = await applyRateLimit({
+    key: `recommendations:all:${userId}:${identifier}`,
+    limit: 30,
+    windowMs: AI_RATE_LIMIT_WINDOW_MS,
+  });
+
+  if (!overallLimit.allowed) {
+    return {
+      success: false,
+      error: 'Too many AI requests. Please try again in a few minutes.',
+    };
+  }
+
+  const scopedLimit = await applyRateLimit({
+    key: `recommendations:${action}:${userId}:${identifier}`,
+    limit: actionLimit,
+    windowMs: AI_RATE_LIMIT_WINDOW_MS,
+  });
+
+  if (!scopedLimit.allowed) {
+    return {
+      success: false,
+      error: 'Rate limit exceeded for this recommendation type. Please retry shortly.',
+    };
+  }
+
+  return null;
+}
+
 // ==================== DIET RECOMMENDATIONS ====================
 
 export async function getDietRecommendation(
@@ -34,18 +75,28 @@ export async function getDietRecommendation(
       return { success: false, error: 'Not authenticated' };
     }
 
+    const normalizedRequest = specificRequest?.trim();
+    if (normalizedRequest && normalizedRequest.length > 500) {
+      return { success: false, error: 'Request is too long. Please keep it under 500 characters.' };
+    }
+
+    const rateLimitError = await enforceAiRateLimit(user.id, 'diet', 8);
+    if (rateLimitError) {
+      return rateLimitError;
+    }
+
     const healthProfile = await prisma.healthProfile.findUnique({
       where: { userId: user.id },
     });
 
-    const dietPlan = await generateDietPlan(healthProfile, specificRequest);
+    const dietPlan = await generateDietPlan(healthProfile, normalizedRequest);
 
     // Save recommendation
     await prisma.recommendation.create({
       data: {
         userId: user.id,
         type: 'DIET',
-        title: specificRequest || 'Personalized Diet Plan',
+        title: normalizedRequest || 'Personalized Diet Plan',
         content: dietPlan as any,
         basedOnProfile: !!healthProfile,
         basedOnGoal: healthProfile?.primaryGoal,
@@ -72,23 +123,39 @@ export async function getExerciseRecommendation(
       return { success: false, error: 'Not authenticated' };
     }
 
+    const normalizedBodyPart = bodyPart?.trim();
+    const normalizedRequest = specificRequest?.trim();
+
+    if (normalizedBodyPart && normalizedBodyPart.length > 64) {
+      return { success: false, error: 'Body part value is too long.' };
+    }
+
+    if (normalizedRequest && normalizedRequest.length > 500) {
+      return { success: false, error: 'Request is too long. Please keep it under 500 characters.' };
+    }
+
+    const rateLimitError = await enforceAiRateLimit(user.id, 'exercise', 8);
+    if (rateLimitError) {
+      return rateLimitError;
+    }
+
     const healthProfile = await prisma.healthProfile.findUnique({
       where: { userId: user.id },
     });
 
-    const exercisePlan = await generateExercisePlan(healthProfile, bodyPart, specificRequest);
+    const exercisePlan = await generateExercisePlan(healthProfile, normalizedBodyPart, normalizedRequest);
 
     // Save recommendation
     await prisma.recommendation.create({
       data: {
         userId: user.id,
         type: 'EXERCISE',
-        category: bodyPart,
-        title: bodyPart ? `${bodyPart} Exercises` : 'Full Body Workout',
+        category: normalizedBodyPart,
+        title: normalizedBodyPart ? `${normalizedBodyPart} Exercises` : 'Full Body Workout',
         content: exercisePlan as any,
         basedOnProfile: !!healthProfile,
         basedOnGoal: healthProfile?.primaryGoal,
-        bodyPart,
+        bodyPart: normalizedBodyPart,
       },
     });
 
@@ -113,24 +180,49 @@ export async function getYogaRecommendation(
       return { success: false, error: 'Not authenticated' };
     }
 
+    const normalizedBodyPart = bodyPart?.trim();
+    const normalizedCondition = condition?.trim();
+    const normalizedRequest = specificRequest?.trim();
+
+    if (normalizedBodyPart && normalizedBodyPart.length > 64) {
+      return { success: false, error: 'Body part value is too long.' };
+    }
+
+    if (normalizedCondition && normalizedCondition.length > 100) {
+      return { success: false, error: 'Condition value is too long.' };
+    }
+
+    if (normalizedRequest && normalizedRequest.length > 500) {
+      return { success: false, error: 'Request is too long. Please keep it under 500 characters.' };
+    }
+
+    const rateLimitError = await enforceAiRateLimit(user.id, 'yoga', 8);
+    if (rateLimitError) {
+      return rateLimitError;
+    }
+
     const healthProfile = await prisma.healthProfile.findUnique({
       where: { userId: user.id },
     });
 
-    const yogaPlan = await generateYogaPlan(healthProfile, bodyPart, condition, specificRequest);
+    const yogaPlan = await generateYogaPlan(healthProfile, normalizedBodyPart, normalizedCondition, normalizedRequest);
 
     // Save recommendation
     await prisma.recommendation.create({
       data: {
         userId: user.id,
         type: 'YOGA',
-        category: bodyPart || condition,
-        title: bodyPart ? `Yoga for ${bodyPart}` : condition ? `Yoga for ${condition}` : 'Personalized Yoga',
+        category: normalizedBodyPart || normalizedCondition,
+        title: normalizedBodyPart
+          ? `Yoga for ${normalizedBodyPart}`
+          : normalizedCondition
+            ? `Yoga for ${normalizedCondition}`
+            : 'Personalized Yoga',
         content: yogaPlan as any,
         basedOnProfile: !!healthProfile,
         basedOnGoal: healthProfile?.primaryGoal,
-        bodyPart,
-        basedOnCondition: condition,
+        bodyPart: normalizedBodyPart,
+        basedOnCondition: normalizedCondition,
       },
     });
 
@@ -153,22 +245,35 @@ export async function getDiseaseRecommendation(
       return { success: false, error: 'Not authenticated' };
     }
 
+    const normalizedCondition = condition.trim();
+    if (!normalizedCondition) {
+      return { success: false, error: 'Condition is required.' };
+    }
+    if (normalizedCondition.length > 100) {
+      return { success: false, error: 'Condition value is too long.' };
+    }
+
+    const rateLimitError = await enforceAiRateLimit(user.id, 'disease', 6);
+    if (rateLimitError) {
+      return rateLimitError;
+    }
+
     const healthProfile = await prisma.healthProfile.findUnique({
       where: { userId: user.id },
     });
 
-    const guidance = await getDiseaseGuidance(healthProfile, condition);
+    const guidance = await getDiseaseGuidance(healthProfile, normalizedCondition);
 
     // Save recommendation
     await prisma.recommendation.create({
       data: {
         userId: user.id,
         type: 'DISEASE_MANAGEMENT',
-        category: condition,
-        title: `Managing ${condition}`,
+        category: normalizedCondition,
+        title: `Managing ${normalizedCondition}`,
         content: { guidance } as any,
         basedOnProfile: !!healthProfile,
-        basedOnCondition: condition,
+        basedOnCondition: normalizedCondition,
       },
     });
 
@@ -192,22 +297,40 @@ export async function getGoalRecommendation(
       return { success: false, error: 'Not authenticated' };
     }
 
+    const normalizedGoal = goal.trim();
+    const normalizedDuration = duration?.trim();
+
+    if (!normalizedGoal) {
+      return { success: false, error: 'Goal is required.' };
+    }
+    if (normalizedGoal.length > 120) {
+      return { success: false, error: 'Goal is too long.' };
+    }
+    if (normalizedDuration && normalizedDuration.length > 40) {
+      return { success: false, error: 'Duration value is too long.' };
+    }
+
+    const rateLimitError = await enforceAiRateLimit(user.id, 'goal', 6);
+    if (rateLimitError) {
+      return rateLimitError;
+    }
+
     const healthProfile = await prisma.healthProfile.findUnique({
       where: { userId: user.id },
     });
 
-    const plan = await generateGoalPlan(healthProfile, goal, duration);
+    const plan = await generateGoalPlan(healthProfile, normalizedGoal, normalizedDuration);
 
     // Map goal string to enum
-    const goalEnum = mapGoalToEnum(goal);
+    const goalEnum = mapGoalToEnum(normalizedGoal);
 
     // Save recommendation
     await prisma.recommendation.create({
       data: {
         userId: user.id,
         type: 'GOAL_BASED',
-        category: goal,
-        title: `${goal} Plan`,
+        category: normalizedGoal,
+        title: `${normalizedGoal} Plan`,
         content: plan as any,
         basedOnProfile: !!healthProfile,
         basedOnGoal: goalEnum,
@@ -257,27 +380,40 @@ export async function getConditionGuidance(
       return { success: false, error: 'Not authenticated' };
     }
 
+    const normalizedCondition = condition.trim();
+    if (!normalizedCondition) {
+      return { success: false, error: 'Condition is required.' };
+    }
+    if (normalizedCondition.length > 100) {
+      return { success: false, error: 'Condition value is too long.' };
+    }
+
+    const rateLimitError = await enforceAiRateLimit(user.id, 'condition-guidance', 6);
+    if (rateLimitError) {
+      return rateLimitError;
+    }
+
     const healthProfile = await prisma.healthProfile.findUnique({
       where: { userId: user.id },
     });
 
     // getDiseaseGuidance takes (healthProfile, condition) as parameters
-    const guidance = await getDiseaseGuidance(healthProfile, condition);
+    const guidance = await getDiseaseGuidance(healthProfile, normalizedCondition);
 
     // Save recommendation
     await prisma.recommendation.create({
       data: {
         userId: user.id,
         type: 'DISEASE_MANAGEMENT',
-        category: condition,
-        title: `${condition} Management Guide`,
+        category: normalizedCondition,
+        title: `${normalizedCondition} Management Guide`,
         content: { text: guidance },
         basedOnProfile: !!healthProfile,
       },
     });
 
     revalidatePath('/conditions');
-    return { success: true, data: { guidance, condition } };
+    return { success: true, data: { guidance, condition: normalizedCondition } };
   } catch (error) {
     console.error('Condition guidance error:', error);
     return { success: false, error: `Failed to generate guidance: ${error instanceof Error ? error.message : String(error)}` };

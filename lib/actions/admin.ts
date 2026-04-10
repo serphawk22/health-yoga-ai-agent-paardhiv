@@ -69,7 +69,7 @@ export async function verifyAdminPassword(password: string) {
     try {
         const incomingHeaders = await headers();
         const identifier = getClientIdentifierFromHeaders(incomingHeaders);
-        const rateLimit = applyRateLimit({
+        const rateLimit = await applyRateLimit({
             key: `admin-password:${identifier}`,
             limit: 10,
             windowMs: 10 * 60 * 1000,

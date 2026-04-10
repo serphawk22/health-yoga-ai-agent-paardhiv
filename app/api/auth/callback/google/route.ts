@@ -4,6 +4,7 @@ import { createSession, hashPassword } from '@/lib/auth';
 import { applyRateLimit, getClientIdentifier } from '@/lib/security/rate-limit';
 import { cookies } from 'next/headers';
 import { getOAuthStateNonceCookieName, verifyOAuthState } from '@/lib/security/oauth-state';
+import { logSecurityEvent } from '@/lib/security/audit-log';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,13 +14,19 @@ export async function GET(request: NextRequest) {
   const stateToken = url.searchParams.get('state');
 
   const identifier = getClientIdentifier(request);
-  const rateLimit = applyRateLimit({
+  const rateLimit = await applyRateLimit({
     key: `auth-google-callback:${identifier}`,
     limit: 40,
     windowMs: 60 * 1000,
   });
 
   if (!rateLimit.allowed) {
+    logSecurityEvent({
+      event: 'oauth_google_callback_rate_limited',
+      severity: 'warn',
+      identifier,
+      route: '/api/auth/callback/google',
+    });
     return NextResponse.redirect(new URL('/login?error=Too many authentication attempts', request.url));
   }
   
@@ -28,6 +35,13 @@ export async function GET(request: NextRequest) {
   }
 
   if (!stateToken) {
+    logSecurityEvent({
+      event: 'oauth_google_invalid_state',
+      severity: 'warn',
+      identifier,
+      route: '/api/auth/callback/google',
+      metadata: { reason: 'missing_state_token' },
+    });
     return NextResponse.redirect(new URL('/login?error=Invalid OAuth state', request.url));
   }
 
@@ -37,11 +51,25 @@ export async function GET(request: NextRequest) {
   cookieStore.delete(nonceCookieName);
 
   if (!expectedNonce) {
+    logSecurityEvent({
+      event: 'oauth_google_invalid_state',
+      severity: 'warn',
+      identifier,
+      route: '/api/auth/callback/google',
+      metadata: { reason: 'missing_nonce_cookie' },
+    });
     return NextResponse.redirect(new URL('/login?error=Invalid OAuth state', request.url));
   }
 
   const verifiedState = await verifyOAuthState(stateToken, 'google');
   if (!verifiedState || verifiedState.nonce !== expectedNonce) {
+    logSecurityEvent({
+      event: 'oauth_google_invalid_state',
+      severity: 'warn',
+      identifier,
+      route: '/api/auth/callback/google',
+      metadata: { reason: 'state_verification_failed' },
+    });
     return NextResponse.redirect(new URL('/login?error=Invalid OAuth state', request.url));
   }
 

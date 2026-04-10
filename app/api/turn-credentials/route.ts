@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
     try {
         const identifier = getClientIdentifier(request);
-        const rateLimit = applyRateLimit({
+        const rateLimit = await applyRateLimit({
             key: `turn-credentials:${identifier}`,
             limit: 120,
             windowMs: 60 * 1000,

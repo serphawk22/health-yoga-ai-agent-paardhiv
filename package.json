@@ -12,7 +12,8 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:seed": "npx ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "loadtest": "node scripts/load-test.js"
   },
   "dependencies": {
     "@dicebear/collection": "^9.3.2",
@@ -45,6 +46,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "recharts": "^2.13.3",
+    "redis": "^4.7.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^2.6.1",
     "three": "^0.183.0",

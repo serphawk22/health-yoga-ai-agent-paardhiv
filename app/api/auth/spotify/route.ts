@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const identifier = getClientIdentifier(request);
-    const rateLimit = applyRateLimit({
+    const rateLimit = await applyRateLimit({
       key: `auth-spotify:${identifier}`,
       limit: 30,
       windowMs: 60 * 1000,

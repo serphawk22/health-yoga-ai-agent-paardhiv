@@ -3,9 +3,11 @@
 
 import { revalidatePath } from 'next/cache';
 import { randomUUID } from 'crypto';
+import { headers } from 'next/headers';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { healthChat, ChatMessage } from '@/lib/ai';
+import { applyRateLimit, getClientIdentifierFromHeaders } from '@/lib/security/rate-limit';
 
 // ==================== TYPES ====================
 
@@ -13,6 +15,73 @@ export interface ChatActionResult {
   success: boolean;
   error?: string;
   data?: any;
+}
+
+const MAX_CHAT_MESSAGE_LENGTH = 4000;
+const MAX_ATTACHMENT_NAME_LENGTH = 160;
+const MAX_ATTACHMENT_TEXT_LENGTH = 20_000;
+const MAX_ATTACHMENT_BASE64_LENGTH = 6_000_000;
+
+function validateChatInput(
+  message: string,
+  attachment?: { type: string; name: string; mimeType: string; base64?: string; content?: string }
+): string | null {
+  const normalizedMessage = message.trim();
+
+  if (!normalizedMessage && !attachment) {
+    return 'Please enter a message.';
+  }
+
+  if (normalizedMessage.length > MAX_CHAT_MESSAGE_LENGTH) {
+    return `Message is too long. Please keep it under ${MAX_CHAT_MESSAGE_LENGTH} characters.`;
+  }
+
+  if (!attachment) {
+    return null;
+  }
+
+  if (!attachment.name || attachment.name.length > MAX_ATTACHMENT_NAME_LENGTH) {
+    return 'Attachment name is invalid or too long.';
+  }
+
+  if (attachment.content && attachment.content.length > MAX_ATTACHMENT_TEXT_LENGTH) {
+    return 'Attached text content is too large.';
+  }
+
+  if (attachment.base64 && attachment.base64.length > MAX_ATTACHMENT_BASE64_LENGTH) {
+    return 'Attached file is too large.';
+  }
+
+  return null;
+}
+
+async function enforceChatRateLimit(userId: string, hasAttachment: boolean): Promise<string | null> {
+  const incomingHeaders = await headers();
+  const identifier = getClientIdentifierFromHeaders(incomingHeaders);
+
+  const messageRateLimit = await applyRateLimit({
+    key: `chat:messages:${userId}:${identifier}`,
+    limit: 40,
+    windowMs: 60 * 1000,
+  });
+
+  if (!messageRateLimit.allowed) {
+    return 'Too many messages sent in a short time. Please wait and try again.';
+  }
+
+  if (hasAttachment) {
+    const attachmentRateLimit = await applyRateLimit({
+      key: `chat:attachments:${userId}:${identifier}`,
+      limit: 10,
+      windowMs: 60 * 1000,
+    });
+
+    if (!attachmentRateLimit.allowed) {
+      return 'Too many attachment messages sent. Please wait and try again.';
+    }
+  }
+
+  return null;
 }
 
 // ==================== SEND MESSAGE ====================
@@ -27,6 +96,18 @@ export async function sendChatMessage(
     if (!user) {
       return { success: false, error: 'Not authenticated' };
     }
+
+    const inputError = validateChatInput(message, attachment);
+    if (inputError) {
+      return { success: false, error: inputError };
+    }
+
+    const rateLimitError = await enforceChatRateLimit(user.id, !!attachment);
+    if (rateLimitError) {
+      return { success: false, error: rateLimitError };
+    }
+
+    const normalizedMessage = message.trim() || 'Please analyze this report.';
 
     // Generate or use existing session ID
     const chatSessionId = sessionId || generateSessionId();
@@ -52,7 +133,7 @@ export async function sendChatMessage(
     });
 
     // Save user message
-    let storageContent = message;
+    let storageContent = normalizedMessage;
     if (attachment) {
       storageContent += `\n\n[ATTACHED ${attachment.type.toUpperCase()}: ${attachment.name}]`;
     }
@@ -67,7 +148,7 @@ export async function sendChatMessage(
     });
 
     // Generate AI response
-    const aiResponse = await healthChat(message, chatHistory, healthProfile, attachment);
+    const aiResponse = await healthChat(normalizedMessage, chatHistory, healthProfile, attachment);
 
     // Save AI response
     await prisma.chatHistory.create({
@@ -194,5 +275,5 @@ export async function clearAllChatHistory(): Promise<ChatActionResult> {
 // ==================== HELPER ====================
 
 function generateSessionId(): string {
-  return `chat_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  return `chat_${Date.now()}_${randomUUID().slice(0, 8)}`;
 }

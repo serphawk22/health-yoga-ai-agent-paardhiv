@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
     try {
         const identifier = getClientIdentifier(req);
-        const rateLimit = applyRateLimit({
+        const rateLimit = await applyRateLimit({
             key: `test-setup:${identifier}`,
             limit: 10,
             windowMs: 60 * 1000,

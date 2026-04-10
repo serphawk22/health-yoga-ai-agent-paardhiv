@@ -7,7 +7,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 export async function POST(request: NextRequest) {
     try {
         const identifier = getClientIdentifier(request);
-        const rateLimit = applyRateLimit({
+        const rateLimit = await applyRateLimit({
             key: `generate-workout-image:${identifier}`,
             limit: 5,
             windowMs: 10 * 60 * 1000,
