@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { getDoctorAvailability, updateDoctorAvailability } from '@/lib/actions/doctor';
 import { Loader2, Save, CheckCircle2, AlertCircle, Clock, ChevronDown, Check, Calendar } from 'lucide-react';
-import { GradientButton } from '@/components/ui/gradient-button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -19,29 +18,29 @@ const DAYS = [
 
 function PremiumToggle({ checked, onChange, label, sublabel }: { checked: boolean, onChange: (v: boolean) => void, label: string, sublabel: string }) {
     return (
-        <div className="flex items-center gap-6 cursor-pointer group" onClick={() => onChange(!checked)}>
+        <div className="flex items-center gap-4 cursor-pointer group select-none" onClick={() => onChange(!checked)}>
             <div className={cn(
-                "relative w-14 h-8 rounded-full transition-all duration-500 p-1 flex items-center",
-                checked ? "bg-primary-500/20 border border-primary-500/30" : "bg-zinc-800/50 border border-white/5"
+                "relative w-12 h-7 rounded-full transition-all duration-300 p-1 flex items-center border",
+                checked ? "bg-emerald-500/20 border-emerald-500/40" : "bg-white/5 border-white/10"
             )}>
                 <motion.div
                     layout
                     className={cn(
-                        "w-6 h-6 rounded-full shadow-lg transition-colors duration-500",
-                        checked ? "bg-primary-400" : "bg-zinc-600"
+                        "w-5 h-5 rounded-full shadow-lg transition-colors duration-300",
+                        checked ? "bg-emerald-400" : "bg-zinc-500"
                     )}
-                    animate={{ x: checked ? 24 : 0 }}
+                    animate={{ x: checked ? 20 : 0 }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                 />
             </div>
             <div className="flex flex-col">
                 <span className={cn(
-                    "font-black uppercase tracking-widest text-xs transition-colors transition-all duration-300",
-                    checked ? "text-white" : "text-zinc-600"
+                    "font-medium text-sm transition-colors duration-300",
+                    checked ? "text-white" : "text-gray-400"
                 )}>
                     {label}
                 </span>
-                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-1">
+                <span className="text-[11px] text-gray-500 mt-0.5">
                     {sublabel}
                 </span>
             </div>
@@ -84,19 +83,19 @@ function TimePicker({ value, onChange, disabled }: { value: string, onChange: (v
                 disabled={disabled}
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                    "flex items-center justify-between gap-4 px-6 py-4 rounded-2xl border transition-all duration-300 min-w-[160px]",
+                    "flex items-center justify-between gap-4 px-4 py-3 rounded-xl border transition-all duration-300 min-w-[170px]",
                     disabled
-                        ? "bg-transparent border-white/5 opacity-20 cursor-not-allowed"
-                        : "bg-white/[0.03] border-white/10 hover:border-primary-500/50 hover:bg-white/[0.05] text-white"
+                        ? "bg-white/[0.02] border-white/5 text-gray-600 cursor-not-allowed"
+                        : "bg-white/5 border-white/10 hover:border-emerald-500/40 hover:bg-white/10 text-white"
                 )}
             >
                 <div className="flex items-center gap-3">
-                    <Clock className={cn("w-4 h-4", disabled ? "text-zinc-800" : "text-primary-400")} />
-                    <span className="text-sm font-black tracking-tight tabular-nums">
+                    <Clock className={cn("w-4 h-4", disabled ? "text-gray-600" : "text-emerald-400")} />
+                    <span className="text-sm font-medium tracking-tight tabular-nums">
                         {format12h(value)}
                     </span>
                 </div>
-                <ChevronDown className={cn("w-4 h-4 text-zinc-600 transition-transform duration-300", isOpen && "rotate-180")} />
+                <ChevronDown className={cn("w-4 h-4 text-gray-500 transition-transform duration-300", isOpen && "rotate-180")} />
             </button>
 
             <AnimatePresence>
@@ -105,7 +104,7 @@ function TimePicker({ value, onChange, disabled }: { value: string, onChange: (v
                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute bottom-full mb-4 left-0 right-0 bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl z-[100] backdrop-blur-2xl"
+                        className="absolute top-full mt-2 left-0 right-0 bg-[#111113] border border-white/10 rounded-2xl overflow-hidden shadow-2xl z-[100] backdrop-blur-2xl"
                     >
                         <div className="max-h-[240px] overflow-y-auto no-scrollbar py-2">
                             {options.map((t) => (
@@ -119,11 +118,11 @@ function TimePicker({ value, onChange, disabled }: { value: string, onChange: (v
                                     className={cn(
                                         "w-full px-6 py-3 text-left transition-all flex items-center justify-between",
                                         value === t
-                                            ? "bg-primary-500/10 text-primary-400 font-black"
-                                            : "text-zinc-500 hover:text-white hover:bg-white/[0.03]"
+                                            ? "bg-emerald-500/10 text-emerald-300 font-medium"
+                                            : "text-gray-400 hover:text-white hover:bg-white/[0.03]"
                                     )}
                                 >
-                                    <span className="text-xs uppercase tracking-widest">{format12h(t)}</span>
+                                    <span className="text-xs tracking-wide">{format12h(t)}</span>
                                     {value === t && <Check className="w-4 h-4" />}
                                 </button>
                             ))}
@@ -172,10 +171,10 @@ export function AvailabilityManager() {
         const result = await updateDoctorAvailability(activeSlots);
 
         if (result.success) {
-            setMessage({ type: 'success', text: 'Operational schedule synchronized' });
+            setMessage({ type: 'success', text: 'Availability updated successfully' });
             setTimeout(() => setMessage(null), 3000);
         } else {
-            setMessage({ type: 'error', text: 'Synchronization failed' });
+            setMessage({ type: 'error', text: 'Failed to update availability' });
         }
         setIsSaving(false);
     }
@@ -191,22 +190,22 @@ export function AvailabilityManager() {
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
-                <Loader2 className="w-10 h-10 animate-spin text-primary-500" />
-                <p className="text-zinc-600 font-bold uppercase tracking-widest text-[10px]">Accessing Schedule...</p>
+                <Loader2 className="w-10 h-10 animate-spin text-emerald-500" />
+                <p className="text-gray-500 font-medium uppercase tracking-wider text-xs">Loading availability...</p>
             </div>
         );
     }
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-8">
             {/* Header Info */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 px-4">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                 <div className="space-y-1">
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight">Active Hours Configuration</h3>
-                    <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Toggle your active sessions for each day</p>
+                    <h3 className="text-2xl font-medium text-white">Configure Availability</h3>
+                    <p className="text-sm text-gray-400">Enable days and set your consultation start and end times.</p>
                 </div>
 
-                <div className="flex items-center gap-6">
+                <div className="flex flex-wrap items-center gap-3">
                     <AnimatePresence>
                         {message && (
                             <motion.div
@@ -214,8 +213,8 @@ export function AvailabilityManager() {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: 20 }}
                                 className={cn(
-                                    "px-4 py-2 rounded-xl flex items-center gap-2 text-[10px] font-black uppercase tracking-widest",
-                                    message.type === 'success' ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                    "px-4 py-2 rounded-full flex items-center gap-2 text-xs font-medium border",
+                                    message.type === 'success' ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20" : "bg-red-500/10 text-red-300 border-red-500/20"
                                 )}
                             >
                                 {message.type === 'success' ? <CheckCircle2 className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
@@ -224,23 +223,23 @@ export function AvailabilityManager() {
                         )}
                     </AnimatePresence>
 
-                    <GradientButton
+                    <button
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="h-14 px-10 rounded-2xl min-w-[180px]"
+                        className="h-12 px-7 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black flex items-center gap-2 transition-all active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.25)] font-medium disabled:opacity-70"
                     >
                         {isSaving ? (
                             <div className="flex items-center gap-3">
                                 <Loader2 className="w-4 h-4 animate-spin" />
-                                <span className="uppercase tracking-widest text-xs font-black">Syncing...</span>
+                                <span>Saving...</span>
                             </div>
                         ) : (
                             <div className="flex items-center gap-3">
                                 <Save className="w-4 h-4" />
-                                <span className="uppercase tracking-widest text-xs font-black">Sync Schedule</span>
+                                <span>Save Availability</span>
                             </div>
                         )}
-                    </GradientButton>
+                    </button>
                 </div>
             </div>
 
@@ -258,37 +257,37 @@ export function AvailabilityManager() {
                         <motion.div
                             key={index}
                             initial={false}
-                            animate={{ opacity: slot.isActive ? 1 : 0.4 }}
+                            animate={{ opacity: slot.isActive ? 1 : 0.75 }}
                             className={cn(
-                                "flex flex-col lg:flex-row lg:items-center gap-8 p-8 rounded-[2.5rem] border transition-all duration-500",
+                                "flex flex-col xl:flex-row xl:items-center gap-6 p-6 rounded-2xl border transition-all duration-300",
                                 slot.isActive
-                                    ? "bg-white/[0.03] border-white/10 shadow-2xl shadow-primary-500/5 translate-x-1"
-                                    : "bg-transparent border-white/5 grayscale"
+                                    ? "bg-white/5 border-white/10 shadow-[0_0_20px_rgba(16,185,129,0.08)]"
+                                    : "bg-white/[0.02] border-white/5"
                             )}
                         >
-                            <div className="flex items-center gap-4 lg:w-72">
+                            <div className="flex items-center gap-4 xl:w-72">
                                 <PremiumToggle
                                     checked={slot.isActive}
                                     onChange={(v) => updateDay(index, 'isActive', v)}
                                     label={DAYS[index]}
-                                    sublabel={isToday ? "Operational Today" : "Recurring Weekly"}
+                                    sublabel={isToday ? "Active today" : "Recurring weekly"}
                                 />
                             </div>
 
-                            <div className="flex-1 flex items-center gap-4">
+                            <div className="flex-1 flex flex-wrap items-end gap-4">
                                 <div className="flex flex-col gap-2">
-                                    <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1">Start Interval</span>
+                                    <span className="text-xs font-medium text-gray-500 ml-1">Start</span>
                                     <TimePicker
                                         value={slot.startTime}
                                         onChange={(v) => updateDay(index, 'startTime', v)}
                                         disabled={!slot.isActive}
                                     />
                                 </div>
-                                <div className="pt-6">
-                                    <span className="text-zinc-700 font-bold text-xs uppercase tracking-widest px-2">to</span>
+                                <div className="pt-7">
+                                    <span className="text-gray-600 font-medium text-xs px-1">to</span>
                                 </div>
                                 <div className="flex flex-col gap-2">
-                                    <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1">End Interval</span>
+                                    <span className="text-xs font-medium text-gray-500 ml-1">End</span>
                                     <TimePicker
                                         value={slot.endTime}
                                         onChange={(v) => updateDay(index, 'endTime', v)}
@@ -297,13 +296,13 @@ export function AvailabilityManager() {
                                 </div>
                             </div>
 
-                            <div className="lg:ml-auto">
+                            <div className="xl:ml-auto">
                                 <div className={cn(
-                                    "px-4 py-2 rounded-xl flex items-center gap-3 text-[10px] font-black uppercase tracking-widest transition-colors duration-500",
-                                    slot.isActive ? "bg-primary-500/10 text-primary-400 border border-primary-500/20" : "bg-white/5 text-zinc-600 border border-white/5"
+                                    "px-4 py-2 rounded-full flex items-center gap-2 text-xs font-medium border transition-colors duration-300",
+                                    slot.isActive ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20" : "bg-white/5 text-gray-500 border-white/10"
                                 )}>
                                     <Calendar className="w-3 h-3" />
-                                    {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                    Next: {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                 </div>
                             </div>
                         </motion.div>

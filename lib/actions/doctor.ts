@@ -68,7 +68,7 @@ export async function updateDoctorProfile(data: any): Promise<DoctorActionResult
     }
 }
 
-export async function updateUserIdentity(data: { name: string; email: string; role: string; location?: string }): Promise<DoctorActionResult> {
+export async function updateUserIdentity(data: { name: string; email: string; role: string }): Promise<DoctorActionResult> {
     try {
         const user = await getCurrentUser();
         if (!user) return { success: false, error: 'Not authenticated' };

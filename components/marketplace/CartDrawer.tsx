@@ -149,7 +149,7 @@ export function CartDrawer() {
                         <GradientButton
                             onClick={handleCheckout}
                             disabled={isCheckingOut}
-                            className="w-full h-12 text-lg"
+                            className="clay-cta w-full h-12 text-lg"
                         >
                             {isCheckingOut ? (
                                 <>

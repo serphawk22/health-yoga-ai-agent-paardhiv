@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { getUser } from '@/lib/actions/auth';
 import { updateUserIdentity } from '@/lib/actions/doctor';
-import { Loader2, User, Settings, Shield, Award, MapPin, Mail, Phone, Briefcase, Save } from 'lucide-react';
+import { Loader2, User, Settings, Mail, Briefcase, ChevronDown, Save } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -17,9 +17,14 @@ export default function DoctorProfilePage() {
     const [formData, setFormData] = useState({
         name: '',
         role: '',
-        email: '',
-        location: 'Global Digital Practice'
+        email: ''
     });
+
+    const getRoleLabel = (role?: string) => {
+        if (role === 'DOCTOR') return 'Medical Practitioner';
+        if (role === 'YOGA_INSTRUCTOR') return 'Yoga Instructor';
+        return 'Patient';
+    };
 
     useEffect(() => {
         async function loadData() {
@@ -30,8 +35,7 @@ export default function DoctorProfilePage() {
                 setFormData({
                     name: userData.name || '',
                     role: userData.role || '',
-                    email: userData.email || '',
-                    location: 'Global Digital Practice'
+                    email: userData.email || ''
                 });
             }
             setIsLoading(false);
@@ -98,7 +102,7 @@ export default function DoctorProfilePage() {
                             {user?.name}
                         </h1>
                         <p className="text-gray-400 mt-2 text-xl font-medium tracking-wide">
-                            {user?.role === 'DOCTOR' ? 'Medical Practitioner' : 'Yoga & Wellness Instructor'}
+                            {getRoleLabel(user?.role)}
                         </p>
                     </div>
 
@@ -151,20 +155,38 @@ export default function DoctorProfilePage() {
                             </div>
                             
                             <div>
-                                <label className={labelClasses}>Professional Role</label>
+                                <div className="flex items-center justify-between">
+                                    <label className={labelClasses}>Professional Role</label>
+                                    {!isEditMode && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsEditMode(true)}
+                                            className="text-[11px] font-medium text-emerald-400 hover:text-emerald-300 uppercase tracking-wider"
+                                        >
+                                            Change Role
+                                        </button>
+                                    )}
+                                </div>
                                 {isEditMode ? (
-                                    <select 
-                                        className="w-full text-sm font-medium text-white px-5 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-1 focus:ring-emerald-500/50 outline-none transition-all appearance-none" 
-                                        value={formData.role} 
-                                        onChange={e => setFormData({...formData, role: e.target.value})}
-                                    >
-                                        <option value="DOCTOR" className="bg-zinc-900">Medical Practitioner (DOCTOR)</option>
-                                        <option value="YOGA_INSTRUCTOR" className="bg-zinc-900">Yoga Instructor</option>
-                                        <option value="PATIENT" className="bg-zinc-900">Patient</option>
-                                    </select>
+                                    <div className="relative">
+                                        <select
+                                            className="w-full text-sm font-medium text-white px-5 py-3 pr-12 bg-black/20 border border-white/10 rounded-lg focus:ring-1 focus:ring-emerald-500/50 outline-none transition-all appearance-none"
+                                            value={formData.role}
+                                            onChange={e => setFormData({ ...formData, role: e.target.value })}
+                                        >
+                                            <option value="DOCTOR" className="bg-zinc-900">Medical Practitioner</option>
+                                            <option value="YOGA_INSTRUCTOR" className="bg-zinc-900">Yoga Instructor</option>
+                                            <option value="PATIENT" className="bg-zinc-900">Patient</option>
+                                        </select>
+                                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                                        <div className="mt-2 flex items-center gap-2 text-xs text-zinc-500">
+                                            <Briefcase className="w-3.5 h-3.5" />
+                                            Select the role you want to use for this account.
+                                        </div>
+                                    </div>
                                 ) : (
                                     <div className="text-lg font-medium text-white px-5 py-4 bg-white/[0.02] border border-white/5 rounded-2xl shadow-sm">
-                                        {user?.role === 'DOCTOR' ? 'Medical Practitioner' : user?.role === 'YOGA_INSTRUCTOR' ? 'Yoga Instructor' : 'Patient'}
+                                        {getRoleLabel(user?.role)}
                                     </div>
                                 )}
                             </div>
@@ -182,23 +204,6 @@ export default function DoctorProfilePage() {
                                     <div className="flex items-center gap-3 text-lg font-medium text-white px-5 py-4 bg-white/[0.02] border border-white/5 rounded-2xl shadow-sm">
                                         <Mail className="w-4 h-4 text-gray-500 border-none" />
                                         {user?.email}
-                                    </div>
-                                )}
-                            </div>
-                            
-                            <div>
-                                <label className={labelClasses}>Practice Location</label>
-                                {isEditMode ? (
-                                    <input 
-                                        type="text" 
-                                        className="w-full text-sm font-medium text-white px-5 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-1 focus:ring-emerald-500/50 outline-none transition-all" 
-                                        value={formData.location} 
-                                        onChange={e => setFormData({...formData, location: e.target.value})}
-                                    />
-                                ) : (
-                                    <div className="flex items-center gap-3 text-lg font-medium text-white px-5 py-4 bg-white/[0.02] border border-white/5 rounded-2xl shadow-sm">
-                                        <MapPin className="w-4 h-4 text-gray-500 border-none" />
-                                        {formData.location}
                                     </div>
                                 )}
                             </div>

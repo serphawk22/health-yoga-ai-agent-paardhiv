@@ -78,8 +78,8 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
     ];
 
     const statusColors: Record<string, string> = {
-        PENDING: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
-        CONFIRMED: "bg-primary-500/20 text-primary-400 border-primary-500/30",
+        PENDING: "bg-amber-200/70 text-amber-700 border-amber-300 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-500/30",
+        CONFIRMED: "bg-emerald-200/70 text-emerald-700 border-emerald-300 dark:bg-primary-500/20 dark:text-primary-400 dark:border-primary-500/30",
     };
 
     const typeLabels: Record<string, string> = {
@@ -91,9 +91,9 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
     };
 
     return (
-        <div className="relative min-h-screen text-zinc-100 font-sans overflow-hidden">
+        <div className="clay-page relative min-h-screen text-zinc-800 dark:text-zinc-100 font-sans overflow-hidden">
             {/* Background */}
-            <div className="fixed inset-0 z-[-1]">
+            <div className="fixed inset-0 z-[-1] pointer-events-none hidden dark:block">
                 <ColorBends
                     colors={["#ff5c7a", "#8a5cff", "#00ffd1"]}
                     rotation={0}
@@ -112,7 +112,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
             <div className="relative z-10 px-6 py-8 md:px-12 max-w-7xl mx-auto space-y-10">
 
                 {/* Header */}
-                <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-10 backdrop-blur-[40px] saturate-[1.8] rounded-[2.5rem] p-10 bg-zinc-950/40 ring-1 ring-white/[0.05] shadow-[0_32px_64px_rgba(0,0,0,0.4)]">
+                <header className="clay-panel clay-card-text flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-10 backdrop-blur-[40px] saturate-[1.8] rounded-[2.5rem] p-10 bg-zinc-950/40 ring-1 ring-white/[0.05] shadow-[0_32px_64px_rgba(0,0,0,0.4)]">
                     <div>
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -150,7 +150,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.2, duration: 0.5 }}
-                            className="group relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+                            className="clay-panel clay-card-text group relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
                         >
                             <div className="p-8 flex flex-col items-center text-center">
                                 <h3 className="text-[0.8125rem] font-medium uppercase tracking-[0.2em] text-primary-400 mb-8 opacity-60">International Day of Yoga</h3>
@@ -175,7 +175,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.3, duration: 0.5 }}
-                            className="rounded-[2rem] p-8 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)] relative overflow-hidden"
+                            className="clay-panel clay-card-text rounded-[2rem] p-8 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)] relative overflow-hidden"
                         >
                             <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
                             <h3 className="text-[1.75rem] font-medium mb-8 tracking-tight">
@@ -190,7 +190,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
 
                             <div className="mt-8 pt-6 border-t border-white/5">
                                 <Link href="/yoga">
-                                    <GradientButton className="w-full text-white rounded-2xl" variant="variant">Start Today&apos;s Session</GradientButton>
+                                    <GradientButton className="clay-cta w-full text-white rounded-2xl" variant="variant">Start Today&apos;s Session</GradientButton>
                                 </Link>
                             </div>
                         </motion.div>
@@ -204,7 +204,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4, duration: 0.5 }}
-                            className="md:col-span-2 rounded-[2.5rem] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_32px_64px_rgba(0,0,0,0.3)] p-10"
+                            className="clay-panel clay-card-text md:col-span-2 rounded-[2.5rem] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_32px_64px_rgba(0,0,0,0.3)] p-10"
                         >
                             <div className="mb-8">
                                 <h2 className="text-[1.75rem] font-extralight uppercase tracking-[0.1em]">Latest in <span className="text-primary-400 font-light">Yoga World</span></h2>
@@ -212,7 +212,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
 
                             <div className="grid md:grid-cols-2 gap-6">
                                 {yogaNews.map((news) => (
-                                    <div key={news.id} className="group p-6 rounded-[1.5rem] bg-zinc-950/30 border border-white/[0.05] hover:bg-zinc-900/40 hover:border-white/10 transition-all cursor-pointer ring-1 ring-white/[0.02]">
+                                    <div key={news.id} className="clay-panel-soft clay-card-text group p-6 rounded-[1.5rem] bg-zinc-950/30 border border-white/[0.05] hover:bg-zinc-900/40 hover:border-white/10 transition-all cursor-pointer ring-1 ring-white/[0.02]">
                                         <p className="text-[0.8125rem] font-medium text-primary-400/80 mb-3 uppercase tracking-[0.2em] opacity-60">{news.source}</p>
                                         <h4 className="text-[0.8125rem] font-medium leading-snug mb-3 group-hover:text-primary-300 transition-colors tracking-tight">{news.title}</h4>
                                         <p className="text-[0.8125rem] text-zinc-500 font-light line-clamp-2 leading-relaxed">{news.summary}</p>
@@ -226,7 +226,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.5, duration: 0.5 }}
-                            className="md:col-span-2 rounded-[2.5rem] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_32px_64px_rgba(0,0,0,0.3)] p-10 flex flex-col justify-between"
+                            className="clay-panel clay-card-text md:col-span-2 rounded-[2.5rem] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_32px_64px_rgba(0,0,0,0.3)] p-10 flex flex-col justify-between"
                         >
                             <div>
                                 <h3 className="text-[1.75rem] font-medium mb-8 tracking-tight">
@@ -281,7 +281,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             </div>
                             <div className="mt-8">
                                 <Link href="/appointments">
-                                    <GradientButton className="w-full justify-center rounded-2xl" variant="variant">
+                                    <GradientButton className="clay-cta w-full justify-center rounded-2xl" variant="variant">
                                         {appointments.length > 0 ? 'View All Appointments' : 'Book an Appointment'}
                                     </GradientButton>
                                 </Link>
@@ -301,7 +301,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 }}
-                      className="group rounded-[2rem] p-6 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)] hover:border-white/[0.15] transition-all cursor-pointer"
+                      className="clay-panel clay-card-text group rounded-[2rem] p-6 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)] hover:border-white/[0.15] transition-all cursor-pointer"
                     >
                       <div className="p-3 bg-primary-600/10 rounded-xl w-fit mb-4">
                         <ClipboardList className="w-5 h-5 text-primary-400" />
@@ -316,7 +316,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.6 }}
-                      className="group rounded-[2rem] p-6 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)] hover:border-white/[0.15] transition-all cursor-pointer"
+                      className="clay-panel clay-card-text group rounded-[2rem] p-6 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)] hover:border-white/[0.15] transition-all cursor-pointer"
                     >
                       <div className="p-3 bg-purple-500/10 rounded-xl w-fit mb-4">
                         <Users className="w-5 h-5 text-purple-400" />

@@ -1,8 +1,34 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { applyRateLimit, getClientIdentifier } from '@/lib/security/rate-limit';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const identifier = getClientIdentifier(request);
+  const rateLimit = applyRateLimit({
+    key: `auth-google:${identifier}`,
+    limit: 30,
+    windowMs: 60 * 1000,
+  });
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Too many authentication attempts. Please retry shortly.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(rateLimit.retryAfterSeconds),
+          'X-RateLimit-Limit': String(rateLimit.limit),
+          'X-RateLimit-Remaining': String(rateLimit.remaining),
+          'X-RateLimit-Reset': String(rateLimit.resetAt),
+        },
+      }
+    );
+  }
+
   const url = new URL(request.url);
-  const role = url.searchParams.get('role') || 'PATIENT';
+  const requestedRole = url.searchParams.get('role') || 'PATIENT';
+  const role = ['PATIENT', 'DOCTOR', 'YOGA_INSTRUCTOR'].includes(requestedRole)
+    ? requestedRole
+    : 'PATIENT';
   const isLogin = url.searchParams.get('isLogin') === 'true';
   
   const clientId = process.env.GOOGLE_CLIENT_ID;

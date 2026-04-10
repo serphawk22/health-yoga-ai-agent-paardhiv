@@ -76,7 +76,7 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setShowNotifications(!showNotifications)}
                     className={cn(
-                        "h-12 px-4 rounded-full flex items-center justify-center gap-2 transition-all duration-300 border backdrop-blur-xl shadow-lg",
+                        "clay-pill h-12 px-4 rounded-full flex items-center justify-center gap-2 transition-all duration-300 border backdrop-blur-xl shadow-lg",
                         showNotifications
                             ? "bg-white/10 border-white/20 text-white"
                             : "bg-zinc-900/80 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
@@ -84,7 +84,7 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                 >
                     <Bell className="w-5 h-5" />
                     {unreadCount > 0 && (
-                        <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary-600 px-1 text-[0.8125rem] font-bold text-white ring-2 ring-black">
+                        <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary-600 px-1 text-[0.8125rem] font-bold text-white ring-2 ring-white/80 dark:ring-black">
                             {unreadCount}
                         </span>
                     )}
@@ -105,7 +105,7 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: 12, scale: 0.98 }}
                                 transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-                                className="absolute right-0 mt-3 w-80 bg-zinc-50 dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-100 dark:border-zinc-800 z-50 flex flex-col overflow-hidden"
+                                className="clay-popover clay-card-text absolute right-0 mt-3 w-80 bg-zinc-50 dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-100 dark:border-zinc-800 z-50 flex flex-col overflow-hidden"
                             >
                                 {/* Header */}
                                 <div className="px-5 py-3.5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-zinc-100/50 dark:bg-zinc-800/30">
@@ -197,7 +197,7 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className={cn(
-                        "h-12 pl-1.5 pr-4 rounded-full flex items-center gap-3 transition-all duration-300 border backdrop-blur-xl shadow-lg",
+                        "clay-pill h-12 pl-1.5 pr-4 rounded-full flex items-center gap-3 transition-all duration-300 border backdrop-blur-xl shadow-lg",
                         showUserMenu
                             ? "bg-white/10 border-white/20 text-white"
                             : "bg-zinc-900/80 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
@@ -224,7 +224,7 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                className="absolute right-0 mt-3 w-64 bg-zinc-950/90 backdrop-blur-3xl rounded-3xl shadow-2xl border border-white/10 z-50 p-2 overflow-hidden"
+                                className="clay-popover clay-card-text absolute right-0 mt-3 w-64 bg-zinc-950/90 backdrop-blur-3xl rounded-3xl shadow-2xl border border-white/10 z-50 p-2 overflow-hidden"
                             >
                                 <div className="px-5 py-4 mb-2">
                                     <p className="text-[0.8125rem] font-bold text-zinc-600 uppercase tracking-widest mb-1">Account</p>
@@ -238,7 +238,7 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                                         className="flex items-center gap-3 px-4 py-3 text-[0.8125rem] font-medium text-zinc-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all"
                                         onClick={() => setShowUserMenu(false)}
                                     >
-                                        <div className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center">
+                                        <div className="clay-icon w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center border border-transparent">
                                             <User className="w-4 h-4" />
                                         </div>
                                         My Profile
@@ -248,14 +248,14 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                                         className="flex items-center gap-3 px-4 py-3 text-[0.8125rem] font-medium text-zinc-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all"
                                         onClick={() => setShowUserMenu(false)}
                                     >
-                                        <div className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center">
+                                        <div className="clay-icon w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center border border-transparent">
                                             <Settings className="w-4 h-4" />
                                         </div>
                                         Settings
                                     </Link>
                                 </div>
 
-                                <div className="mt-4 p-2 bg-white/5 rounded-2xl">
+                                <div className="clay-panel-inset mt-4 p-2 bg-white/5 rounded-2xl border border-transparent">
                                     <form action={signOut}>
                                         <GradientButton
                                             variant="variant"

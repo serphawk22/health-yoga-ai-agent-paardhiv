@@ -244,7 +244,7 @@ export function ProductForm({ product, isEditing = false }: ProductFormProps) {
                 >
                     Discard Changes
                 </button>
-                <GradientButton type="submit" disabled={isLoading} className="h-14 px-12 rounded-2xl min-w-[220px]">
+                <GradientButton type="submit" disabled={isLoading} className="clay-cta h-14 px-12 rounded-2xl min-w-[220px]">
                     {isLoading ? (
                         <div className="flex items-center gap-3">
                             <Loader2 className="w-5 h-5 animate-spin" />

@@ -60,7 +60,7 @@ export function DietPlanner() {
     }
 
     return (
-        <div className="relative z-10 text-zinc-100 mt-16 pb-20">
+        <div className="relative z-10 text-zinc-800 dark:text-zinc-100 mt-16 pb-20">
             {/* Header */}
             <div className="mb-8 no-print">
                 <h2 className="text-[1.75rem] font-extralight uppercase tracking-tight text-white mb-2">Diet <span className="text-primary-400 font-light">Planner</span></h2>
@@ -68,7 +68,7 @@ export function DietPlanner() {
             </div>
 
             {/* Tabs */}
-            <div className="flex bg-zinc-950/40 backdrop-blur-md p-1.5 rounded-2xl border border-white/5 mb-8 no-print w-fit shadow-xl gap-1 ring-1 ring-white/[0.03]">
+            <div className="clay-panel clay-card-text flex bg-zinc-950/40 backdrop-blur-md p-1.5 rounded-2xl border border-white/5 mb-8 no-print w-fit shadow-xl gap-1 ring-1 ring-white/[0.03]">
                 <button
                     onClick={() => setActiveTab('generate')}
                     className={cn(
@@ -93,7 +93,7 @@ export function DietPlanner() {
             {activeTab === 'generate' && (
                 <div className="animate-fadeIn space-y-6">
                     {/* Request Section */}
-                    <div className="bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.3)] no-print relative overflow-hidden group ring-1 ring-white/[0.03]">
+                    <div className="clay-panel clay-card-text bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.3)] no-print relative overflow-hidden group ring-1 ring-white/[0.03]">
                         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
                         <h3 className="font-medium text-white text-[1.75rem] mb-1 relative z-10 tracking-tight">Generate New Plan</h3>
                         <p className="text-[0.8125rem] font-extralight text-zinc-300 mb-6 relative z-10">
@@ -104,7 +104,7 @@ export function DietPlanner() {
                             value={specificRequest}
                             onChange={(e) => setSpecificRequest(e.target.value)}
                             placeholder="e.g., 'I want a high protein vegetarian plan' (optional)"
-                            className="w-full bg-black/20 border border-white/5 rounded-2xl p-5 text-[15px] font-extralight text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-white/10 transition-all resize-none mb-6 group-focus-within:bg-black/40"
+                            className="clay-input w-full bg-black/20 border border-white/5 rounded-2xl p-5 text-[15px] font-extralight text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-white/10 transition-all resize-none mb-6 group-focus-within:bg-black/40"
                             rows={2}
                         />
 
@@ -112,7 +112,7 @@ export function DietPlanner() {
                             <GradientButton
                                 onClick={generateDietPlan}
                                 disabled={isLoading}
-                                className="h-auto py-3 px-6 rounded-2xl"
+                                className="clay-cta h-auto py-3 px-6 rounded-2xl"
                             >
                                 {isLoading ? (
                                     <>
@@ -152,7 +152,7 @@ export function DietPlanner() {
                             </div>
 
                             {/* Overview */}
-                            <div className="bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.3)] ring-1 ring-white/[0.03] print:shadow-none print:border-gray-200">
+                            <div className="clay-panel clay-card-text bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.3)] ring-1 ring-white/[0.03] print:shadow-none print:border-gray-200">
                                 <p className="text-[0.8125rem] font-medium text-zinc-400 uppercase tracking-widest mb-4">Daily Overview</p>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                     <div className="p-5 rounded-[1.5rem] bg-orange-500/5 border border-orange-500/10 print:bg-gray-50 print:border-gray-200 ring-1 ring-orange-500/5">
@@ -183,7 +183,7 @@ export function DietPlanner() {
                             </div>
 
                             {/* Meals */}
-                            <div className="bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.3)] ring-1 ring-white/[0.03] print:shadow-none print:border-gray-200">
+                            <div className="clay-panel clay-card-text bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.3)] ring-1 ring-white/[0.03] print:shadow-none print:border-gray-200">
                                 <p className="text-[0.8125rem] font-medium text-zinc-400 uppercase tracking-widest mb-6">Daily Meals</p>
                                 <div className="grid md:grid-cols-2 gap-4">
                                     {dietPlan.meals?.map((meal: any, index: number) => (
@@ -195,7 +195,7 @@ export function DietPlanner() {
                             {/* Foods to Include/Avoid */}
                             <div className="grid md:grid-cols-2 gap-6 print:block print:space-y-6">
                                 {dietPlan.foodsToInclude && (
-                                    <div className="bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.3)] ring-1 ring-white/[0.03] print:shadow-none print:border-gray-200 print:break-inside-avoid">
+                                    <div className="clay-panel clay-card-text bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.3)] ring-1 ring-white/[0.03] print:shadow-none print:border-gray-200 print:break-inside-avoid">
                                         <p className="text-[0.8125rem] font-medium text-green-400/80 uppercase tracking-widest mb-4">Foods to Include</p>
                                         <ul className="space-y-3">
                                             {dietPlan.foodsToInclude.map((food: string, i: number) => (
@@ -209,7 +209,7 @@ export function DietPlanner() {
                                 )}
 
                                 {dietPlan.foodsToAvoid && (
-                                    <div className="bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.3)] ring-1 ring-white/[0.03] print:shadow-none print:border-gray-200 print:break-inside-avoid">
+                                    <div className="clay-panel clay-card-text bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.3)] ring-1 ring-white/[0.03] print:shadow-none print:border-gray-200 print:break-inside-avoid">
                                         <p className="text-[0.8125rem] font-medium text-red-400/80 uppercase tracking-widest mb-4">Foods to Avoid</p>
                                         <ul className="space-y-3">
                                             {dietPlan.foodsToAvoid.map((food: string, i: number) => (
@@ -225,7 +225,7 @@ export function DietPlanner() {
 
                             {/* Hydration Tips */}
                             {dietPlan.hydrationTips && (
-                                <div className="bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.3)] ring-1 ring-white/[0.03] print:shadow-none print:border-gray-200 print:break-inside-avoid">
+                                <div className="clay-panel clay-card-text bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.3)] ring-1 ring-white/[0.03] print:shadow-none print:border-gray-200 print:break-inside-avoid">
                                     <p className="text-[0.8125rem] font-medium text-blue-400/80 uppercase tracking-widest mb-4">Hydration Tips</p>
                                     <ul className="space-y-3">
                                         {dietPlan.hydrationTips.map((tip: string, i: number) => (
@@ -286,7 +286,7 @@ export function DietPlanner() {
                                 <button
                                     key={item.id}
                                     onClick={() => loadFromHistory(item)}
-                                    className="w-full p-8 rounded-[2rem] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] shadow-[0_16px_32px_rgba(0,0,0,0.2)] hover:bg-white/[0.05] hover:border-white/10 hover:shadow-[0_24px_48px_rgba(0,0,0,0.3)] hover:-translate-y-1 transition-all duration-300 text-left group ring-1 ring-white/[0.03]"
+                                    className="clay-panel clay-card-text w-full p-8 rounded-[2rem] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] shadow-[0_16px_32px_rgba(0,0,0,0.2)] hover:bg-white/[0.05] hover:border-white/10 hover:shadow-[0_24px_48px_rgba(0,0,0,0.3)] hover:-translate-y-1 transition-all duration-300 text-left group ring-1 ring-white/[0.03]"
                                 >
                                     <div className="flex items-center justify-between">
                                         <div>

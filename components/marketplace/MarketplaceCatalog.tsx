@@ -193,7 +193,7 @@ export function MarketplaceCatalog() {
                                             <GradientButton
                                                 disabled={product.stock <= 0}
                                                 onClick={() => addToCart(product)}
-                                                className="w-full py-2 md:py-4 h-auto rounded-xl md:rounded-2xl text-xs relative z-10"
+                                                className="clay-cta w-full py-2 md:py-4 h-auto rounded-xl md:rounded-2xl text-xs relative z-10"
                                             >
                                                 <ShoppingCart className="w-4 h-4 mr-2" />
                                                 Express Buy

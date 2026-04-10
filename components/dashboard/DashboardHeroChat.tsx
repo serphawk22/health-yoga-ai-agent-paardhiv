@@ -144,7 +144,7 @@ export function DashboardHeroChat() {
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "fixed bottom-8 right-8 z-[100] w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden",
+          "clay-pill fixed bottom-8 right-8 z-[100] w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden",
           isOpen 
             ? "bg-zinc-900/90 border border-white/20 text-white" 
             : "bg-zinc-950/60 backdrop-blur-2xl border border-white/10 text-primary-400 hover:border-primary-500/50 hover:shadow-primary-500/20"
@@ -174,11 +174,11 @@ export function DashboardHeroChat() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 z-[90] w-[380px] max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-8rem)] flex flex-col rounded-[2rem] bg-zinc-950/95 backdrop-blur-xl border border-white/10 shadow-[0_32px_128px_rgba(0,0,0,0.6)] overflow-hidden"
+            className="clay-chat-shell clay-card-text fixed bottom-24 right-6 z-[90] w-[380px] max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-8rem)] flex flex-col rounded-[2rem] bg-zinc-950/95 backdrop-blur-xl border border-white/10 shadow-[0_32px_128px_rgba(0,0,0,0.6)] overflow-hidden"
           >
             {/* Header */}
-            <div className="p-4 border-b border-white/5 flex items-center gap-3 bg-white/[0.02]">
-                <div className="relative w-10 h-10 rounded-full overflow-hidden bg-primary-500/20 shrink-0">
+            <div className="clay-panel-soft p-4 border-b border-white/5 flex items-center gap-3 bg-white/[0.02]">
+                <div className="clay-icon relative w-10 h-10 rounded-full overflow-hidden bg-primary-500/20 shrink-0 border border-transparent">
                     <Image 
                         src="/ai-avatar.png" 
                         alt="Zenya AI" 
@@ -187,8 +187,8 @@ export function DashboardHeroChat() {
                     />
                 </div>
                 <div>
-                    <h3 className="text-[0.8125rem] font-medium text-white">Zenya</h3>
-                    <p className="text-[0.8125rem] text-primary-400 capitalize tracking-wider">Wellness Guide</p>
+                  <h3 className="text-[0.8125rem] font-medium text-zinc-800 dark:text-white">Zenya</h3>
+                  <p className="text-[0.8125rem] text-primary-500 dark:text-primary-400 capitalize tracking-wider">Wellness Guide</p>
                 </div>
             </div>
 
@@ -198,7 +198,7 @@ export function DashboardHeroChat() {
                 {messages.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center space-y-8">
                     <div className="space-y-2">
-                      <h4 className="text-[1.75rem] font-light text-white tracking-tight italic">Namaste, How can I assist you today?</h4>
+                      <h4 className="text-[1.75rem] font-light text-zinc-800 dark:text-white tracking-tight italic">Namaste, How can I assist you today?</h4>
                       <p className="text-zinc-500 text-[0.8125rem] font-light max-w-[250px] mx-auto">I am ready to help with your yoga practice, wellness routines, or any mindfulness concerns.</p>
                     </div>
                     
@@ -207,7 +207,7 @@ export function DashboardHeroChat() {
                         <button
                           key={suggestion}
                           onClick={() => handleSubmit(suggestion)}
-                          className="px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-[0.8125rem] text-zinc-400 hover:text-white hover:bg-white/[0.08] hover:border-white/10 transition-all text-left"
+                          className="clay-action px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-[0.8125rem] text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-white/[0.08] hover:border-white/10 transition-all text-left"
                         >
                           {suggestion}
                         </button>
@@ -234,8 +234,8 @@ export function DashboardHeroChat() {
                             className={cn(
                               'px-4 py-3 text-[0.8125rem] font-light leading-relaxed rounded-2xl transition-all duration-300',
                               message.role === 'user'
-                                ? 'bg-zinc-100 text-zinc-950 rounded-tr-none font-normal'
-                                : 'bg-[#0a0a0b] text-zinc-100 border border-white/5 rounded-tl-none shadow-md'
+                                ? 'clay-chat-user bg-zinc-100 text-zinc-950 rounded-tr-none font-normal'
+                                : 'clay-chat-assistant bg-[#0a0a0b] text-zinc-100 border border-white/5 rounded-tl-none shadow-md'
                             )}
                           >
                             <div className="whitespace-pre-wrap">{message.content}</div>
@@ -261,7 +261,7 @@ export function DashboardHeroChat() {
 
                     {isLoading && (
                       <div className="flex gap-3">
-                        <div className="bg-[#0a0a0b] border border-white/5 rounded-2xl rounded-tl-none px-5 py-4 flex items-center gap-2 shadow-md">
+                        <div className="clay-chat-assistant bg-[#0a0a0b] border border-white/5 rounded-2xl rounded-tl-none px-5 py-4 flex items-center gap-2 shadow-md">
                           <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-[bounce_1.2s_infinite]" style={{ animationDelay: '0ms' }} />
                           <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-[bounce_1.2s_infinite]" style={{ animationDelay: '150ms' }} />
                           <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-[bounce_1.2s_infinite]" style={{ animationDelay: '300ms' }} />
@@ -275,8 +275,8 @@ export function DashboardHeroChat() {
             </div>
 
             {/* Input Bar */}
-            <div className="p-4 border-t border-white/5 bg-zinc-950/80 backdrop-blur-md">
-              <div className="flex items-end gap-2 bg-white/[0.03] rounded-2xl border border-white/10 p-2 pr-2 focus-within:bg-white/[0.05] focus-within:border-primary-500/40 transition-all shadow-inner relative">
+            <div className="clay-panel-inset p-4 border-t border-white/5 bg-zinc-950/80 backdrop-blur-md">
+              <div className="clay-chat-input-shell flex items-end gap-2 bg-white/[0.03] rounded-2xl border border-white/10 p-2 pr-2 focus-within:bg-white/[0.05] focus-within:border-primary-500/40 transition-all shadow-inner relative">
                 <textarea
                   ref={inputRef}
                   value={input}
@@ -288,7 +288,7 @@ export function DashboardHeroChat() {
                   placeholder="Ask a wellness question..."
                   rows={1}
                   disabled={isLoading}
-                  className="flex-1 bg-transparent border-none outline-none px-3 py-2.5 text-[0.8125rem] min-h-[40px] max-h-[120px] resize-none text-zinc-100 placeholder:text-zinc-600 font-light"
+                  className="flex-1 bg-transparent border-none outline-none px-3 py-2.5 text-[0.8125rem] min-h-[40px] max-h-[120px] resize-none text-zinc-800 dark:text-zinc-100 placeholder:text-zinc-500 dark:placeholder:text-zinc-600 font-light"
                 />
                 <div className="pb-1.5 shrink-0">
                   <motion.button

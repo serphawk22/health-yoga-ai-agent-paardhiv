@@ -3,9 +3,27 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as ChatActions from '@/lib/actions/chat';
 import * as AppointmentActions from '@/lib/actions/appointments';
 import * as RecommendationActions from '@/lib/actions/recommendations';
+import { applyRateLimit, getClientIdentifier } from '@/lib/security/rate-limit';
+
+const isTestEndpointEnabled = process.env.NODE_ENV !== 'production' || process.env.ALLOW_TEST_ENDPOINTS === 'true';
 
 export async function POST(req: NextRequest) {
+    if (!isTestEndpointEnabled) {
+        return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
+    }
+
     try {
+        const identifier = getClientIdentifier(req);
+        const rateLimit = applyRateLimit({
+            key: `test-harness:${identifier}`,
+            limit: 30,
+            windowMs: 60 * 1000,
+        });
+
+        if (!rateLimit.allowed) {
+            return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+        }
+
         const body = await req.json();
         const { module, action, payload } = body;
 

@@ -1,7 +1,32 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { applyRateLimit, getClientIdentifier } from '@/lib/security/rate-limit';
 
-export async function GET() {
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: NextRequest) {
     try {
+        const identifier = getClientIdentifier(request);
+        const rateLimit = applyRateLimit({
+            key: `turn-credentials:${identifier}`,
+            limit: 120,
+            windowMs: 60 * 1000,
+        });
+
+        if (!rateLimit.allowed) {
+            return NextResponse.json(
+                { error: 'Rate limit exceeded. Please retry shortly.' },
+                {
+                    status: 429,
+                    headers: {
+                        'Retry-After': String(rateLimit.retryAfterSeconds),
+                        'X-RateLimit-Limit': String(rateLimit.limit),
+                        'X-RateLimit-Remaining': String(rateLimit.remaining),
+                        'X-RateLimit-Reset': String(rateLimit.resetAt),
+                    },
+                }
+            );
+        }
+
         const meteredDomain = process.env.NEXT_PUBLIC_METERED_DOMAIN;
         const apiKey = process.env.METERED_API_KEY;
 
@@ -9,8 +34,11 @@ export async function GET() {
         // This is the RECOMMENDED path — dynamic credentials are time-limited and always valid.
         if (meteredDomain && apiKey) {
             try {
+                const meteredUrl = new URL(`https://${meteredDomain}/api/v1/turn/credentials`);
+                meteredUrl.searchParams.set('apiKey', apiKey);
+
                 const response = await fetch(
-                    `https://${meteredDomain}/api/v1/turn/credentials?apiKey=${apiKey}`,
+                    meteredUrl.toString(),
                     { cache: 'no-store' } // Always fetch fresh credentials
                 );
 
@@ -31,7 +59,7 @@ export async function GET() {
                     console.warn(`[TURN] Metered API returned ${response.status}: ${response.statusText}`);
                 }
             } catch (e) {
-                console.warn('[TURN] Metered dynamic API failed:', e);
+                console.warn('[TURN] Metered dynamic API failed');
             }
         } else {
             console.warn('[TURN] NEXT_PUBLIC_METERED_DOMAIN or METERED_API_KEY not set — TURN relay will NOT work across different networks!');

@@ -1,10 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { applyRateLimit, getClientIdentifier } from '@/lib/security/rate-limit';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(request: NextRequest) {
     try {
+        const identifier = getClientIdentifier(request);
+        const rateLimit = applyRateLimit({
+            key: `generate-workout-image:${identifier}`,
+            limit: 5,
+            windowMs: 10 * 60 * 1000,
+        });
+
+        if (!rateLimit.allowed) {
+            return NextResponse.json(
+                { error: 'Rate limit exceeded. Please try again later.' },
+                {
+                    status: 429,
+                    headers: {
+                        'Retry-After': String(rateLimit.retryAfterSeconds),
+                        'X-RateLimit-Limit': String(rateLimit.limit),
+                        'X-RateLimit-Remaining': String(rateLimit.remaining),
+                        'X-RateLimit-Reset': String(rateLimit.resetAt),
+                    },
+                }
+            );
+        }
+
+        if (!process.env.OPENAI_API_KEY) {
+            return NextResponse.json({ error: 'Image generation is not configured' }, { status: 503 });
+        }
+
         const body = await request.json();
         const { exercises, type } = body as {
             exercises: Array<{
@@ -22,6 +49,10 @@ export async function POST(request: NextRequest) {
 
         if (!exercises || exercises.length === 0) {
             return NextResponse.json({ error: 'No exercises provided' }, { status: 400 });
+        }
+
+        if (exercises.length > 20) {
+            return NextResponse.json({ error: 'Too many exercises in one request' }, { status: 400 });
         }
 
         // Build a descriptive list of each exercise

@@ -2,11 +2,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { hashPassword, createSession } from '@/lib/auth';
+import { applyRateLimit, getClientIdentifier } from '@/lib/security/rate-limit';
+
+const isTestEndpointEnabled = process.env.NODE_ENV !== 'production' || process.env.ALLOW_TEST_ENDPOINTS === 'true';
 
 export async function POST(req: NextRequest) {
+    if (!isTestEndpointEnabled) {
+        return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
+    }
+
     try {
+        const identifier = getClientIdentifier(req);
+        const rateLimit = applyRateLimit({
+            key: `test-setup:${identifier}`,
+            limit: 10,
+            windowMs: 60 * 1000,
+        });
+
+        if (!rateLimit.allowed) {
+            return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+        }
+
         const body = await req.json();
         const { email, password, name } = body;
+
+        if (!email || !password || !name) {
+            return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
+        }
 
         let user = await prisma.user.findUnique({
             where: { email },

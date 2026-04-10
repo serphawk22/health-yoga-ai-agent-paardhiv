@@ -84,6 +84,11 @@
     @apply bg-health-bg text-health-text;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  .light body {
+    background-color: #e9eff6;
+    background-image: none;
+  }
 }
 
 @layer components {
@@ -204,6 +209,134 @@
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+  }
+
+  /* Claymorphism system for light theme surfaces */
+  .light .clay-page {
+    background: #e9eff6;
+  }
+
+  .light .clay-panel,
+  .light .clay-panel-soft,
+  .light .clay-panel-inset,
+  .light .clay-pill,
+  .light .clay-popover,
+  .light .clay-chat-shell,
+  .light .clay-input,
+  .light .clay-action,
+  .light .clay-icon,
+  .light .clay-chat-user,
+  .light .clay-chat-assistant,
+  .light .clay-chat-input-shell {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .light .clay-panel {
+    background: linear-gradient(145deg, #eef3f8, #e4eaf2) !important;
+    border-color: #d4dce7 !important;
+    box-shadow:
+      14px 14px 30px rgba(156, 170, 190, 0.35),
+      -10px -10px 24px rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .light .clay-panel-soft {
+    background: linear-gradient(145deg, #f1f5f9, #e8eef5) !important;
+    border-color: #d9e1ec !important;
+    box-shadow:
+      10px 10px 20px rgba(165, 178, 198, 0.28),
+      -8px -8px 18px rgba(255, 255, 255, 0.85) !important;
+  }
+
+  .light .clay-panel-inset,
+  .light .clay-input,
+  .light .clay-chat-input-shell {
+    background: linear-gradient(145deg, #e6ecf4, #f0f5fb) !important;
+    border-color: #d1dae6 !important;
+    box-shadow:
+      inset 6px 6px 14px rgba(164, 178, 199, 0.33),
+      inset -6px -6px 14px rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .light .clay-pill,
+  .light .clay-action,
+  .light .clay-popover,
+  .light .clay-chat-shell {
+    background: linear-gradient(145deg, #edf2f8, #e5ebf3) !important;
+    border-color: #d2dae6 !important;
+    box-shadow:
+      8px 8px 16px rgba(165, 178, 198, 0.3),
+      -7px -7px 14px rgba(255, 255, 255, 0.86) !important;
+  }
+
+  .light .clay-icon {
+    background: linear-gradient(145deg, #ebf1f8, #e3e9f1) !important;
+    border-color: #d4dce8 !important;
+    box-shadow:
+      5px 5px 10px rgba(162, 176, 197, 0.28),
+      -4px -4px 9px rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .light .clay-chat-user {
+    background: linear-gradient(145deg, #d5f7df, #b9eec9) !important;
+    color: #0f5132 !important;
+    border: 1px solid #9dddb2 !important;
+    box-shadow: 6px 6px 14px rgba(122, 163, 136, 0.25) !important;
+  }
+
+  .light .clay-chat-assistant {
+    background: linear-gradient(145deg, #edf2f8, #e5ebf3) !important;
+    color: #1f2937 !important;
+    border: 1px solid #d2dae6 !important;
+    box-shadow: 8px 8px 16px rgba(165, 178, 198, 0.28) !important;
+  }
+
+  .light .clay-card-text .text-white,
+  .light .clay-card-text .text-white\/90,
+  .light .clay-card-text .text-zinc-300,
+  .light .clay-card-text .text-zinc-200,
+  .light .clay-card-text .text-zinc-100 {
+    color: #1f2937 !important;
+  }
+
+  .light .clay-card-text .text-zinc-600,
+  .light .clay-card-text .text-zinc-500,
+  .light .clay-card-text .text-zinc-400 {
+    color: #5f6f86 !important;
+  }
+
+  .light .clay-card-text .border-white\/5,
+  .light .clay-card-text .border-white\/10,
+  .light .clay-card-text .border-white\/\[0\.08\],
+  .light .clay-card-text .border-white\/\[0\.05\] {
+    border-color: #d2dae5 !important;
+  }
+
+  .light .gradient-button,
+  .light .clay-cta {
+    --color-1: #d8f6e1;
+    --color-2: #c6efe4;
+    --color-3: #aee8f7;
+    --color-4: #def5ff;
+    --color-5: #f3f9ff;
+    --border-color-1: rgba(72, 153, 122, 0.45);
+    --border-color-2: rgba(255, 255, 255, 0.95);
+    color: #132538 !important;
+    box-shadow:
+      10px 10px 22px rgba(160, 175, 196, 0.35),
+      -8px -8px 18px rgba(255, 255, 255, 0.92) !important;
+  }
+
+  .light .gradient-button:hover,
+  .light .clay-cta:hover {
+    --color-1: #c7efda;
+    --color-2: #b4e9e4;
+    --color-3: #9de2f6;
+    --color-4: #cff0fe;
+    --color-5: #e9f5ff;
+    --border-color-1: rgba(72, 153, 122, 0.55);
+    --border-color-2: rgba(255, 255, 255, 1);
+    color: #0f2235 !important;
   }
 }
 

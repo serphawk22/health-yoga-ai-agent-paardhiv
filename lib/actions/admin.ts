@@ -3,17 +3,104 @@
 import prisma from '@/lib/prisma';
 import { hashPassword } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
+import { cookies, headers } from 'next/headers';
+import { SignJWT, jwtVerify } from 'jose';
+import { createHash, timingSafeEqual } from 'crypto';
+import { getJwtSecretKey } from '@/lib/jwt-config';
+import { applyRateLimit, getClientIdentifierFromHeaders } from '@/lib/security/rate-limit';
 
-const ADMIN_PASSWORD = 'SerpHawk@2026#yoga';
+const ADMIN_COOKIE_NAME = 'health-agent-admin';
+const ADMIN_SESSION_TTL_SECONDS = 8 * 60 * 60;
+
+function getAdminPassword(): string | null {
+    const configuredPassword = process.env.ADMIN_PANEL_PASSWORD || process.env.ADMIN_PASSWORD;
+    if (!configuredPassword || !configuredPassword.trim()) {
+        return null;
+    }
+    return configuredPassword;
+}
+
+function hashForComparison(value: string): Buffer {
+    return createHash('sha256').update(value).digest();
+}
+
+function safeCompare(left: string, right: string): boolean {
+    return timingSafeEqual(hashForComparison(left), hashForComparison(right));
+}
+
+async function createAdminSession() {
+    const token = await new SignJWT({ admin: true })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .setExpirationTime(`${ADMIN_SESSION_TTL_SECONDS}s`)
+        .sign(getJwtSecretKey());
+
+    const cookieStore = await cookies();
+    cookieStore.set(ADMIN_COOKIE_NAME, token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: ADMIN_SESSION_TTL_SECONDS,
+    });
+}
+
+async function requireAdminAccess() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(ADMIN_COOKIE_NAME)?.value;
+
+    if (!token) {
+        return { success: false, error: 'Unauthorized' };
+    }
+
+    try {
+        const { payload } = await jwtVerify(token, getJwtSecretKey());
+        if (payload.admin !== true) {
+            throw new Error('Invalid admin session payload');
+        }
+        return { success: true };
+    } catch {
+        cookieStore.delete(ADMIN_COOKIE_NAME);
+        return { success: false, error: 'Unauthorized' };
+    }
+}
 
 export async function verifyAdminPassword(password: string) {
-    if (password === ADMIN_PASSWORD) {
+    try {
+        const incomingHeaders = await headers();
+        const identifier = getClientIdentifierFromHeaders(incomingHeaders);
+        const rateLimit = applyRateLimit({
+            key: `admin-password:${identifier}`,
+            limit: 10,
+            windowMs: 10 * 60 * 1000,
+        });
+
+        if (!rateLimit.allowed) {
+            return { success: false, error: 'Too many attempts. Try again in a few minutes.' };
+        }
+
+        const adminPassword = getAdminPassword();
+        if (!adminPassword) {
+            console.error('Admin password is not configured. Set ADMIN_PANEL_PASSWORD in environment variables.');
+            return { success: false, error: 'Admin access is not configured' };
+        }
+
+        if (!password || !safeCompare(password, adminPassword)) {
+            return { success: false, error: 'Invalid admin password' };
+        }
+
+        await createAdminSession();
         return { success: true };
+    } catch (error) {
+        console.error('Admin verification error:', error);
+        return { success: false, error: 'Failed to verify admin password' };
     }
-    return { success: false, error: 'Invalid admin password' };
 }
 
 export async function getAllUsers() {
+    const access = await requireAdminAccess();
+    if (!access.success) return access;
+
     try {
         const users = await prisma.user.findMany({
             select: {
@@ -45,6 +132,9 @@ export async function getAllUsers() {
 }
 
 export async function updateUser(id: string, data: any) {
+    const access = await requireAdminAccess();
+    if (!access.success) return access;
+
     try {
         const updateData: any = {
             name: data.name,
@@ -66,6 +156,9 @@ export async function updateUser(id: string, data: any) {
 }
 
 export async function changeUserPassword(id: string, newPassword: string) {
+    const access = await requireAdminAccess();
+    if (!access.success) return access;
+
     try {
         const hashedPassword = await hashPassword(newPassword);
         
@@ -82,6 +175,9 @@ export async function changeUserPassword(id: string, newPassword: string) {
 }
 
 export async function deleteUser(id: string) {
+    const access = await requireAdminAccess();
+    if (!access.success) return access;
+
     try {
         await prisma.user.delete({
             where: { id }
@@ -96,6 +192,9 @@ export async function deleteUser(id: string) {
 }
 
 export async function getSystemMetrics() {
+    const access = await requireAdminAccess();
+    if (!access.success) return access;
+
     try {
         const breakdown = await getTokenConsumptionBreakdown();
         const totalTokens = breakdown.success ? (breakdown.totalTokens ?? 0) : 0;
@@ -133,6 +232,9 @@ export async function getSystemMetrics() {
 }
 
 export async function getTokenConsumptionBreakdown() {
+    const access = await requireAdminAccess();
+    if (!access.success) return access;
+
     try {
         // Estimation Constants
         const T_CHAT = 250;

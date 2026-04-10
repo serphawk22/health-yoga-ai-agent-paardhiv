@@ -46,7 +46,7 @@ export function SellerDashboard() {
                     <p className="text-zinc-500 mt-1 font-light">Manage your health products and track your sales</p>
                 </div>
                 <Link href="/marketplace/new">
-                    <GradientButton className="h-12 px-6 rounded-2xl flex items-center gap-2">
+                    <GradientButton className="clay-cta h-12 px-6 rounded-2xl flex items-center gap-2">
                         <Plus className="w-5 h-5" />
                         Add New Product
                     </GradientButton>
@@ -104,7 +104,7 @@ export function SellerDashboard() {
                             <p className="text-zinc-500 max-w-xs mx-auto mt-2 font-light">Start selling by adding your first product to the marketplace.</p>
                         </div>
                         <Link href="/marketplace/new" className="mt-4">
-                            <GradientButton variant="variant" className="px-8">Get Started</GradientButton>
+                            <GradientButton variant="variant" className="clay-cta px-8">Get Started</GradientButton>
                         </Link>
                     </div>
                 ) : (

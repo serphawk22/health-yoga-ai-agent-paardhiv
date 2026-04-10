@@ -35,9 +35,9 @@ export default function MarketplacePage() {
     const isSeller = user?.role === 'DOCTOR' || user?.role === 'YOGA_INSTRUCTOR';
 
     return (
-        <div className="max-w-7xl mx-auto pb-20 lg:pb-6 relative z-10 text-zinc-100 min-h-screen">
+        <div className="clay-page max-w-7xl mx-auto pb-20 lg:pb-6 relative z-10 text-zinc-800 dark:text-zinc-100 min-h-screen">
             {/* Background */}
-            <div className="fixed inset-0 z-[-1] pointer-events-none">
+            <div className="fixed inset-0 z-[-1] pointer-events-none hidden dark:block">
                 <ColorBends
                     colors={["#ff5c7a", "#8a5cff", "#00ffd1"]}
                     rotation={0}
