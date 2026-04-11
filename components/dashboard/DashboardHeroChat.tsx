@@ -174,25 +174,46 @@ export function DashboardHeroChat() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="clay-chat-shell clay-card-text fixed bottom-24 right-6 z-[90] w-[380px] max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-8rem)] flex flex-col rounded-[2rem] bg-zinc-950/95 backdrop-blur-xl border border-white/10 shadow-[0_32px_128px_rgba(0,0,0,0.6)] overflow-hidden"
+            className="clay-chat-shell clay-card-text fixed bottom-24 right-6 z-[90] w-[800px] max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-8rem)] flex flex-row rounded-[2rem] bg-white/90 dark:bg-zinc-950/95 backdrop-blur-2xl border border-black/10 dark:border-white/10 shadow-[0_32px_128px_rgba(0,0,0,0.2)] dark:shadow-[0_32px_128px_rgba(0,0,0,0.6)] overflow-hidden"
           >
-            {/* Header */}
-            <div className="clay-panel-soft p-4 border-b border-white/5 flex items-center gap-3 bg-white/[0.02]">
-                <div className="clay-icon relative w-10 h-10 rounded-full overflow-hidden bg-primary-500/20 shrink-0 border border-transparent">
-                    <Image 
-                        src="/ai-avatar.png" 
-                        alt="Zenya AI" 
-                        fill
-                        className="object-cover"
-                    />
-                </div>
-                <div>
-                  <h3 className="text-[0.8125rem] font-medium text-zinc-800 dark:text-white">Zenya</h3>
-                  <p className="text-[0.8125rem] text-primary-500 dark:text-primary-400 capitalize tracking-wider">Wellness Guide</p>
+            {/* Left Sidebar for Face */}
+            <div className="hidden md:flex w-[320px] border-r border-black/5 dark:border-white/5 bg-zinc-50/50 dark:bg-white/[0.02] flex-col items-center justify-center p-8 relative overflow-hidden shrink-0">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary-500/10 rounded-full blur-[4rem] pointer-events-none" />
+                <div className="relative z-10 flex flex-col items-center">
+                    <div className="clay-icon relative w-48 h-48 rounded-[2rem] overflow-hidden shrink-0 border border-black/5 dark:border-white/10 shadow-xl mb-8">
+                        <Image 
+                            src="/frames/ezgif-frame-001.png" 
+                            alt="Zenya AI" 
+                            fill
+                            className="object-cover"
+                        />
+                    </div>
+                    <div className="text-center">
+                        <h3 className="text-3xl font-medium text-zinc-800 dark:text-white mb-2 tracking-tight">Zenya</h3>
+                        <p className="text-sm font-medium text-primary-600 dark:text-primary-400 uppercase tracking-widest">Wellness Guide</p>
+                    </div>
                 </div>
             </div>
 
-            {/* Messages Stream */}
+            {/* Right Side - Chat */}
+            <div className="flex-1 flex flex-col relative h-full min-w-0 bg-transparent">
+              {/* Mobile Header (only visible on small screens) */}
+              <div className="md:hidden clay-panel-soft p-4 border-b border-black/5 dark:border-white/5 flex items-center gap-3 bg-white/50 dark:bg-white/[0.02]">
+                  <div className="clay-icon relative w-10 h-10 rounded-full overflow-hidden shrink-0 border border-transparent">
+                      <Image 
+                          src="/frames/ezgif-frame-001.png" 
+                          alt="Zenya AI" 
+                          fill
+                          className="object-cover"
+                      />
+                  </div>
+                  <div>
+                    <h3 className="text-[0.8125rem] font-medium text-zinc-800 dark:text-white">Zenya</h3>
+                    <p className="text-[0.8125rem] text-primary-500 dark:text-primary-400 capitalize tracking-wider">Wellness Guide</p>
+                  </div>
+              </div>
+
+              {/* Messages Stream */}
             <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 py-6 custom-scrollbar space-y-6">
               <AnimatePresence initial={false}>
                 {messages.length === 0 ? (
@@ -207,7 +228,7 @@ export function DashboardHeroChat() {
                         <button
                           key={suggestion}
                           onClick={() => handleSubmit(suggestion)}
-                          className="clay-action px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-[0.8125rem] text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-white/[0.08] hover:border-white/10 transition-all text-left"
+                          className="clay-action px-4 py-3 rounded-xl bg-zinc-100 dark:bg-white/5 border border-black/5 dark:border-white/5 text-[0.8125rem] text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-white/[0.08] hover:border-black/10 dark:hover:border-white/10 transition-all text-left"
                         >
                           {suggestion}
                         </button>
@@ -234,8 +255,8 @@ export function DashboardHeroChat() {
                             className={cn(
                               'px-4 py-3 text-[0.8125rem] font-light leading-relaxed rounded-2xl transition-all duration-300',
                               message.role === 'user'
-                                ? 'clay-chat-user bg-zinc-100 text-zinc-950 rounded-tr-none font-normal'
-                                : 'clay-chat-assistant bg-[#0a0a0b] text-zinc-100 border border-white/5 rounded-tl-none shadow-md'
+                                ? 'clay-chat-user bg-zinc-800 text-zinc-50 dark:bg-zinc-100 dark:text-zinc-950 rounded-tr-none font-normal'
+                                : 'clay-chat-assistant bg-white text-zinc-800 border border-black/5 dark:bg-[#0a0a0b] dark:text-zinc-100 dark:border-white/5 rounded-tl-none shadow-md'
                             )}
                           >
                             <div className="whitespace-pre-wrap">{message.content}</div>
@@ -261,10 +282,10 @@ export function DashboardHeroChat() {
 
                     {isLoading && (
                       <div className="flex gap-3">
-                        <div className="clay-chat-assistant bg-[#0a0a0b] border border-white/5 rounded-2xl rounded-tl-none px-5 py-4 flex items-center gap-2 shadow-md">
-                          <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-[bounce_1.2s_infinite]" style={{ animationDelay: '0ms' }} />
-                          <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-[bounce_1.2s_infinite]" style={{ animationDelay: '150ms' }} />
-                          <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-[bounce_1.2s_infinite]" style={{ animationDelay: '300ms' }} />
+                        <div className="clay-chat-assistant bg-white text-zinc-800 border border-black/5 dark:bg-[#0a0a0b] dark:text-zinc-100 dark:border-white/5 rounded-2xl rounded-tl-none px-5 py-4 flex items-center gap-2 shadow-md">
+                          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-[bounce_1.2s_infinite]" style={{ animationDelay: '0ms' }} />
+                          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-[bounce_1.2s_infinite]" style={{ animationDelay: '150ms' }} />
+                          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-[bounce_1.2s_infinite]" style={{ animationDelay: '300ms' }} />
                         </div>
                       </div>
                     )}
@@ -275,8 +296,8 @@ export function DashboardHeroChat() {
             </div>
 
             {/* Input Bar */}
-            <div className="clay-panel-inset p-4 border-t border-white/5 bg-zinc-950/80 backdrop-blur-md">
-              <div className="clay-chat-input-shell flex items-end gap-2 bg-white/[0.03] rounded-2xl border border-white/10 p-2 pr-2 focus-within:bg-white/[0.05] focus-within:border-primary-500/40 transition-all shadow-inner relative">
+            <div className="clay-panel-inset p-4 border-t border-black/5 dark:border-white/5 bg-white/50 dark:bg-zinc-950/80 backdrop-blur-md">
+              <div className="clay-chat-input-shell flex items-end gap-2 bg-zinc-100 dark:bg-white/[0.03] rounded-2xl border border-black/5 dark:border-white/10 p-2 pr-2 focus-within:bg-white dark:focus-within:bg-white/[0.05] focus-within:border-primary-500/40 transition-all shadow-inner relative">
                 <textarea
                   ref={inputRef}
                   value={input}
@@ -299,8 +320,8 @@ export function DashboardHeroChat() {
                     className={cn(
                       'p-2.5 rounded-xl transition-all flex items-center justify-center',
                       !input.trim() || isLoading
-                        ? 'bg-zinc-800/50 text-zinc-600 grayscale'
-                        : 'bg-primary-500 text-zinc-950 hover:bg-primary-400'
+                        ? 'bg-zinc-200 dark:bg-zinc-800/50 text-zinc-400 dark:text-zinc-600 grayscale'
+                        : 'bg-primary-500 text-white dark:text-zinc-950 hover:bg-primary-600 dark:hover:bg-primary-400'
                     )}
                   >
                     {isLoading ? (
@@ -312,6 +333,7 @@ export function DashboardHeroChat() {
                 </div>
               </div>
             </div>
+          </div>
           </motion.div>
         )}
       </AnimatePresence>

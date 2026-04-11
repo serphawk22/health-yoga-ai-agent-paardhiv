@@ -1,7 +1,19 @@
-import { createClient } from 'redis';
 import { logSecurityEvent } from '@/lib/security/audit-log';
 
-type RedisClient = ReturnType<typeof createClient>;
+type RedisClient = {
+  isOpen?: boolean;
+  connect: () => Promise<unknown>;
+  eval: (
+    script: string,
+    options: { keys: string[]; arguments: string[] }
+  ) => Promise<unknown>;
+  on: (event: 'error', listener: (error: unknown) => void) => void;
+};
+
+type RedisCreateClient = (options: {
+  url: string;
+  socket?: { connectTimeout?: number };
+}) => RedisClient;
 
 type RateLimitEntry = {
   count: number;
@@ -11,9 +23,25 @@ type RateLimitEntry = {
 const REDIS_RATE_LIMIT_URL = process.env.RATE_LIMIT_REDIS_URL || process.env.REDIS_URL;
 const RATE_LIMIT_KEY_PREFIX = process.env.RATE_LIMIT_KEY_PREFIX || 'health-agent:rl';
 
+function toPositiveInt(value: string | undefined, fallback: number): number {
+  const parsed = Number.parseInt(value || '', 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+const REDIS_CONNECT_TIMEOUT_MS = toPositiveInt(
+  process.env.RATE_LIMIT_REDIS_CONNECT_TIMEOUT_MS,
+  750
+);
+
+const REDIS_RETRY_DELAY_MS = toPositiveInt(
+  process.env.RATE_LIMIT_REDIS_RETRY_DELAY_MS,
+  60_000
+);
+
 const globalForRateLimit = globalThis as unknown as {
   __healthAgentRateLimitStore?: Map<string, RateLimitEntry>;
   __healthAgentRateLimitCleanupAt?: number;
+  __healthAgentRateLimitRedisCreateClient?: RedisCreateClient;
   __healthAgentRateLimitRedisClient?: RedisClient;
   __healthAgentRateLimitRedisConnectPromise?: Promise<RedisClient | null>;
   __healthAgentRateLimitRedisRetryAt?: number;
@@ -56,6 +84,27 @@ function getRedisKey(key: string) {
   return `${RATE_LIMIT_KEY_PREFIX}:${key}`;
 }
 
+async function getRedisCreateClient(): Promise<RedisCreateClient | null> {
+  if (!REDIS_RATE_LIMIT_URL) {
+    return null;
+  }
+
+  const existing = globalForRateLimit.__healthAgentRateLimitRedisCreateClient;
+  if (existing) {
+    return existing;
+  }
+
+  try {
+    const redisModule = await import('redis');
+    const createClient = (redisModule as unknown as { createClient: RedisCreateClient }).createClient;
+    globalForRateLimit.__healthAgentRateLimitRedisCreateClient = createClient;
+    return createClient;
+  } catch (error) {
+    warnRedisFallback(error);
+    return null;
+  }
+}
+
 async function getRedisClient(): Promise<RedisClient | null> {
   if (!REDIS_RATE_LIMIT_URL) {
     return null;
@@ -77,8 +126,16 @@ async function getRedisClient(): Promise<RedisClient | null> {
 
   globalForRateLimit.__healthAgentRateLimitRedisConnectPromise = (async () => {
     try {
+      const createClient = await getRedisCreateClient();
+      if (!createClient) {
+        return null;
+      }
+
       const client = createClient({
         url: REDIS_RATE_LIMIT_URL,
+        socket: {
+          connectTimeout: REDIS_CONNECT_TIMEOUT_MS,
+        },
       });
 
       client.on('error', (error) => {
@@ -90,7 +147,7 @@ async function getRedisClient(): Promise<RedisClient | null> {
       globalForRateLimit.__healthAgentRateLimitRedisRetryAt = 0;
       return client;
     } catch (error) {
-      globalForRateLimit.__healthAgentRateLimitRedisRetryAt = Date.now() + 60_000;
+      globalForRateLimit.__healthAgentRateLimitRedisRetryAt = Date.now() + REDIS_RETRY_DELAY_MS;
       warnRedisFallback(error);
       return null;
     } finally {
@@ -101,7 +158,7 @@ async function getRedisClient(): Promise<RedisClient | null> {
   return globalForRateLimit.__healthAgentRateLimitRedisConnectPromise ?? null;
 }
 
-async function applyInMemoryRateLimit(options: RateLimitOptions): Promise<RateLimitResult> {
+function applyInMemoryRateLimit(options: RateLimitOptions): RateLimitResult {
   const now = Date.now();
   cleanupExpired(now);
 
@@ -223,6 +280,11 @@ export interface RateLimitResult {
 }
 
 export async function applyRateLimit(options: RateLimitOptions): Promise<RateLimitResult> {
+  // Fast path for environments without Redis configured.
+  if (!REDIS_RATE_LIMIT_URL) {
+    return applyInMemoryRateLimit(options);
+  }
+
   const redisResult = await applyRedisRateLimit(options);
   if (redisResult) {
     return redisResult;
