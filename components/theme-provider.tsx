@@ -30,14 +30,14 @@ export function ThemeProvider({
     storageKey = 'health-agent-theme',
     ...props
 }: ThemeProviderProps) {
-    const [theme, setTheme] = useState<Theme>(defaultTheme);
-
-    useEffect(() => {
-        const savedTheme = localStorage.getItem(storageKey) as Theme;
-        if (savedTheme) {
-            setTheme(savedTheme);
+    const [theme, setTheme] = useState<Theme>(() => {
+        if (typeof window === 'undefined') {
+            return defaultTheme;
         }
-    }, [storageKey]);
+
+        const savedTheme = localStorage.getItem(storageKey);
+        return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : defaultTheme;
+    });
 
     useEffect(() => {
         const root = window.document.documentElement;
@@ -48,8 +48,8 @@ export function ThemeProvider({
 
     const value = {
         theme,
-        setTheme: (theme: Theme) => {
-            setTheme(theme);
+        setTheme: (nextTheme: Theme) => {
+            setTheme(nextTheme);
         },
         toggleTheme: () => {
             setTheme(theme === 'dark' ? 'light' : 'dark');

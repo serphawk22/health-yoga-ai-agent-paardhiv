@@ -338,6 +338,33 @@
     --border-color-2: rgba(255, 255, 255, 1);
     color: #0f2235 !important;
   }
+
+  /* In light mode, force all green-toned text utilities to darker shades for contrast */
+  .light [class*="text-primary-"],
+  .light [class*="text-green-"],
+  .light [class*="text-emerald-"],
+  .light [class*="text-lime-"] {
+    color: #166534 !important;
+  }
+
+  .light [class*="text-green-"] [class*="opacity"],
+  .light [class*="text-emerald-"] [class*="opacity"] {
+    color: #166534 !important;
+  }
+
+  .light [class*="hover:text-primary-"]:hover,
+  .light [class*="hover:text-green-"]:hover,
+  .light [class*="hover:text-emerald-"]:hover,
+  .light [class*="hover:text-lime-"]:hover {
+    color: #14532d !important;
+  }
+
+  .light .group:hover [class*="group-hover:text-primary-"],
+  .light .group:hover [class*="group-hover:text-green-"],
+  .light .group:hover [class*="group-hover:text-emerald-"],
+  .light .group:hover [class*="group-hover:text-lime-"] {
+    color: #14532d !important;
+  }
 }
 
 /* Animation utilities */
