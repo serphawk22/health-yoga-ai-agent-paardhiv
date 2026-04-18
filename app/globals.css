@@ -681,3 +681,28 @@ html.lenis body {
   --border-color-1: hsla(320, 75%, 90%, 0.2);
   --border-color-2: hsla(320, 50%, 90%, 0.75);
 }
+
+/* Global no-glow policy for interactive controls */
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+.gradient-button,
+.clay-cta {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+button::before,
+button::after,
+[role="button"]::before,
+[role="button"]::after,
+.gradient-button::before,
+.gradient-button::after,
+.clay-cta::before,
+.clay-cta::after {
+  box-shadow: none !important;
+  filter: none !important;
+}

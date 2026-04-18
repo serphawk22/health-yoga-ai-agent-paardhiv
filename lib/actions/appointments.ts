@@ -9,7 +9,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { extractAppointmentDetails } from '@/lib/ai';
 import { Prisma } from '@prisma/client';
 import { applyRateLimit, getClientIdentifierFromHeaders } from '@/lib/security/rate-limit';
-import { format, parse, isValid, isBefore, startOfDay } from 'date-fns';
+import { addDays, format, isValid, isBefore, startOfDay } from 'date-fns';
 
 // ==================== TYPES ====================
 
@@ -21,6 +21,44 @@ export interface AppointmentActionResult {
 
 function generateSecureMeetingId(): string {
   return randomBytes(6).toString('hex').toUpperCase();
+}
+
+type AvailabilityWindow = {
+  startTime: string;
+  endTime: string;
+  slotDuration: number;
+};
+
+function buildAvailabilitySlots(
+  availability: AvailabilityWindow[],
+  bookedTimes: Set<string>
+): { time: string; available: boolean }[] {
+  const slots: { time: string; available: boolean }[] = [];
+
+  for (const avail of availability) {
+    const [startHour, startMin] = avail.startTime.split(':').map(Number);
+    const [endHour, endMin] = avail.endTime.split(':').map(Number);
+
+    let currentHour = startHour;
+    let currentMin = startMin;
+
+    while (currentHour < endHour || (currentHour === endHour && currentMin < endMin)) {
+      const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
+
+      slots.push({
+        time: timeStr,
+        available: !bookedTimes.has(timeStr),
+      });
+
+      currentMin += avail.slotDuration;
+      if (currentMin >= 60) {
+        currentHour += Math.floor(currentMin / 60);
+        currentMin %= 60;
+      }
+    }
+  }
+
+  return slots;
 }
 
 // ==================== GET DOCTORS ====================
@@ -82,37 +120,96 @@ export async function getDoctorAvailability(
 
     const bookedTimes = new Set(existingAppointments.map((a: any) => a.scheduledTime));
 
-    // Generate available slots
-    const slots: { time: string; available: boolean }[] = [];
-
-    for (const avail of availability) {
-      const [startHour, startMin] = avail.startTime.split(':').map(Number);
-      const [endHour, endMin] = avail.endTime.split(':').map(Number);
-
-      let currentHour = startHour;
-      let currentMin = startMin;
-
-      while (currentHour < endHour || (currentHour === endHour && currentMin < endMin)) {
-        const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
-
-        slots.push({
-          time: timeStr,
-          available: !bookedTimes.has(timeStr),
-        });
-
-        // Add slot duration
-        currentMin += avail.slotDuration;
-        if (currentMin >= 60) {
-          currentHour += Math.floor(currentMin / 60);
-          currentMin = currentMin % 60;
-        }
-      }
-    }
+    const slots = buildAvailabilitySlots(availability, bookedTimes);
 
     return { success: true, data: { slots } };
   } catch (error) {
     console.error('Get availability error:', error);
     return { success: false, error: 'Failed to get availability' };
+  }
+}
+
+// ==================== GET AVAILABLE DATES ====================
+
+export async function getDoctorAvailableDates(
+  doctorId: string,
+  startDate: string,
+  days = 7
+): Promise<AppointmentActionResult> {
+  try {
+    const safeDays = Math.min(Math.max(days, 1), 31);
+    const rangeStart = startOfDay(new Date(startDate));
+
+    if (!doctorId || !isValid(rangeStart)) {
+      return { success: false, error: 'Invalid date range' };
+    }
+
+    const doctor = await prisma.doctor.findUnique({
+      where: { id: doctorId },
+      select: { id: true, isActive: true },
+    });
+
+    if (!doctor || !doctor.isActive) {
+      return { success: false, error: 'Selected doctor is not available.' };
+    }
+
+    const dates = Array.from({ length: safeDays }, (_, index) => addDays(rangeStart, index));
+    const dayNumbers = Array.from(new Set(dates.map((date) => date.getDay())));
+    const rangeEnd = addDays(rangeStart, safeDays);
+
+    const [availability, appointments] = await Promise.all([
+      prisma.doctorAvailability.findMany({
+        where: {
+          doctorId,
+          dayOfWeek: { in: dayNumbers },
+          isActive: true,
+        },
+      }),
+      prisma.appointment.findMany({
+        where: {
+          doctorId,
+          scheduledDate: {
+            gte: rangeStart,
+            lt: rangeEnd,
+          },
+          status: { notIn: ['CANCELLED'] },
+        },
+        select: {
+          scheduledDate: true,
+          scheduledTime: true,
+        },
+      }),
+    ]);
+
+    const appointmentsByDate = appointments.reduce<Record<string, Set<string>>>((acc, appointment) => {
+      const key = format(appointment.scheduledDate, 'yyyy-MM-dd');
+      if (!acc[key]) {
+        acc[key] = new Set<string>();
+      }
+      acc[key].add(appointment.scheduledTime);
+      return acc;
+    }, {});
+
+    const today = startOfDay(new Date());
+    const data = dates.map((date) => {
+      const key = format(date, 'yyyy-MM-dd');
+      const dayAvailability = availability.filter((slot) => slot.dayOfWeek === date.getDay());
+      const slots = buildAvailabilitySlots(dayAvailability, appointmentsByDate[key] || new Set<string>());
+      const availableSlotCount = slots.filter((slot) => slot.available).length;
+
+      return {
+        date: key,
+        isPast: isBefore(date, today),
+        hasSchedule: slots.length > 0,
+        totalSlotCount: slots.length,
+        availableSlotCount: isBefore(date, today) ? 0 : availableSlotCount,
+      };
+    });
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Get available dates error:', error);
+    return { success: false, error: 'Failed to get available dates' };
   }
 }
 

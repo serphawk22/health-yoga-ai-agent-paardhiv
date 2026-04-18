@@ -28,6 +28,7 @@ export function TubesBackground({
     useEffect(() => {
         let mounted = true;
         let cleanup: (() => void) | undefined;
+        let cancelStart: (() => void) | undefined;
 
         const initTubes = async () => {
             if (!canvasRef.current) return;
@@ -73,10 +74,22 @@ export function TubesBackground({
             }
         };
 
-        initTubes();
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const isSmallScreen = window.matchMedia('(max-width: 640px)').matches;
+
+        if (!prefersReducedMotion && !isSmallScreen) {
+            if ('requestIdleCallback' in window) {
+                const id = window.requestIdleCallback(initTubes, { timeout: 1200 });
+                cancelStart = () => window.cancelIdleCallback(id);
+            } else {
+                const id = globalThis.setTimeout(initTubes, 500);
+                cancelStart = () => globalThis.clearTimeout(id);
+            }
+        }
 
         return () => {
             mounted = false;
+            if (cancelStart) cancelStart();
             if (cleanup) cleanup();
         };
     }, []);
@@ -96,6 +109,9 @@ export function TubesBackground({
             className={cn('relative w-full h-full min-h-[400px] overflow-hidden bg-background', className)}
             onClick={handleClick}
         >
+            {!isLoaded && (
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(34,197,94,0.16),transparent_32%),radial-gradient(circle_at_70%_65%,rgba(14,165,233,0.12),transparent_34%),linear-gradient(180deg,#050505,#000)]" />
+            )}
             <canvas
                 ref={canvasRef}
                 className="absolute inset-0 w-full h-full block"

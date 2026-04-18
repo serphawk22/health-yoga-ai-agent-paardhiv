@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   getDoctors,
   getDoctorAvailability,
+  getDoctorAvailableDates,
   createAppointment,
   getUserAppointments,
   cancelAppointment
@@ -46,6 +47,8 @@ export default function AppointmentsPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [availableSlots, setAvailableSlots] = useState<any[]>([]);
+  const [availableDates, setAvailableDates] = useState<Record<string, any>>({});
+  const [isDateSummaryLoading, setIsDateSummaryLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [reason, setReason] = useState('');
@@ -79,6 +82,50 @@ export default function AppointmentsPage() {
       loadAvailability();
     }
   }, [selectedDoctor, selectedDate, loadAvailability]);
+
+  const loadDateSummary = useCallback(async () => {
+    if (!selectedDoctor) {
+      setAvailableDates({});
+      return;
+    }
+
+    setIsDateSummaryLoading(true);
+    const weekStartDate = startOfWeek(selectedDate, { weekStartsOn: 1 });
+    const result = await getDoctorAvailableDates(
+      selectedDoctor.id,
+      format(weekStartDate, 'yyyy-MM-dd'),
+      7
+    );
+
+    if (result.success) {
+      const summary = (result.data || []).reduce((acc: Record<string, any>, item: any) => {
+        acc[item.date] = item;
+        return acc;
+      }, {});
+      setAvailableDates(summary);
+
+      const selectedKey = format(selectedDate, 'yyyy-MM-dd');
+      const selectedSummary = summary[selectedKey];
+      if (!selectedSummary?.availableSlotCount) {
+        const nextAvailable = (result.data || []).find((item: any) => !item.isPast && item.availableSlotCount > 0);
+        if (nextAvailable && nextAvailable.date !== selectedKey) {
+          setSelectedDate(new Date(`${nextAvailable.date}T00:00:00`));
+        }
+      }
+    } else {
+      setAvailableDates({});
+    }
+
+    setIsDateSummaryLoading(false);
+  }, [selectedDoctor, selectedDate]);
+
+  useEffect(() => {
+    loadDateSummary();
+  }, [loadDateSummary]);
+
+  useEffect(() => {
+    setSelectedTime(null);
+  }, [selectedDoctor?.id, selectedDate]);
 
   async function loadData() {
     const [doctorsResult, appointmentsResult] = await Promise.all([
@@ -134,17 +181,17 @@ export default function AppointmentsPage() {
 
   return (
     <div className="max-w-7xl mx-auto pb-20 lg:pb-12 animate-fadeIn bg-black min-h-screen text-zinc-100 p-4 lg:p-6">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 sm:mb-12">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-white mb-2">Appointments</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-2">Appointments</h1>
           <p className="text-zinc-500 font-medium">Book consultations with top-rated specialists</p>
         </div>
 
-        <div className="flex bg-white/[0.03] backdrop-blur-md p-1.5 rounded-2xl border border-white/10 shadow-xl w-fit">
+        <div className="flex bg-white/[0.03] backdrop-blur-md p-1.5 rounded-2xl border border-white/10 shadow-xl w-full sm:w-fit">
           <button
             onClick={() => setView('book')}
             className={cn(
-              "px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+              "flex-1 sm:flex-none px-4 sm:px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
               view === 'book' ? "bg-white/10 text-white shadow-xl border border-white/5" : "text-zinc-500 hover:text-white"
             )}
           >
@@ -153,7 +200,7 @@ export default function AppointmentsPage() {
           <button
             onClick={() => setView('list')}
             className={cn(
-              "px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+              "flex-1 sm:flex-none px-4 sm:px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
               view === 'list' ? "bg-white/10 text-white shadow-xl border border-white/5" : "text-zinc-500 hover:text-white"
             )}
           >
@@ -177,16 +224,16 @@ export default function AppointmentsPage() {
                   Back to specialists
                 </button>
 
-                <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 flex flex-col md:flex-row items-center gap-8 shadow-2xl relative overflow-hidden">
+                <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-3xl sm:rounded-[2.5rem] p-5 sm:p-8 flex flex-col md:flex-row items-center gap-6 sm:gap-8 shadow-2xl relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-primary-600/5 rounded-full blur-3xl -mr-32 -mt-32" />
-                  <div className="relative w-28 h-28 rounded-3xl bg-gradient-to-br from-primary-500 to-primary-700 p-0.5 shadow-2xl">
+                  <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-br from-primary-500 to-primary-700 p-0.5 shadow-2xl">
                     <div className="w-full h-full rounded-3xl bg-zinc-950 flex items-center justify-center text-4xl font-bold text-white">
                       {selectedDoctor.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                     </div>
                   </div>
                   <div className="flex-1 text-center md:text-left">
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
-                      <h2 className="text-4xl font-black text-white">{selectedDoctor.name}</h2>
+                      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white break-words">{selectedDoctor.name}</h2>
                       <span className="bg-primary-600/20 text-primary-400 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-primary-500/20">{selectedDoctor.specialization}</span>
                     </div>
                     <p className="text-zinc-400 text-lg font-medium mb-6">{selectedDoctor.qualification}</p>
@@ -214,7 +261,7 @@ export default function AppointmentsPage() {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-8">
-                  <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
+                  <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-3xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-2xl">
                     <div className="flex items-center justify-between mb-6">
                       <h3 className="font-bold flex items-center gap-2">
                         <CalendarDays className="w-5 h-5 text-primary-500" />
@@ -229,33 +276,67 @@ export default function AppointmentsPage() {
                         </button>
                       </div>
                     </div>
-                    <div className="grid grid-cols-7 gap-2">
+                    <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
                       {weekDays.map((day) => {
                         const isSelected = isSameDay(day, selectedDate);
                         const isPast = day < new Date(new Date().setHours(0, 0, 0, 0));
+                        const dateKey = format(day, 'yyyy-MM-dd');
+                        const dateSummary = availableDates[dateKey];
+                        const hasOpenSlots = !!dateSummary?.availableSlotCount;
+                        const hasSchedule = !!dateSummary?.hasSchedule;
+                        const isUnavailable = !isDateSummaryLoading && !hasOpenSlots;
+                        const isDisabled = isPast || isUnavailable;
                         return (
                           <button
                             key={day.toISOString()}
-                            onClick={() => !isPast && setSelectedDate(day)}
-                            disabled={isPast}
+                            onClick={() => !isDisabled && setSelectedDate(day)}
+                            disabled={isDisabled}
+                            title={
+                              isPast
+                                ? 'Past date'
+                                : hasOpenSlots
+                                  ? `${dateSummary.availableSlotCount} slots available`
+                                  : hasSchedule
+                                    ? 'Fully booked'
+                                    : 'Not available'
+                            }
                             className={cn(
-                              "h-12 rounded-xl flex flex-col items-center justify-center transition-all duration-300 border font-bold text-sm",
-                              isSelected
+                              "h-14 rounded-xl flex flex-col items-center justify-center transition-all duration-300 border font-bold text-sm",
+                              isSelected && !isDisabled
                                 ? "bg-primary-600 border-primary-500 text-white shadow-lg shadow-primary-900/20"
                                 : isPast
                                   ? "bg-transparent border-transparent text-zinc-800 cursor-not-allowed"
-                                  : "bg-zinc-950/30 border-zinc-800 text-zinc-400 hover:border-zinc-700"
+                                  : hasOpenSlots
+                                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:border-emerald-400"
+                                    : hasSchedule
+                                      ? "bg-amber-500/5 border-amber-500/20 text-amber-500/70 cursor-not-allowed"
+                                      : "bg-zinc-950/20 border-zinc-900 text-zinc-700 cursor-not-allowed"
                             )}
                           >
                             <span className="text-[10px] uppercase font-black mb-1">{format(day, 'EEE')[0]}</span>
                             {format(day, 'd')}
+                            <span className={cn(
+                              "mt-1 h-1.5 w-1.5 rounded-full",
+                              isDateSummaryLoading
+                                ? "bg-zinc-700"
+                                : hasOpenSlots
+                                  ? "bg-emerald-400"
+                                  : hasSchedule
+                                    ? "bg-amber-500"
+                                    : "bg-zinc-800"
+                            )} />
                           </button>
                         );
                       })}
                     </div>
+                    <div className="mt-5 flex flex-wrap items-center gap-3 text-[11px] font-medium text-zinc-500">
+                      <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-emerald-400" />Open</span>
+                      <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-amber-500" />Full</span>
+                      <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-zinc-800" />Unavailable</span>
+                    </div>
                   </div>
 
-                  <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
+                  <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-3xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-2xl">
                     <h3 className="font-bold flex items-center gap-2 mb-6">
                       <Clock className="w-5 h-5 text-primary-500" />
                       Available Slots
@@ -291,7 +372,7 @@ export default function AppointmentsPage() {
                 </div>
 
                 {selectedTime && (
-                  <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl animate-slideUp">
+                  <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-3xl sm:rounded-[2.5rem] p-5 sm:p-8 shadow-2xl animate-slideUp">
                     <div className="grid md:grid-cols-2 gap-8">
                       <div className="space-y-4">
                         <h3 className="text-lg font-bold">Booking Details</h3>
@@ -325,17 +406,17 @@ export default function AppointmentsPage() {
               </div>
             ) : (
               /* Doctor List - shown when no doctor is selected */
-              <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
+              <div className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-3xl sm:rounded-[2.5rem] p-5 sm:p-8 shadow-2xl">
                 <h3 className="text-xl font-bold mb-2">Select a Doctor</h3>
                 <p className="text-sm text-zinc-500 mb-6">Pick a specialist to view their availability and book your session.</p>
 
-                <div className="flex bg-white/[0.05] backdrop-blur-md rounded-2xl p-1.5 mb-8 border border-white/10 shadow-xl w-fit gap-1">
+                <div className="grid grid-cols-3 bg-white/[0.05] backdrop-blur-md rounded-2xl p-1.5 mb-8 border border-white/10 shadow-xl w-full sm:w-fit gap-1">
                   {['all', 'doctors', 'instructors'].map((cat) => (
                     <button
                       key={cat}
                       onClick={() => setCategory(cat as any)}
                       className={cn(
-                        "px-6 py-2.5 text-sm font-bold rounded-xl capitalize transition-all duration-300",
+                        "px-3 sm:px-6 py-2.5 text-xs sm:text-sm font-bold rounded-xl capitalize transition-all duration-300",
                         category === cat ? "bg-white/10 text-white shadow-lg border border-white/5" : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
                       )}
                     >
@@ -349,7 +430,7 @@ export default function AppointmentsPage() {
                     <button
                       key={doctor.id}
                       onClick={() => setSelectedDoctor(doctor)}
-                      className="w-full p-6 rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 transition-all duration-300 text-left group shadow-lg"
+                      className="w-full p-4 sm:p-6 rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 transition-all duration-300 text-left group shadow-lg"
                     >
                       <div className="flex items-center gap-5">
                         <div className="relative">
@@ -428,42 +509,42 @@ function AppointmentCard({
   };
 
   return (
-    <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-5 flex items-center gap-5 transition-all hover:bg-zinc-800/40">
-      <div className="w-14 h-14 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-zinc-300">
+    <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-3xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 transition-all hover:bg-zinc-800/40">
+      <div className="w-14 h-14 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-zinc-300 shrink-0">
         {appointment.doctor.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
       </div>
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between mb-1">
+        <div className="flex items-start justify-between gap-3 mb-1">
           <p className="font-bold text-white truncate">{appointment.doctor.name}</p>
           <span className={cn("text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md", statusConfig[appointment.status] || statusConfig.PENDING)}>
             {appointment.status}
           </span>
         </div>
         <p className="text-xs text-zinc-500 mb-3">{appointment.doctor.specialization}</p>
-        <div className="flex items-center gap-4 text-[11px] font-bold text-zinc-400">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] font-bold text-zinc-400">
           <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {formatDate(appointment.scheduledDate)}</span>
           <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {formatTime(appointment.scheduledTime)}</span>
         </div>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 self-stretch sm:self-auto">
         {appointment.status === 'CONFIRMED' && appointment.meetingId && (
           <Link
             href={`/appointments/call/${appointment.meetingId}`}
-            className="flex items-center gap-2 px-4 py-3 bg-primary-600/20 border border-primary-500/30 text-primary-400 rounded-xl hover:bg-primary-600 hover:text-white transition-all group shadow-lg shadow-primary-500/10"
+            className="flex flex-1 sm:flex-none items-center justify-center gap-2 px-4 py-3 bg-primary-600/20 border border-primary-500/30 text-primary-400 rounded-xl hover:bg-primary-600 hover:text-white transition-all group shadow-lg shadow-primary-500/10"
           >
             <Video className="w-4 h-4 group-hover:animate-pulse" />
             <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Join Call</span>
           </Link>
         )}
         {onChat && (
-          <button onClick={onChat} className="p-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white rounded-xl transition-all border border-white/5">
+          <button onClick={onChat} className="flex-1 sm:flex-none p-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white rounded-xl transition-all border border-white/5 flex items-center justify-center">
             <MessageCircle className="w-4 h-4" />
           </button>
         )}
         {onCancel && (
-          <button onClick={onCancel} className="p-3 bg-zinc-800 hover:bg-red-600 text-zinc-400 hover:text-white rounded-xl transition-all border border-white/5">
+          <button onClick={onCancel} className="flex-1 sm:flex-none p-3 bg-zinc-800 hover:bg-red-600 text-zinc-400 hover:text-white rounded-xl transition-all border border-white/5 flex items-center justify-center">
             <X className="w-4 h-4" />
           </button>
         )}

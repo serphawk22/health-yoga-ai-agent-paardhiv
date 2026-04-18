@@ -2,16 +2,42 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
-import Link from 'next/link';
 
 const FRAME_COUNT = 120;
-const INITIAL_FRAME = 1;
+const DESKTOP_FRAME_TARGET = 60;
+const MOBILE_FRAME_TARGET = 36;
+const BATCH_SIZE = 4;
+
+function getFrameNumbers(targetCount: number) {
+  return Array.from({ length: targetCount }, (_, index) => (
+    Math.min(
+      FRAME_COUNT,
+      1 + Math.round(((FRAME_COUNT - 1) * index) / Math.max(1, targetCount - 1))
+    )
+  ));
+}
+
+function getFrameSrc(frameNumber: number) {
+  return `/frames/ezgif-frame-${frameNumber.toString().padStart(3, '0')}.png`;
+}
+
+function scheduleIdle(callback: () => void) {
+  if ('requestIdleCallback' in window) {
+    const id = window.requestIdleCallback(callback, { timeout: 1000 });
+    return () => window.cancelIdleCallback(id);
+  }
+
+  const id = globalThis.setTimeout(callback, 120);
+  return () => globalThis.clearTimeout(id);
+}
 
 export const YogaScrollAnimation = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imageMapRef = useRef<Map<number, HTMLImageElement>>(new Map());
   const [loadedImages, setLoadedImages] = useState<number>(0);
-  const [images] = useState<HTMLImageElement[]>([]);
+  const [frameNumbers, setFrameNumbers] = useState<number[]>([]);
+  const [hasFirstFrame, setHasFirstFrame] = useState(false);
 
   // Framer Motion Scroll Tracking
   const { scrollYProgress } = useScroll({
@@ -34,27 +60,72 @@ export const YogaScrollAnimation = () => {
   const block2Opacity = useTransform(smoothProgress, [0.35, 0.45, 0.6, 0.65], [0, 1, 1, 0]);
   const block2Y = useTransform(smoothProgress, [0.35, 0.65], [50, -50]);
 
-  // Preload Images
   useEffect(() => {
+    let cancelled = false;
+    let cancelIdle: (() => void) | undefined;
     let currentLoaded = 0;
-    const loadedImagesArr: HTMLImageElement[] = [];
-    for (let i = INITIAL_FRAME; i <= FRAME_COUNT; i++) {
+
+    const targetCount = window.matchMedia('(max-width: 640px)').matches
+      ? MOBILE_FRAME_TARGET
+      : DESKTOP_FRAME_TARGET;
+    const frames = getFrameNumbers(targetCount);
+
+    imageMapRef.current.clear();
+    setFrameNumbers(frames);
+    setLoadedImages(0);
+    setHasFirstFrame(false);
+
+    const loadFrame = (frameNumber: number, eager = false) => new Promise<void>((resolve) => {
       const img = new Image();
-      const frameNumber = i.toString().padStart(3, '0');
-      img.src = `/frames/ezgif-frame-${frameNumber}.png`;
+      img.decoding = 'async';
+      img.loading = eager ? 'eager' : 'lazy';
+      img.src = getFrameSrc(frameNumber);
       img.onload = () => {
+        if (cancelled) {
+          resolve();
+          return;
+        }
+        imageMapRef.current.set(frameNumber, img);
         currentLoaded++;
         setLoadedImages(currentLoaded);
+        if (frameNumber === frames[0]) {
+          setHasFirstFrame(true);
+        }
+        resolve();
       };
-      loadedImagesArr.push(img);
-    }
-    // Only set images if we are in a fresh effect
-    images.splice(0, images.length, ...loadedImagesArr);
-  }, [images]);
+      img.onerror = () => resolve();
+    });
+
+    loadFrame(frames[0], true).then(() => {
+      let index = 1;
+
+      const loadBatch = () => {
+        if (cancelled || index >= frames.length) {
+          return;
+        }
+
+        const batch = frames.slice(index, index + BATCH_SIZE);
+        index += BATCH_SIZE;
+
+        Promise.all(batch.map((frameNumber) => loadFrame(frameNumber))).finally(() => {
+          if (!cancelled && index < frames.length) {
+            cancelIdle = scheduleIdle(loadBatch);
+          }
+        });
+      };
+
+      cancelIdle = scheduleIdle(loadBatch);
+    });
+
+    return () => {
+      cancelled = true;
+      cancelIdle?.();
+    };
+  }, []);
 
   // Canvas Drawing Engine
   useEffect(() => {
-    if (loadedImages < FRAME_COUNT || !canvasRef.current) return;
+    if (!hasFirstFrame || frameNumbers.length === 0 || !canvasRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -66,11 +137,23 @@ export const YogaScrollAnimation = () => {
       // Calculate current frame index based on scroll progress
       const progress = smoothProgress.get();
       const frameIndex = Math.min(
-        FRAME_COUNT - 1,
-        Math.floor(progress * FRAME_COUNT)
+        frameNumbers.length - 1,
+        Math.floor(progress * frameNumbers.length)
       );
 
-      const img = images[frameIndex];
+      let img = imageMapRef.current.get(frameNumbers[frameIndex]);
+
+      if (!img) {
+        for (let offset = 1; offset < frameNumbers.length; offset++) {
+          const previousFrame = frameNumbers[frameIndex - offset];
+          const nextFrame = frameNumbers[frameIndex + offset];
+          img = previousFrame ? imageMapRef.current.get(previousFrame) : undefined;
+          if (img) break;
+          img = nextFrame ? imageMapRef.current.get(nextFrame) : undefined;
+          if (img) break;
+        }
+      }
+
       if (img && img.complete) {
         const { width, height } = canvas;
         const imgRatio = img.width / img.height;
@@ -101,14 +184,15 @@ export const YogaScrollAnimation = () => {
     render();
 
     return () => cancelAnimationFrame(animationFrameId);
-  }, [loadedImages, images, smoothProgress]);
+  }, [frameNumbers, hasFirstFrame, smoothProgress]);
 
   // Handle Resize
   useEffect(() => {
     const handleResize = () => {
       if (canvasRef.current) {
-        canvasRef.current.width = window.innerWidth;
-        canvasRef.current.height = window.innerHeight;
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        canvasRef.current.width = Math.floor(window.innerWidth * pixelRatio);
+        canvasRef.current.height = Math.floor(window.innerHeight * pixelRatio);
       }
     };
 
@@ -118,33 +202,33 @@ export const YogaScrollAnimation = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const progressPercentage = (loadedImages / FRAME_COUNT) * 100;
+  const progressPercentage = frameNumbers.length > 0
+    ? Math.round((loadedImages / frameNumbers.length) * 100)
+    : 0;
 
   return (
     <div ref={containerRef} className="relative h-[400vh] w-full bg-black">
-      {/* Preloader */}
-      {loadedImages < FRAME_COUNT && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
-          <div className="w-64 max-w-[80vw]">
-            <p className="text-zinc-500 text-xs mb-3 text-center uppercase tracking-widest font-medium">
-              Loading Experience...
-            </p>
-            <div className="h-1 w-full bg-zinc-900 rounded-full overflow-hidden">
+      {/* Sticky Scroll Container */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center bg-black">
+        {loadedImages < frameNumbers.length && (
+          <div className="absolute bottom-6 left-1/2 z-30 w-56 max-w-[70vw] -translate-x-1/2 rounded-full border border-white/10 bg-black/55 px-4 py-3 backdrop-blur">
+            <div className="mb-2 flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+              <span>Visual guide</span>
+              <span>{progressPercentage}%</span>
+            </div>
+            <div className="h-1 w-full overflow-hidden rounded-full bg-zinc-900">
               <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 transition-all duration-300 ease-out"
+                className="h-full rounded-full bg-emerald-400 transition-all duration-300 ease-out"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Sticky Scroll Container */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center bg-black">
         {/* Canvas Render Area */}
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 w-full h-full bg-black"
         />
 
         {/* Overlay */}

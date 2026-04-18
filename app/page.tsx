@@ -7,6 +7,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Typewriter } from '@/components/ui/typewriter';
 import { TubesBackground } from '@/components/ui/neon-flow';
+import { LazyYogaScrollAnimation } from '@/components/landing/LazyYogaScrollAnimation';
 import { ArrowDown, ArrowRight } from 'lucide-react';
 
 const YogaView = dynamic(
@@ -18,14 +19,6 @@ const YogaView = dynamic(
         Loading yoga generator...
       </div>
     ),
-  }
-);
-
-const YogaScrollAnimation = dynamic(
-  () => import('@/components/ui/yoga-scroll-animation').then((mod) => mod.YogaScrollAnimation),
-  {
-    ssr: false,
-    loading: () => <div className="h-[300vh] w-full bg-black" />,
   }
 );
 
@@ -136,7 +129,7 @@ export default function HomePage() {
       </motion.section>
 
       {/* ═══ Section 2: Interactive Yoga Scroll Animation ═══ */}
-      <YogaScrollAnimation />
+      <LazyYogaScrollAnimation />
 
 
 
