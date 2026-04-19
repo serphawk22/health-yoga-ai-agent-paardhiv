@@ -237,14 +237,14 @@ export default function MetricsPage() {
   return (
     <div className="max-w-5xl mx-auto pb-20 lg:pb-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-health-text">Health Metrics</h1>
-          <p className="text-health-muted">Track and monitor your health data over time</p>
+          <h1 className="text-xl md:text-2xl font-bold text-health-text">Health Metrics</h1>
+          <p className="text-xs md:text-sm text-health-muted">Track and monitor your health data over time</p>
         </div>
         <GradientButton
           onClick={() => setShowAddModal(true)}
-          className="h-auto"
+          className="w-full md:w-auto py-3 md:py-4 h-auto text-sm"
         >
           <Plus className="w-4 h-4 mr-2" />
           Log Metric
@@ -269,11 +269,11 @@ export default function MetricsPage() {
       </Link>
 
       {/* Date Range Filter */}
-      <div className="bg-zinc-900/80 border border-zinc-800 rounded-[24px] mb-8 p-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row items-center gap-4">
+      <div className="bg-zinc-900/80 border border-zinc-800 rounded-[24px] mb-8 p-4 md:p-6 shadow-sm">
+        <div className="flex flex-col md:items-center gap-4">
           <div className="flex items-center gap-2">
-            <Calendar className="w-6 h-6 text-zinc-400" />
-            <span className="text-lg font-medium text-zinc-400">Show my health from:</span>
+            <Calendar className="w-5 h-5 md:w-6 md:h-6 text-zinc-400" />
+            <span className="text-base md:text-lg font-medium text-zinc-400">Show analytics for:</span>
           </div>
           <div className="flex flex-wrap gap-3 w-full sm:w-auto">
             {(['today', 'week', 'month', 'all'] as const).map((range) => {
@@ -288,7 +288,7 @@ export default function MetricsPage() {
                   key={range}
                   onClick={() => setDateRange(range)}
                   className={cn(
-                    "px-6 py-3 rounded-full text-base font-bold transition-colors min-h-[48px]",
+                    "px-4 md:px-6 py-2 md:py-3 rounded-full text-xs md:text-base font-bold transition-colors min-h-[40px] md:min-h-[48px]",
                     dateRange === range
                       ? 'bg-primary-600 text-white'
                       : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white'
@@ -312,10 +312,10 @@ export default function MetricsPage() {
           {METRIC_GROUPS.map((group) => (
             <div key={group.title} className="mb-12">
               <div className="flex items-center gap-4 mb-6">
-                <h2 className="text-2xl font-bold text-white">{group.title}</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-white whitespace-nowrap">{group.title}</h2>
                 <div className="h-px flex-1 bg-zinc-800 rounded-full"></div>
               </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {group.metrics.map(metricId => {
                   const type = METRIC_TYPES.find(t => t.id === metricId);
                   if (!type) return null;
@@ -335,18 +335,18 @@ export default function MetricsPage() {
                   const colors = colorMap[type.color] || colorMap.blue;
 
                   return (
-                    <div key={type.id} className="bg-zinc-900 border border-zinc-800 rounded-[24px] p-6 hover:shadow-xl transition-all duration-300">
+                    <div key={type.id} className="bg-zinc-900 border border-zinc-800 rounded-[24px] p-5 md:p-6 hover:shadow-xl transition-all duration-300">
                       <div className="flex flex-col items-center text-center">
-                        <div className={`w-20 h-20 rounded-[20px] ${colors.bg} flex items-center justify-center mb-5`}>
-                          <Icon className={`w-10 h-10 ${colors.text}`} />
+                        <div className={`w-16 h-16 md:w-20 md:h-20 rounded-[18px] md:rounded-[20px] ${colors.bg} flex items-center justify-center mb-4 md:mb-5`}>
+                          <Icon className={`w-8 h-8 md:w-10 md:h-10 ${colors.text}`} />
                         </div>
 
-                        <h3 className="text-2xl font-bold text-white mb-2">{type.label}</h3>
+                        <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{type.label}</h3>
 
                         {latest ? (
-                          <div className="my-5 w-full">
-                            <p className="text-[2.5rem] font-black text-white leading-none">
-                              {latest.value} <span className="text-xl font-normal text-zinc-400">{type.unit}</span>
+                          <div className="my-4 md:my-5 w-full">
+                            <p className="text-3xl md:text-[2.5rem] font-black text-white leading-none">
+                              {latest.value} <span className="text-lg font-normal text-zinc-400">{type.unit}</span>
                             </p>
                             <div className="flex items-center justify-center gap-2 mt-4">
                               <p className="text-base text-zinc-400 font-medium">
@@ -371,9 +371,9 @@ export default function MetricsPage() {
                             setSelectedMetricType(type.id);
                             setShowAddModal(true);
                           }}
-                          className="w-full min-h-[56px] mt-4 rounded-[16px] font-bold text-xl"
+                          className="w-full min-h-[48px] md:min-h-[56px] mt-4 rounded-[14px] md:rounded-[16px] font-bold text-base md:text-xl"
                         >
-                          <Plus className="w-6 h-6 mr-2 group-hover:scale-110 transition-transform" />
+                          <Plus className="w-5 h-5 md:w-6 md:h-6 mr-2 group-hover:scale-110 transition-transform" />
                           Add Reading
                         </GradientButton>
                       </div>

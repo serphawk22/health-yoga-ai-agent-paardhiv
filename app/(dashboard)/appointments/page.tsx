@@ -210,7 +210,7 @@ export default function AppointmentsPage() {
       </div>
 
       {view === 'book' ? (
-        <div className="grid lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           {/* Column 2: Doctor List / Details & Booking */}
           <div className="lg:col-span-12 space-y-6">
             {selectedDoctor ? (
@@ -425,7 +425,7 @@ export default function AppointmentsPage() {
                   ))}
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {filteredDoctors.map((doctor) => (
                     <button
                       key={doctor.id}

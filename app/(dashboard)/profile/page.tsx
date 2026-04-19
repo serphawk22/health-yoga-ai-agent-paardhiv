@@ -144,38 +144,38 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.05 }}
-          className="flex items-center justify-between"
+          className="flex flex-col sm:flex-row items-center justify-between gap-6"
         >
-          <div className="flex items-center gap-6">
-            <ProfileAvatar gender={profile.gender} size={64} />
+          <div className="flex items-center gap-4 md:gap-6">
+            <ProfileAvatar gender={profile.gender} size={48} />
             <div>
-              <p className="text-zinc-500 font-medium text-sm uppercase tracking-wider mb-1">Health Hub</p>
-              <h1 className="text-3xl font-light text-health-text tracking-tight">
+              <p className="text-zinc-500 font-medium text-[10px] md:text-sm uppercase tracking-wider mb-0.5 md:mb-1">Health Hub</p>
+              <h1 className="text-2xl md:text-3xl font-light text-health-text tracking-tight">
                 My Profile
               </h1>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full sm:w-auto">
             {!isEditing ? (
               <button
                 onClick={() => setIsEditing(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all shadow-lg"
+                className="flex flex-1 sm:flex-none items-center justify-center gap-2 px-4 py-2.5 md:py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all shadow-lg"
               >
                 <Edit2 className="w-3.5 h-3.5" />
                 Edit Profile
               </button>
             ) : (
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full sm:w-auto">
                 <button
                   onClick={handleCancel}
-                  className="px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all font-semibold"
+                  className="flex-1 sm:flex-none px-4 py-2.5 md:py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex items-center gap-2 px-5 py-2 rounded-xl bg-primary-600 text-white text-sm font-bold hover:bg-primary-500 transition-all shadow-lg shadow-primary-600/20 disabled:opacity-50"
+                  className="flex flex-1 sm:flex-none items-center justify-center gap-2 px-5 py-2.5 md:py-2 rounded-xl bg-primary-600 text-white text-sm font-bold hover:bg-primary-500 transition-all shadow-lg shadow-primary-600/20 disabled:opacity-50"
                 >
                   {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   Save
@@ -332,13 +332,13 @@ export default function ProfilePage() {
               className="rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-8 flex flex-col md:flex-row items-center justify-between shadow-sm relative overflow-hidden"
             >
 
-              <div className="text-center md:text-left mb-6 md:mb-0">
+              <div className="text-center md:text-left mb-4 md:mb-0">
                 <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.2em] mb-2">Body Mass Index</p>
-                <div className="flex items-baseline justify-center md:justify-start gap-3">
-                  <h3 className="text-6xl font-light text-health-text tracking-tighter leading-none">
+                <div className="flex items-baseline justify-center md:justify-start gap-2 md:gap-3">
+                  <h3 className="text-5xl md:text-6xl font-light text-health-text tracking-tighter leading-none">
                     {(profile.weightKg / Math.pow(profile.heightCm / 100, 2)).toFixed(1)}
                   </h3>
-                  <span className="text-primary-600 dark:text-primary-400 font-bold text-sm tracking-widest uppercase">BMI</span>
+                  <span className="text-primary-600 dark:text-primary-400 font-bold text-xs md:text-sm tracking-widest uppercase">BMI</span>
                 </div>
               </div>
 
@@ -487,7 +487,7 @@ function Section({ title, children, layoutId }: { title: string; children: React
       className="space-y-4"
     >
       <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest px-1">{title}</h2>
-      <div className="rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-5 shadow-sm">
+      <div className="rounded-2xl md:rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-4 md:p-5 shadow-sm">
         {children}
       </div>
     </motion.div>

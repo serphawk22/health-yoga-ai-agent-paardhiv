@@ -36,11 +36,11 @@ export default async function MusicPage() {
   ];
 
   return (
-    <div className="max-w-3xl mx-auto pb-32 pt-6 animate-fadeIn">
+    <div className="max-w-3xl mx-auto pb-32 pt-2 md:pt-6 animate-fadeIn p-4 md:p-0">
       {/* Header matching YogaHeader styling */}
-      <div className="space-y-6 mb-12 flex flex-col md:flex-row md:items-start justify-between border-b border-zinc-100 dark:border-zinc-800 pb-8">
+      <div className="space-y-6 mb-8 md:mb-12 flex flex-col md:flex-row md:items-start justify-between border-b border-zinc-100 dark:border-zinc-800 pb-8">
         <div>
-          <h1 className="text-3xl font-light text-health-text">
+          <h1 className="text-2xl md:text-3xl font-light text-health-text">
             Focus & Calm Music
           </h1>
           <p className="text-zinc-500 mt-1 max-w-sm">

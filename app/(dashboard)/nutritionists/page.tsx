@@ -9,23 +9,23 @@ export const metadata = {
 
 export default function NutritionistsPage() {
   return (
-    <div className="max-w-5xl mx-auto pb-20 pt-6">
-      <div className="mb-10">
-        <p className="text-zinc-500 font-medium text-sm uppercase tracking-wider mb-1">Expert Panel</p>
-        <h1 className="text-3xl font-light text-health-text tracking-tight">
+    <div className="max-w-5xl mx-auto pb-20 pt-2 md:pt-6">
+      <div className="mb-6 md:mb-10 px-1 md:px-0">
+        <p className="text-zinc-500 font-medium text-[10px] md:text-sm uppercase tracking-wider mb-1">Expert Panel</p>
+        <h1 className="text-2xl md:text-3xl font-light text-health-text tracking-tight">
           Our Nutritionists
         </h1>
-        <p className="text-zinc-500 mt-2 text-sm max-w-xl">
+        <p className="text-zinc-500 mt-2 text-xs md:text-sm max-w-xl">
           Meet our team of certified nutritionists who bring years of expertise in therapeutic nutrition, sports nutrition, Ayurvedic wisdom, and family health.
         </p>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-4 md:gap-6">
         {nutritionists.map((nutritionist) => (
           <Link
             key={nutritionist.id}
             href={`/nutritionists/${nutritionist.slug}`}
-            className="group rounded-3xl bg-zinc-900 border border-zinc-800 p-8 hover:border-zinc-700 transition-all hover:shadow-xl"
+            className="group rounded-3xl bg-zinc-900 border border-zinc-800 p-5 md:p-8 hover:border-zinc-700 transition-all hover:shadow-xl"
           >
             <div className="flex flex-col md:flex-row gap-6">
               {/* Avatar */}

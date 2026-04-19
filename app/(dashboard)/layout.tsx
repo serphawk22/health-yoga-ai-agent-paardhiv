@@ -30,7 +30,7 @@ export default async function DashboardLayout({
             isComplete={!!user.healthProfile?.isComplete}
             completionStep={user.healthProfile?.completionStep || 0}
           />
-          <main className="p-6 max-w-7xl mx-auto pb-24">
+          <main className="p-3 md:p-6 max-w-7xl mx-auto pb-24" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 6rem)' }}>
             {children}
           </main>
           <Dock userRole={user.role} />

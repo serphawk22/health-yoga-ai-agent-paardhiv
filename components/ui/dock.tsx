@@ -65,7 +65,7 @@ export function Dock({ userRole = 'PATIENT' }: { userRole?: string }) {
 
     return (
         <div
-            className="fixed left-1/2 -translate-x-1/2 z-50 bottom-3 md:bottom-8"
+            className="fixed left-1/2 -translate-x-1/2 z-50 bottom-2 md:bottom-8 h-14 md:h-20"
             style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 0.5rem)' }}
         >
             <motion.div
@@ -131,14 +131,14 @@ function DockIcon({
                 whileTap={{ scale: 0.92 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 className={cn(
-                    "relative aspect-square w-9 md:w-10 rounded-full flex items-center justify-center group shrink-0 cursor-pointer",
+                    "relative aspect-square w-8 md:w-10 rounded-full flex items-center justify-center group shrink-0 cursor-pointer",
                     isActive
                         ? "bg-primary-100 dark:bg-primary-900/30"
                         : "bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700"
                 )}
             >
                 <Icon className={cn(
-                    "h-4 w-4 md:h-5 md:w-5 transition-colors duration-150 pointer-events-none",
+                    "h-3.5 w-3.5 md:h-5 md:w-5 transition-colors duration-150 pointer-events-none",
                     isActive
                         ? "text-primary-600 dark:text-primary-400"
                         : "text-zinc-600 dark:text-zinc-300"

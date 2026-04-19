@@ -68,7 +68,7 @@ export function UserCapsule({ user }: UserCapsuleProps) {
     };
 
     return (
-        <div className="fixed top-6 right-8 z-[100] flex items-center gap-3">
+        <div className="fixed top-2 right-2 md:top-6 md:right-8 z-[100] flex items-center gap-3">
             {/* Notifications Capsule */}
             <div className="relative">
                 <motion.button

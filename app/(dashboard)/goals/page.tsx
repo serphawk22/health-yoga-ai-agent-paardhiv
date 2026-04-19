@@ -125,7 +125,7 @@ export default function GoalsPage() {
           <h2 className="font-semibold text-health-text">Choose Your Goal</h2>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
           {GOAL_TYPES.map((goal) => (
             <div key={goal.id} className="relative h-full rounded-2xl p-0.5">
               <div className="relative h-full rounded-[1.25rem] border-[0.75px] border-health-border md:rounded-[1.5rem] bg-health-card">

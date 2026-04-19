@@ -112,15 +112,15 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
             <div className="relative z-10 px-6 py-8 md:px-12 max-w-7xl mx-auto space-y-10">
 
                 {/* Header */}
-                <header className="clay-panel clay-card-text flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-10 backdrop-blur-[40px] saturate-[1.8] rounded-[2.5rem] p-10 bg-zinc-950/40 ring-1 ring-white/[0.05] shadow-[0_32px_64px_rgba(0,0,0,0.4)]">
+                <header className="clay-panel clay-card-text flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-6 md:pb-10 backdrop-blur-[40px] saturate-[1.8] rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 bg-zinc-950/40 ring-1 ring-white/[0.05] shadow-[0_32px_64px_rgba(0,0,0,0.4)]">
                     <div>
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
                         >
-                            <h1 className="text-[1.75rem] font-extralight tracking-tight mb-2">
-                                Namaste, <span className="text-[1.75rem] text-primary-400 uppercase font-thin">{userName}</span>
+                            <h1 className="text-xl md:text-[1.75rem] font-extralight tracking-tight mb-2">
+                                Namaste, <span className="text-xl md:text-[1.75rem] text-primary-400 uppercase font-thin">{userName}</span>
                             </h1>
                             <p className="text-[0.8125rem] text-zinc-400 font-light max-w-2xl">
                                 Find your balance today. Your journey to inner peace continues.
@@ -133,7 +133,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             <Calendar className="w-3.5 h-3.5" />
                             <span className="text-[0.8125rem] font-medium tracking-[0.2em] uppercase opacity-70">{formattedDate}</span>
                         </div>
-                        <div className="text-[1.75rem] font-extralight tracking-tighter tabular-nums text-white/90">
+                        <div className="text-base md:text-[1.75rem] font-extralight tracking-tighter tabular-nums text-white/90">
                             {formattedTime}
                         </div>
                     </div>
@@ -152,7 +152,7 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             transition={{ delay: 0.2, duration: 0.5 }}
                             className="clay-panel clay-card-text group relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
                         >
-                            <div className="p-8 flex flex-col items-center text-center">
+                            <div className="p-5 md:p-8 flex flex-col items-center text-center">
                                 <h3 className="text-[0.8125rem] font-medium uppercase tracking-[0.2em] text-primary-400 mb-8 opacity-60">International Day of Yoga</h3>
 
                                 {timeUntilYogaDay ? (
@@ -175,10 +175,10 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.3, duration: 0.5 }}
-                            className="clay-panel clay-card-text rounded-[2rem] p-8 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)] relative overflow-hidden"
+                            className="clay-panel clay-card-text rounded-[2rem] p-5 md:p-8 bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_20px_40px_rgba(0,0,0,0.3)] relative overflow-hidden"
                         >
                             <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
-                            <h3 className="text-[1.75rem] font-medium mb-8 tracking-tight">
+                            <h3 className="text-xl md:text-[1.75rem] font-medium mb-6 md:mb-8 tracking-tight">
                                 Why Yoga Today?
                             </h3>
                             <ul className="space-y-4">
@@ -204,10 +204,10 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4, duration: 0.5 }}
-                            className="clay-panel clay-card-text md:col-span-2 rounded-[2.5rem] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_32px_64px_rgba(0,0,0,0.3)] p-10"
+                            className="clay-panel clay-card-text md:col-span-2 rounded-[2rem] md:rounded-[2.5rem] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_32px_64px_rgba(0,0,0,0.3)] p-6 md:p-10"
                         >
-                            <div className="mb-8">
-                                <h2 className="text-[1.75rem] font-extralight uppercase tracking-[0.1em]">Latest in <span className="text-primary-400 font-light">Yoga World</span></h2>
+                            <div className="mb-6 md:mb-8">
+                                <h2 className="text-lg md:text-[1.75rem] font-extralight uppercase tracking-[0.1em]">Latest in <span className="text-primary-400 font-light">Yoga World</span></h2>
                             </div>
 
                             <div className="grid md:grid-cols-2 gap-6">
@@ -226,10 +226,10 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.5, duration: 0.5 }}
-                            className="clay-panel clay-card-text md:col-span-2 rounded-[2.5rem] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_32px_64px_rgba(0,0,0,0.3)] p-10 flex flex-col justify-between"
+                            className="clay-panel clay-card-text md:col-span-2 rounded-[2rem] md:rounded-[2.5rem] bg-zinc-950/40 backdrop-blur-[40px] saturate-[1.8] border border-white/[0.08] ring-1 ring-white/[0.03] shadow-[0_32px_64px_rgba(0,0,0,0.3)] p-6 md:p-10 flex flex-col justify-between"
                         >
                             <div>
-                                <h3 className="text-[1.75rem] font-medium mb-8 tracking-tight">
+                                <h3 className="text-xl md:text-[1.75rem] font-medium mb-6 md:mb-8 tracking-tight">
                                     Upcoming Appointments
                                 </h3>
 
@@ -239,9 +239,9 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
                                             const aptDate = new Date(apt.scheduledDate);
                                             return (
                                                 <div key={apt.id} className="flex items-start gap-4 pb-6 border-b border-white/5 last:border-0 last:pb-0">
-                                                    <div className="bg-primary-500/10 text-primary-400 rounded-2xl p-2.5 text-center min-w-[55px] ring-1 ring-primary-500/20 shadow-lg">
-                                                        <span className="block text-[0.8125rem] font-bold uppercase tracking-wider opacity-60 font-sans">{aptDate.toLocaleDateString('en-US', { month: 'short' })}</span>
-                                                        <span className="block text-[1.75rem] font-bold leading-tight mt-0.5">{aptDate.getDate()}</span>
+                                                    <div className="bg-primary-500/10 text-primary-400 rounded-xl md:rounded-2xl p-2 md:p-2.5 text-center min-w-[50px] md:min-w-[55px] ring-1 ring-primary-500/20 shadow-lg">
+                                                        <span className="block text-[0.7rem] md:text-[0.8125rem] font-bold uppercase tracking-wider opacity-60 font-sans">{aptDate.toLocaleDateString('en-US', { month: 'short' })}</span>
+                                                        <span className="block text-xl md:text-[1.75rem] font-bold leading-tight mt-0.5">{aptDate.getDate()}</span>
                                                     </div>
                                                     <div className="flex-1 min-w-0 pt-0.5">
                                                         <div className="flex items-center gap-2 mb-1">
@@ -335,10 +335,8 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
 
 // ---------------- Helper Components ----------------
 
-function TimeUnit({ value, label }: { value: number; label: string }) {
-    return (
         <div className="flex flex-col items-center">
-            <div className="text-[1.75rem] font-extralight text-white/90 tabular-nums tracking-tighter">
+            <div className="text-xl md:text-[1.75rem] font-extralight text-white/90 tabular-nums tracking-tighter">
                 {value.toString().padStart(2, '0')}
             </div>
             <span className="text-[0.8125rem] font-medium uppercase text-zinc-500 tracking-[0.2em] mt-2 opacity-50">{label}</span>

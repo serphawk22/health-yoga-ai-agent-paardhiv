@@ -151,7 +151,7 @@ export default function AssessmentPage() {
           </div>
 
           {/* Individual Scores */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <ScoreCard
               icon={Activity}
               label="BMI Score"
@@ -254,7 +254,7 @@ export default function AssessmentPage() {
                 <Gauge className="w-5 h-5 text-primary-600" />
                 <h3 className="font-semibold text-health-text">Suggested Goals</h3>
               </div>
-              <div className="grid sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {assessment.goalSuggestions.map((goal: string, i: number) => (
                   <div key={i} className="p-3 rounded-lg border border-health-border hover:border-primary-300 transition-colors">
                     <div className="flex items-center gap-2">
