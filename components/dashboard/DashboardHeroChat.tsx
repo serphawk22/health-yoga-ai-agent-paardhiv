@@ -136,18 +136,29 @@ export function DashboardHeroChat() {
     target.style.height = Math.min(target.scrollHeight, 120) + 'px';
   }
 
+  useEffect(() => {
+    const handleToggle = () => setIsOpen(prev => !prev);
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener('toggle-chat', handleToggle);
+    window.addEventListener('open-chat', handleOpen);
+    return () => {
+      window.removeEventListener('toggle-chat', handleToggle);
+      window.removeEventListener('open-chat', handleOpen);
+    };
+  }, []);
+
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Button - Hidden on Mobile */}
       <motion.button
         whileHover={{ scale: 1.1, y: -2 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "clay-pill fixed bottom-8 right-8 z-[100] w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden",
+          "clay-pill fixed bottom-8 right-8 z-[100] w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden hidden md:flex",
           isOpen 
             ? "bg-zinc-900/90 border border-white/20 text-white" 
-            : "bg-zinc-950/60 backdrop-blur-2xl border border-white/10 text-primary-400 hover:border-primary-500/50 hover:shadow-primary-500/20"
+            : "bg-zinc-900 shadow-xl border border-white/10 text-primary-400 hover:border-primary-500/50 hover:shadow-primary-500/20"
         )}
       >
         {/* Glow effect inside button */}
@@ -198,19 +209,27 @@ export function DashboardHeroChat() {
             {/* Right Side - Chat */}
             <div className="flex-1 flex flex-col relative h-full min-w-0 bg-transparent">
               {/* Mobile Header (only visible on small screens) */}
-              <div className="md:hidden clay-panel-soft p-4 border-b border-black/5 dark:border-white/5 flex items-center gap-3 bg-white/50 dark:bg-white/[0.02]">
-                  <div className="clay-icon relative w-10 h-10 rounded-full overflow-hidden shrink-0 border border-transparent">
-                      <Image 
-                          src="/frames/ezgif-frame-001.png" 
-                          alt="Zenya AI" 
-                          fill
-                          className="object-cover"
-                      />
+              <div className="md:hidden clay-panel-soft p-4 border-b border-black/5 dark:border-white/5 flex items-center justify-between bg-white/50 dark:bg-white/[0.02]">
+                  <div className="flex items-center gap-3">
+                      <div className="clay-icon relative w-10 h-10 rounded-full overflow-hidden shrink-0 border border-transparent">
+                          <Image 
+                              src="/frames/ezgif-frame-001.png" 
+                              alt="Zenya AI" 
+                              fill
+                              className="object-cover"
+                          />
+                      </div>
+                      <div>
+                        <h3 className="text-[0.8125rem] font-medium text-zinc-800 dark:text-white">Zenya</h3>
+                        <p className="text-[0.8125rem] text-primary-500 dark:text-primary-400 capitalize tracking-wider">Wellness Guide</p>
+                      </div>
                   </div>
-                  <div>
-                    <h3 className="text-[0.8125rem] font-medium text-zinc-800 dark:text-white">Zenya</h3>
-                    <p className="text-[0.8125rem] text-primary-500 dark:text-primary-400 capitalize tracking-wider">Wellness Guide</p>
-                  </div>
+                  <button 
+                    onClick={() => setIsOpen(false)}
+                    className="p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
               </div>
 
               {/* Messages Stream */}

@@ -2,13 +2,13 @@
 
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef, useState } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Typewriter } from '@/components/ui/typewriter';
 import { TubesBackground } from '@/components/ui/neon-flow';
 import { LazyYogaScrollAnimation } from '@/components/landing/LazyYogaScrollAnimation';
-import { ArrowDown, ArrowRight } from 'lucide-react';
+import { ArrowDown, ArrowRight, Menu, X, LogIn, UserPlus } from 'lucide-react';
 
 const YogaView = dynamic(
   () => import('@/components/features/exercise/YogaView').then((mod) => mod.YogaView),
@@ -24,6 +24,7 @@ const YogaView = dynamic(
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -41,8 +42,8 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center gap-2">
-              <span className="text-lg font-semibold text-white tracking-tight">Yoga</span>
-              <div className="text-sm font-medium text-zinc-500">
+              <span className="text-xl font-bold text-white tracking-tight">Yoga</span>
+              <div className="text-sm font-medium text-zinc-500 hidden md:block">
                 <Typewriter
                   text={["Women", "for Everyone"]}
                   speed={70}
@@ -52,21 +53,88 @@ export default function HomePage() {
                 />
               </div>
             </div>
-            <div className="flex items-center gap-3">
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-3">
               <Link
                 href="/login"
                 className="px-5 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors"
               >
                 Sign In
               </Link>
-              <GradientButton asChild className="min-w-[110px] px-6 py-2.5 h-10 text-sm rounded-full">
+              <GradientButton asChild className="min-w-[110px] px-6 py-2.5 h-10 text-sm rounded-full text-white">
                 <Link href="/register">
                   Get Started
                 </Link>
               </GradientButton>
             </div>
+
+            {/* Mobile Menu Button */}
+            <div className="flex md:hidden items-center">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="p-2 text-zinc-400 hover:text-white transition-colors"
+                aria-label="Toggle menu"
+              >
+                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Mobile Navigation Overlay */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              className="md:hidden fixed inset-x-4 top-[84px] bg-[#050505]/95 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] z-40 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden"
+            >
+              <div className="flex flex-col p-6 gap-2">
+                <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4 px-2">
+                  Navigation
+                </div>
+                
+                <Link
+                   href="/login"
+                   onClick={() => setIsMenuOpen(false)}
+                   className="w-full group flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 rounded-xl bg-zinc-900 border border-white/5 text-zinc-400 group-hover:text-white transition-colors">
+                      <LogIn className="w-5 h-5" />
+                    </div>
+                    <span className="text-lg font-medium text-zinc-300 group-hover:text-white transition-colors">Sign In</span>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                </Link>
+
+                <Link 
+                  href="/register" 
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-full group flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 rounded-xl bg-zinc-900 border border-white/5 text-zinc-400 group-hover:text-white transition-colors">
+                      <UserPlus className="w-5 h-5" />
+                    </div>
+                    <span className="text-lg font-medium text-zinc-300 group-hover:text-white transition-colors">Join Community</span>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                </Link>
+
+                <div className="mt-4 px-2">
+                  <GradientButton asChild className="w-full py-5 h-auto text-lg rounded-2xl text-white font-bold">
+                    <Link href="/register" onClick={() => setIsMenuOpen(false)}>
+                      Get Started Free
+                    </Link>
+                  </GradientButton>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* ═══ Section 1: Hero with Neon Flow Background ═══ */}
@@ -131,8 +199,6 @@ export default function HomePage() {
       {/* ═══ Section 2: Interactive Yoga Scroll Animation ═══ */}
       <LazyYogaScrollAnimation />
 
-
-
       {/* ═══ Section 4: Interactive Yoga Showcase ═══ */}
       <section className="relative z-10 py-32 px-6 border-t border-white/[0.02]">
         <div className="max-w-4xl mx-auto">
@@ -190,8 +256,7 @@ export default function HomePage() {
         font-extrabold
         tracking-[-0.04em]
         leading-[1]
-        text-[18vw]
-        md:text-[12vw]
+        text-[6vw] sm:text-[12vw]
         lg:text-[10vw]
         select-none
         whitespace-nowrap

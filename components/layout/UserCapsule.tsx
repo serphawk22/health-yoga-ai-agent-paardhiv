@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { signOut } from '@/lib/actions/auth';
 import { getInitials } from '@/lib/utils';
-import { Bell, ChevronDown, User, Settings, LogOut, CheckCircle, AlertCircle } from 'lucide-react';
+import { Bell, ChevronDown, User, Settings, LogOut, CheckCircle, AlertCircle, MessageCircle } from 'lucide-react';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { useRouter } from 'next/navigation';
 import { getNotifications, markAllNotificationsAsRead, markNotificationAsRead, clearAllNotifications } from '@/lib/actions/notification';
@@ -253,6 +253,18 @@ export function UserCapsule({ user }: UserCapsuleProps) {
                                         </div>
                                         Settings
                                     </Link>
+                                    <button
+                                        onClick={() => {
+                                            window.dispatchEvent(new CustomEvent('open-chat'));
+                                            setShowUserMenu(false);
+                                        }}
+                                        className="w-full flex md:hidden items-center gap-3 px-4 py-3 text-[0.8125rem] font-medium text-zinc-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all"
+                                    >
+                                        <div className="clay-icon w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center border border-transparent">
+                                            <MessageCircle className="w-4 h-4 text-primary-400" />
+                                        </div>
+                                        Zenya AI Assistant
+                                    </button>
                                 </div>
 
                                 <div className="clay-panel-inset mt-4 p-2 bg-white/5 rounded-2xl border border-transparent">

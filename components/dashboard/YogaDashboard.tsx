@@ -157,10 +157,10 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
 
                                 {timeUntilYogaDay ? (
                                     <div className="grid grid-cols-4 gap-4 w-full">
-                                        <TimeUnit value={timeUntilYogaDay.days} label="Days" />
-                                        <TimeUnit value={timeUntilYogaDay.hours} label="Hours" />
-                                        <TimeUnit value={timeUntilYogaDay.minutes} label="Mins" />
-                                        <TimeUnit value={timeUntilYogaDay.seconds} label="Secs" />
+                                        <TimeSegment value={timeUntilYogaDay.days} label="Days" />
+                                        <TimeSegment value={timeUntilYogaDay.hours} label="Hours" />
+                                        <TimeSegment value={timeUntilYogaDay.minutes} label="Mins" />
+                                        <TimeSegment value={timeUntilYogaDay.seconds} label="Secs" />
                                     </div>
                                 ) : (
                                     <div className="animate-pulse h-16 w-full bg-zinc-800/50 rounded-xl" />
@@ -335,6 +335,8 @@ export function YogaDashboard({ userName, appointments }: YogaDashboardProps) {
 
 // ---------------- Helper Components ----------------
 
+function TimeSegment({ label, value }: { label: string; value: number | string }) {
+    return (
         <div className="flex flex-col items-center">
             <div className="text-xl md:text-[1.75rem] font-extralight text-white/90 tabular-nums tracking-tighter">
                 {value.toString().padStart(2, '0')}
